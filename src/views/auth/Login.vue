@@ -5,9 +5,6 @@
       <!-- Brand logo-->
       <b-link class="brand-logo">
         <vuexy-logo />
-        <h2 class="brand-text text-primary ml-1">
-          Vuexy
-        </h2>
       </b-link>
       <!-- /Brand logo-->
 
@@ -19,7 +16,7 @@
         <div class="w-100 d-lg-flex align-items-center justify-content-center px-5">
           <b-img
             fluid
-            :src="imgUrl"
+            src='@/assets/images/pages/login-dark.svg'
             alt="Login V2"
           />
         </div>
@@ -41,7 +38,7 @@
             title-tag="h2"
             class="font-weight-bold mb-1"
           >
-            Welcome to Vuexy! 👋
+            Welcome to E Loan Mask 👋🏻
           </b-card-title>
           <b-card-text class="mb-2">
             Please sign-in to your account and start the adventure
@@ -77,8 +74,8 @@
               <!-- forgot password -->
               <b-form-group>
                 <div class="d-flex justify-content-between">
-                  <label for="login-password">Password</label>
-                  <b-link :to="{name:'auth-forgot-password-v2'}">
+                  <label for="login-password">密碼</label>
+                  <b-link :to="{name:'forgot-password'}">
                     <small>Forgot Password?</small>
                   </b-link>
                 </div>
@@ -119,7 +116,7 @@
                   v-model="status"
                   name="checkbox-1"
                 >
-                  Remember Me
+                  Remember me
                 </b-form-checkbox>
               </b-form-group>
 
@@ -130,15 +127,15 @@
                 block
                 @click="validationForm"
               >
-                Sign in
+                Login
               </b-button>
             </b-form>
           </validation-observer>
 
           <b-card-text class="text-center mt-2">
             <span>New on our platform? </span>
-            <b-link :to="{name:'page-auth-register-v2'}">
-              <span>&nbsp;Create an account</span>
+            <b-link :to="{name:'signup'}">
+              <span>&nbsp;Create account</span>
             </b-link>
           </b-card-text>
 
@@ -158,22 +155,10 @@
               <feather-icon icon="FacebookIcon" />
             </b-button>
             <b-button
-              variant="twitter"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="TwitterIcon" />
-            </b-button>
-            <b-button
               variant="google"
               href="javascript:void(0)"
             >
               <feather-icon icon="MailIcon" />
-            </b-button>
-            <b-button
-              variant="github"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="GithubIcon" />
             </b-button>
           </div>
         </b-col>
@@ -186,17 +171,18 @@
 <script>
 /* eslint-disable global-require */
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
-import VuexyLogo from '@core/layouts/components/Logo.vue'
 import {
   BRow, BCol, BLink, BFormGroup, BFormInput, BInputGroupAppend, BInputGroup, BFormCheckbox, BCardText, BCardTitle, BImg, BForm, BButton,
 } from 'bootstrap-vue'
 import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
-import store from '@/store/index'
+import VuexyLogo from '@core/layouts/components/Logo.vue'
+// import store from '@/store/index'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
+    VuexyLogo,
     BRow,
     BCol,
     BLink,
@@ -210,7 +196,6 @@ export default {
     BImg,
     BForm,
     BButton,
-    VuexyLogo,
     ValidationProvider,
     ValidationObserver,
   },
@@ -220,7 +205,6 @@ export default {
       status: '',
       password: '',
       userEmail: '',
-      sideImg: require('@/assets/images/pages/login-v2.svg'),
       // validation rulesimport store from '@/store/index'
       required,
       email,
@@ -229,14 +213,6 @@ export default {
   computed: {
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
-    },
-    imgUrl() {
-      if (store.state.appConfig.layout.skin === 'dark') {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.sideImg = require('@/assets/images/pages/login-v2-dark.svg')
-        return this.sideImg
-      }
-      return this.sideImg
     },
   },
   methods: {

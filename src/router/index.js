@@ -39,14 +39,6 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('@/views/Login.vue'),
-      meta: {
-        layout: 'full',
-      },
-    },
-    {
       path: '/error-404',
       name: 'error-404',
       component: () => import('@/views/error/Error404.vue'),
@@ -57,6 +49,54 @@ const router = new VueRouter({
     {
       path: '*',
       redirect: 'error-404',
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: () => import('@/views/auth/Signup.vue'),
+      meta: {
+        layout: 'full',
+      },
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/auth/Login.vue'),
+      meta: {
+        layout: 'full',
+      },
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('@/views/auth/ForgotPassword.vue'),
+      meta: {
+        layout: 'full',
+      },
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: () => import('@/views/auth/ResetPassword.vue'),
+      meta: {
+        layout: 'full',
+      },
+    },
+    {
+      path: '/reset-password-confirm',
+      name: 'reset-password-confirm',
+      component: () => import('@/views/auth/ResetPasswordConfirm.vue'),
+      meta: {
+        layout: 'full',
+      },
+    },
+    {
+      path: '/register-verify-email',
+      name: 'register-verify-email',
+      component: () => import('@/views/auth/RegisterVerifyEmail.vue'),
+      meta: {
+        layout: 'full',
+      },
     },
   ],
 })

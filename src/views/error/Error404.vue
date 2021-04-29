@@ -3,26 +3,23 @@
   <div class="misc-wrapper">
     <b-link class="brand-logo">
       <vuexy-logo />
-      <h2 class="brand-text text-primary ml-1">
-        Vuexy
-      </h2>
     </b-link>
 
     <div class="misc-inner p-2 p-sm-3">
       <div class="w-100 text-center">
         <h2 class="mb-1">
-          Page Not Found 🕵🏻‍♀️
+          Page Not Found ⚠️
         </h2>
         <p class="mb-2">
-          Oops! 😖 The requested URL was not found on this server.
+          The requested URL /error was not found on this server.
         </p>
 
         <b-button
           variant="primary"
           class="mb-2 btn-sm-block"
-          :to="{path:'/'}"
+          :to="{path:'/login'}"
         >
-          Back to home
+          Back to login
         </b-button>
 
         <!-- image -->
