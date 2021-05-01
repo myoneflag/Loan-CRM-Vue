@@ -16,7 +16,7 @@
         <div class="w-100 d-lg-flex align-items-center justify-content-center px-5">
           <b-img
             fluid
-            src='@/assets/images/pages/signup-dark.svg'
+            src="@/assets/images/pages/signup-dark.svg"
             alt="Login V2"
           />
         </div>
@@ -58,14 +58,14 @@
                 <validation-provider
                   #default="{ errors }"
                   name="username"
-                  rules="required|email"
+                  rules="required"
                 >
                   <b-form-input
                     id="login-name"
-                    v-model="userEmail"
+                    v-model="userName"
                     :state="errors.length > 0 ? false:null"
                     name="login-name"
-                    placeholder="john@example.com"
+                    placeholder="John Smith"
                   />
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
@@ -198,6 +198,8 @@ import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 // import store from '@/store/index'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import moment from 'moment'
+import { db, auth } from '../../firebase'
 
 export default {
   components: {
@@ -224,6 +226,7 @@ export default {
       status: '',
       password: '',
       userEmail: '',
+      userName: '',
       // validation rulesimport store from '@/store/index'
       required,
       email,
@@ -238,14 +241,49 @@ export default {
     validationForm() {
       this.$refs.loginValidation.validate().then(success => {
         if (success) {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Form Submitted',
-              icon: 'EditIcon',
-              variant: 'success',
-            },
-          })
+          auth
+            .doCreateUserWithEmailAndPassword(this.userEmail, this.password)
+            .then(async res => {
+              // create user in firestore
+              db.setOneDoc({
+                collectionName: 'users',
+                id: res.user.uid,
+                email: this.userEmail,
+                name: this.userName,
+                roles: [],
+                createdAt: moment().toDate(),
+              })
+                .then(() => {
+                  this.$toast({
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Success Signed up',
+                      icon: 'StarIcon',
+                      variant: 'success',
+                    },
+                  })
+                })
+                .catch(error => {
+                  this.$toast({
+                    component: ToastificationContent,
+                    props: {
+                      title: error.message || 'Failed Sign up',
+                      icon: 'AlertTriangleIcon',
+                      variant: 'error',
+                    },
+                  })
+                })
+            })
+            .catch(error => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: error.message || 'Failed Sign up',
+                  icon: 'AlertTriangleIcon',
+                  variant: 'error',
+                },
+              })
+            })
         }
       })
     },

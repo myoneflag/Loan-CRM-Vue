@@ -82,7 +82,10 @@
 
         <b-dropdown-divider />
 
-        <b-dropdown-item link-class="d-flex align-items-center">
+        <b-dropdown-item
+          link-class="d-flex align-items-center"
+          @click="logout"
+        >
           <feather-icon
             size="16"
             icon="LogOutIcon"
@@ -99,6 +102,7 @@
 import {
   BLink, BNavbarNav, BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar,
 } from 'bootstrap-vue'
+import { auth } from '../../firebase'
 
 export default {
   components: {
@@ -115,6 +119,14 @@ export default {
     toggleVerticalMenuActive: {
       type: Function,
       default: () => {},
+    },
+  },
+  methods: {
+    logout() {
+      auth.doSignOut().then(() => {
+        // Redirect to login page
+        this.$router.push({ name: 'login' })
+      })
     },
   },
 }
