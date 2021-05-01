@@ -16,7 +16,7 @@
         <div class="w-100 d-lg-flex align-items-center justify-content-center px-5">
           <b-img
             fluid
-            src='@/assets/images/pages/login-dark.svg'
+            src="@/assets/images/pages/login-dark.svg"
             alt="Login V2"
           />
         </div>
@@ -179,6 +179,7 @@ import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 // import store from '@/store/index'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { auth } from '../../firebase'
 
 export default {
   components: {
@@ -219,14 +220,28 @@ export default {
     validationForm() {
       this.$refs.loginValidation.validate().then(success => {
         if (success) {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Form Submitted',
-              icon: 'EditIcon',
-              variant: 'success',
-            },
-          })
+          auth
+            .doSignInWithEmailAndPassword(this.userEmail, this.password)
+            .then(() => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success Logged in',
+                  icon: 'StarIcon',
+                  variant: 'success',
+                },
+              })
+            })
+            .catch(error => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: error.message || 'Failed Sign in',
+                  icon: 'AlertTriangleIcon',
+                  variant: 'error',
+                },
+              })
+            })
         }
       })
     },

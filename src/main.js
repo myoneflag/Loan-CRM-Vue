@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
+import { firebase } from './firebase'
 
 import router from './router'
 import store from './store'
@@ -28,8 +29,13 @@ require('@/assets/scss/style.scss')
 
 Vue.config.productionTip = false
 
-new Vue({
-  router,
-  store,
-  render: h => h(App),
-}).$mount('#app')
+let app
+firebase.auth.onAuthStateChanged(() => {
+  if (!app) {
+    app = new Vue({
+      store,
+      router,
+      render: h => h(App),
+    }).$mount('#app')
+  }
+})

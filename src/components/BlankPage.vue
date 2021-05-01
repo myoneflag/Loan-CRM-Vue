@@ -1,7 +1,7 @@
 <template>
   <!-- blank page-->
   <div class="w-100 vh-100 blank-page d-flex justify-content-center align-items-center">
-    <slot></slot>
+    <slot />
   </div>
 <!-- / blank page-->
 </template>

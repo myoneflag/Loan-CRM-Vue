@@ -4,8 +4,12 @@
     <b-card-code
       style="max-width: 28rem;"
     >
-      <b-card-text class="mb-2 text-center"><strong>Email has been sent to your mailbox</strong></b-card-text>
-      <b-card-text class="mb-0">You can change your password after verifying your email address</b-card-text>
+      <b-card-text class="mb-2 text-center">
+        <strong>Email has been sent to your mailbox</strong>
+      </b-card-text>
+      <b-card-text class="mb-0">
+        You can change your password after verifying your email address
+      </b-card-text>
       <b-button
         variant="primary"
         class="mt-2 btn-sm-block w-100"

@@ -4,8 +4,12 @@
     <b-card-code
       style="max-width: 28rem;"
     >
-      <b-card-text class="mb-2 text-center"><strong>Please verify your email</strong></b-card-text>
-      <b-card-text class="mb-0">You can login after verify email, please check the mail in your mail box.</b-card-text>
+      <b-card-text class="mb-2 text-center">
+        <strong>Please verify your email</strong>
+      </b-card-text>
+      <b-card-text class="mb-0">
+        You can login after verify email, please check the mail in your mail box.
+      </b-card-text>
       <b-button
         variant="primary"
         class="mt-2 btn-sm-block w-100"
