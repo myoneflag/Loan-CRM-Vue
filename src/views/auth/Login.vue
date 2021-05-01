@@ -231,6 +231,12 @@ export default {
                   variant: 'success',
                 },
               })
+
+              // Redirect to query page
+              // console.log(this.$route)
+
+              // Redirect to home page
+              this.$router.push({ name: 'home' })
             })
             .catch(error => {
               this.$toast({
