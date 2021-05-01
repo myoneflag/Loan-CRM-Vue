@@ -25,7 +25,7 @@ VUE_APP_FIREBASE_MEASUREMENT_ID = <FIREBASE_MEASUREMENT_ID>
 ```
 * Run `npm run serve` to run on local.
 
-### Test
+### Lint
 * Run `npm run lint`
 
 ### Build
