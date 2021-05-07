@@ -217,8 +217,7 @@ export default {
     } else {
       auth
         .verifyPasswordResetCode(this.$router.currentRoute.query.oobCode)
-        .then(email => {
-          console.log(email)
+        .then(() => {
         })
         .catch(error => {
           this.$toast({
@@ -245,8 +244,7 @@ export default {
         if (success) {
           auth
             .confirmPasswordReset(this.$router.currentRoute.query.oobCode, this.password)
-            .then(res => {
-              console.log(res)
+            .then(() => {
               this.$toast({
                 component: ToastificationContent,
                 props: {
