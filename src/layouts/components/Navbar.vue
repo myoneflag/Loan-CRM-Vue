@@ -102,7 +102,8 @@
 import {
   BLink, BNavbarNav, BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar,
 } from 'bootstrap-vue'
-import { auth } from '../../firebase'
+import moment from 'moment'
+import { db, auth, firebase } from '../../firebase'
 
 export default {
   components: {
@@ -123,6 +124,13 @@ export default {
   },
   methods: {
     logout() {
+      db.addOneDoc({
+        collectionName: 'access_history',
+        userId: firebase.auth?.currentUser?.uid,
+        action: 'logout',
+        createdAt: moment().toDate(),
+        noLogging: true,
+      })
       auth.doSignOut().then(() => {
         // Redirect to login page
         this.$router.push({ name: 'login' })

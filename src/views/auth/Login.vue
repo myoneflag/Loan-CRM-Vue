@@ -150,13 +150,13 @@
           <div class="auth-footer-btn d-flex justify-content-center">
             <b-button
               variant="facebook"
-              href="javascript:void(0)"
+              @click="faceBookSignIn"
             >
               <feather-icon icon="FacebookIcon" />
             </b-button>
             <b-button
               variant="google"
-              href="javascript:void(0)"
+              @click="googleSignIn"
             >
               <feather-icon icon="MailIcon" />
             </b-button>
@@ -179,7 +179,8 @@ import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 // import store from '@/store/index'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import { auth } from '../../firebase'
+import moment from 'moment'
+import { db, auth } from '../../firebase'
 
 export default {
   components: {
@@ -222,7 +223,14 @@ export default {
         if (success) {
           auth
             .doSignInWithEmailAndPassword(this.userEmail, this.password)
-            .then(() => {
+            .then(res => {
+              db.addOneDoc({
+                collectionName: 'access_history',
+                userId: res.user?.uid,
+                action: 'login',
+                createdAt: moment().toDate(),
+                noLogging: true,
+              })
               this.$toast({
                 component: ToastificationContent,
                 props: {
@@ -250,6 +258,100 @@ export default {
             })
         }
       })
+    },
+    googleSignIn() {
+      auth.doGoogleSignIn()
+        .then(res => {
+          db.addOneDoc({
+            collectionName: 'access_history',
+            userId: res.user?.uid,
+            action: 'google',
+            createdAt: moment().toDate(),
+            noLogging: true,
+          })
+          db.setOneDoc({
+            collectionName: 'users',
+            id: res.user?.uid,
+            ...res.additionalUserInfo.profile,
+            roles: [],
+            createdAt: moment().toDate(),
+          })
+            .then(() => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success Logged in',
+                  icon: 'StarIcon',
+                  variant: 'success',
+                },
+              })
+              // Redirect to home page
+              this.$router.push({ name: 'home' })
+            })
+            .catch(error => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: error.message || 'Failed Sign in',
+                  icon: 'AlertTriangleIcon',
+                  variant: 'error',
+                },
+              })
+            })
+        })
+        .catch(error => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: error.message || 'Failed Sign in',
+              icon: 'AlertTriangleIcon',
+              variant: 'error',
+            },
+          })
+        })
+    },
+    faceBookSignIn() {
+      auth.doFacebookSignIn()
+        .then(res => {
+          db.addOneDoc({
+            collectionName: 'access_history',
+            userId: res.user?.uid,
+            action: 'facebook',
+            createdAt: moment().toDate(),
+            noLogging: true,
+          })
+          db.setOneDoc({
+            collectionName: 'users',
+            id: res.user?.uid,
+            // ...response.data
+            roles: [],
+            createdAt: moment().toDate(),
+          })
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success Logged in',
+              icon: 'StarIcon',
+              variant: 'success',
+            },
+          })
+
+          // Redirect to query page
+          // console.log(this.$route)
+
+          // Redirect to home page
+          this.$router.push({ name: 'home' })
+        })
+        .catch(error => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: error.message || 'Failed Sign in',
+              icon: 'AlertTriangleIcon',
+              variant: 'error',
+            },
+          })
+        })
     },
   },
 }

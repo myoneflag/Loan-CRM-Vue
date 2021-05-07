@@ -156,6 +156,7 @@ import { required } from '@validations'
 import store from '@/store/index'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { auth } from '../../firebase'
 
 export default {
   components: {
@@ -208,6 +209,30 @@ export default {
       return this.password2FieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
   },
+  created() {
+    if (this.$router.currentRoute?.query?.apiKey !== process.env.VUE_APP_FIREBASE_API_KEY
+    || !this.$router.currentRoute?.query?.oobCode
+    || this.$router.currentRoute?.query?.mode !== 'resetPassword') {
+      this.$router.push({ name: 'login' })
+    } else {
+      auth
+        .verifyPasswordResetCode(this.$router.currentRoute.query.oobCode)
+        .then(email => {
+          console.log(email)
+        })
+        .catch(error => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: error.message || 'Invaild code',
+              icon: 'AlertTriangleIcon',
+              variant: 'error',
+            },
+          })
+          this.$router.push({ name: 'login' })
+        })
+    }
+  },
   methods: {
     togglePassword1Visibility() {
       this.password1FieldType = this.password1FieldType === 'password' ? 'text' : 'password'
@@ -218,14 +243,30 @@ export default {
     validationForm() {
       this.$refs.simpleRules.validate().then(success => {
         if (success) {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Form Submitted',
-              icon: 'EditIcon',
-              variant: 'success',
-            },
-          })
+          auth
+            .confirmPasswordReset(this.$router.currentRoute.query.oobCode, this.password)
+            .then(res => {
+              console.log(res)
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success reset password',
+                  icon: 'EditIcon',
+                  variant: 'success',
+                },
+              })
+              this.$router.push({ name: 'login' })
+            })
+            .catch(error => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: error.message || 'Failed to reset',
+                  icon: 'AlertTriangleIcon',
+                  variant: 'error',
+                },
+              })
+            })
         }
       })
     },

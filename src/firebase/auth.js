@@ -10,6 +10,15 @@ export const doSignInWithEmailAndPassword = (email, password) => auth.signInWith
 // sign out
 export const doSignOut = () => auth.signOut()
 
+// send a user a verification email
+export const sendEmailVerification = () => auth.currentUser.sendEmailVerification()
+
+// valid before displaying the password reset
+export const verifyPasswordResetCode = code => auth.verifyPasswordResetCode(code)
+
+// password reset with code
+export const confirmPasswordReset = (code, newPassword) => auth.confirmPasswordReset(code, newPassword)
+
 // password reset
 export const doPasswordReset = email => auth.sendPasswordResetEmail(email)
 
