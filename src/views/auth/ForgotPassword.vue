@@ -102,6 +102,8 @@ import { required, email } from '@validations'
 import store from '@/store/index'
 import VuexyLogo from '@core/layouts/components/Logo.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+// import moment from 'moment'
+import { auth } from '../../firebase'
 
 export default {
   components: {
@@ -142,14 +144,28 @@ export default {
     validationForm() {
       this.$refs.simpleRules.validate().then(success => {
         if (success) {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Form Submitted',
-              icon: 'EditIcon',
-              variant: 'success',
-            },
-          })
+          auth
+            .doPasswordReset(this.userEmail)
+            .then(() => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success email sent reset link',
+                  icon: 'EditIcon',
+                  variant: 'success',
+                },
+              })
+            })
+            .catch(error => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: error.message || 'Failed to email',
+                  icon: 'AlertTriangleIcon',
+                  variant: 'error',
+                },
+              })
+            })
         }
       })
     },
