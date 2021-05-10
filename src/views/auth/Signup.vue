@@ -243,11 +243,19 @@ export default {
         if (success) {
           auth
             .doCreateUserWithEmailAndPassword(this.userEmail, this.password)
-            .then(async res => {
+            .then(res => {
+              // log user signup
+              db.addOneDoc({
+                collectionName: 'access_history',
+                userId: res.user?.uid,
+                action: 'signup',
+                createdAt: moment().toDate(),
+                noLogging: true,
+              })
               // create user in firestore
               db.setOneDoc({
                 collectionName: 'users',
-                id: res.user.uid,
+                id: res.user?.uid,
                 email: this.userEmail,
                 name: this.userName,
                 roles: [],
@@ -262,6 +270,7 @@ export default {
                       variant: 'success',
                     },
                   })
+                  this.$router.push({ name: 'home' })
                 })
                 .catch(error => {
                   this.$toast({

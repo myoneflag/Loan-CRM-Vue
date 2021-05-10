@@ -127,7 +127,8 @@ import {
 import { initialAbility } from '@/libs/acl/config'
 import useJwt from '@/auth/jwt/useJwt'
 import { avatarText } from '@core/utils/filter'
-import { auth } from '../../../../../firebase'
+import moment from 'moment'
+import { db, auth, firebase } from '../../../../../firebase'
 
 export default {
   components: {
@@ -144,6 +145,13 @@ export default {
   },
   methods: {
     logout() {
+      db.addOneDoc({
+        collectionName: 'access_history',
+        userId: firebase.auth?.currentUser?.uid,
+        action: 'logout',
+        createdAt: moment().toDate(),
+        noLogging: true,
+      })
       auth.doSignOut().then(() => {
         // Remove userData from localStorage
         // ? You just removed token from localStorage. If you like, you can also make API call to backend to blacklist used token
