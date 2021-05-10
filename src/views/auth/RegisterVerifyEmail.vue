@@ -27,7 +27,7 @@
 import BCardCode from '@core/components/b-card-code'
 import { BCardText, BButton } from 'bootstrap-vue'
 
-import BlankPage from '@/components/BlankPage.vue'
+import BlankPage from '@/views/components/BlankPage.vue'
 
 export default {
   components: {

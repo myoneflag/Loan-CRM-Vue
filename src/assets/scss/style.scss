@@ -4,3 +4,47 @@ NOTE:
 ------
 PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+@import 'variables/variables';
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #3A4052;
+  border-radius: 8px;
+  opacity: .6;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $primary-color;
+  border-radius: 8px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $primary-active-color;
+}
+
+.link-text {
+  color: $text-color;
+  text-decoration: underline;
+}
+.full-width-dropdown button {
+  display: flex;
+  justify-content: space-between;
+}
+.scroll-touch {
+  -webkit-overflow-scrolling: touch; /* Lets it scroll lazy */
+}
+.loan-box {
+  background-color: $box-color !important;
+}
+.circle-rounded {
+  border-radius: 10px;
+}

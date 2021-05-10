@@ -1,7 +1,7 @@
 export default [
   {
     title: 'Home',
-    route: 'home',
+    route: 'dashboard',
     icon: 'HomeIcon',
   },
   {
@@ -11,7 +11,7 @@ export default [
   },
   {
     title: 'Transactions',
-    route: 'second-page',
+    route: 'transactions',
     icon: 'FileTextIcon',
   },
 ]

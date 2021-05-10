@@ -103,10 +103,10 @@ $timeline-border-color: $border-color;
 }
 
 .timeline-item {
-  padding-left: 2.5rem;
+  padding-left: 1.5rem;
   position: relative;
   &:not(:last-of-type) {
-    padding-bottom: 2rem;
+    padding-bottom: 0.5rem;
     border-left: 1px solid $timeline-border-color;
   }
 
@@ -128,7 +128,7 @@ $timeline-border-color: $border-color;
     left: -6px;
     width: 12px;
     height: 12px;
-    top: 0;
+    top: 4px;
     border-radius: 50%;
     z-index: 1;
 

@@ -5,7 +5,7 @@ export default [
     children: [
       {
         title: 'Home',
-        route: 'home',
+        route: 'dashboard',
         icon: 'HomeIcon',
       },
       {

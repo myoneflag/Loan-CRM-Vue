@@ -20,6 +20,6 @@ export default {
 @import '@core/scss/vue/pages/page-misc.scss';
 
 .blank-page {
-  background: url('../assets/images/pages/blank-page.svg') no-repeat center center fixed;
+  background: url('../../assets/images/pages/blank-page.svg') no-repeat center center fixed;
 }
 </style>
