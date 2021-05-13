@@ -6,7 +6,7 @@ export default [
   },
   {
     title: 'Customers',
-    route: 'second-page',
+    route: 'customers',
     icon: 'UsersIcon',
   },
   {

@@ -73,7 +73,7 @@
               <!-------------------------- Search box Start -------------------------->
               <b-form-group class="m-0">
                 <b-form-input
-                  id="basicInput"
+                  id="search_input"
                   placeholder="Search..."
                   class="mb-1"
                   style="min-width: 233px;"

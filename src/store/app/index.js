@@ -5,6 +5,53 @@ export default {
   state: {
     windowWidth: 0,
     shallShowOverlay: false,
+    navBackInfo: {
+      buttonShow: false,
+      backName: 'index',
+    },
+    customerRegister: {
+      basic: {
+        name: '',
+        group: '',
+        acountId: '',
+        birthday: '',
+        idNumber: '',
+        bankAccount: '',
+        cellPhoneNumber: '',
+        homePhoneNumber: '',
+        address: '',
+        houseOwnership: 'own',
+        jobOccupation: '',
+        companyAddress: '',
+        companyName: '',
+        companyPhoneNumber: '',
+      },
+      family: {
+        familyName: '',
+        familyPhoneNumber: '',
+        familyAddress: '',
+        familyJobOccupation: '',
+        familyRelationship: '',
+      },
+      guarantor: {
+        guarantorName: '',
+        guarantorContactNumber: '',
+        guarantorAddress: '',
+        guarantorAmount: 0,
+        guarantorDays: 0,
+        guarantorContent: '',
+      },
+      credit: {
+        creditInfo: '',
+      },
+      debt: {
+        debtBorrowingDate: '',
+        debtRepaymentMonth: '',
+        debtChequesAmount: 0,
+        debtChequesState: '',
+        debtNote: '',
+      },
+    },
   },
   getters: {
     currentBreakPoint: state => {
@@ -22,6 +69,11 @@ export default {
     },
     TOGGLE_OVERLAY(state, val) {
       state.shallShowOverlay = val !== undefined ? val : !state.shallShowOverlay
+    },
+    UPDATE_NAV_BACK_BUTTON(state, val) {
+      state.navBackInfo = {
+        ...val,
+      }
     },
   },
   actions: {},

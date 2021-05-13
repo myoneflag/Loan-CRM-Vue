@@ -17,9 +17,21 @@
     </ul>
 
     <!-- Left Col -->
-    <!-- <div class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex">
-      <dark-Toggler class="d-none d-lg-block" />
-    </div> -->
+    <div class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex">
+      <!-- <dark-Toggler class="d-none d-lg-block" /> -->
+      <b-button
+        v-if="backButtonInfo.buttonShow"
+        variant="flat-dark"
+        size="sm"
+        @click="back"
+      >
+        <feather-icon
+          icon="ChevronLeftIcon"
+          class="mr-50"
+        />
+        <span class="align-middle">Back</span>
+      </b-button>
+    </div>
 
     <b-navbar-nav class="nav align-items-center ml-auto">
       <b-nav-item-dropdown
@@ -100,7 +112,7 @@
 
 <script>
 import {
-  BLink, BNavbarNav, BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar,
+  BLink, BNavbarNav, BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar, BButton,
 } from 'bootstrap-vue'
 import moment from 'moment'
 import { db, auth, firebase } from '../../firebase'
@@ -113,13 +125,18 @@ export default {
     BDropdownItem,
     BDropdownDivider,
     BAvatar,
-
+    BButton,
     // Navbar Components
   },
   props: {
     toggleVerticalMenuActive: {
       type: Function,
       default: () => {},
+    },
+  },
+  computed: {
+    backButtonInfo() {
+      return this.$store.state.app.navBackInfo
     },
   },
   methods: {
@@ -135,6 +152,9 @@ export default {
         // Redirect to login page
         this.$router.push({ name: 'login' })
       })
+    },
+    back() {
+      this.$router.push({ name: this.backButtonInfo.backName })
     },
   },
 }

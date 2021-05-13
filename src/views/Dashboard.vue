@@ -1115,10 +1115,4 @@ export default {
 </script>
 
 <style lang="scss">
-.custom-table {
-  td {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-}
 </style>

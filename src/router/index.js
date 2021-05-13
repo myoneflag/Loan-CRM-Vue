@@ -21,6 +21,24 @@ const router = new VueRouter({
       },
     },
     {
+      path: '/',
+      name: 'customers',
+      component: () => import('@/views/Customers.vue'),
+      meta: {
+        pageTitle: 'Customers',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/customer-register',
+      name: 'customer-register',
+      component: () => import('@/views/CustomerRegister.vue'),
+      meta: {
+        pageTitle: 'Customer Register',
+        requiresAuth: true,
+      },
+    },
+    {
       path: '/second-page',
       name: 'second-page',
       component: () => import('@/views/SecondPage.vue'),

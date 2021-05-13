@@ -48,3 +48,34 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 .circle-rounded {
   border-radius: 10px;
 }
+.custom-table {
+  td {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 12px;
+  }
+}
+.step-label {
+  .label-box {
+    width: 30px;
+    height: 30px;
+    color: $text-color;
+    background-color: rgba(186, 191, 199, 0.12);
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+.step-label.active {
+  .label-box {
+    color: white;
+    background-color: $primary-color;
+  }
+  .label-text {
+    color: $primary-color;
+    font-weight: 600;
+  }
+}

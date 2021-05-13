@@ -1,6 +1,8 @@
 <template>
   <b-form-datepicker
-    v-model="value"
+    v-model="selfValue"
+    @input="e => $emit('change', e)"
+    :state="state"
   />
 </template>
 
@@ -11,10 +13,17 @@ export default {
   components: {
     BFormDatepicker,
   },
+  props: {
+    value: String,
+    state: Boolean,
+  },
   data() {
     return {
-      value: '',
+      selfValue: '',
     }
+  },
+  mounted() {
+    this.$set(this, 'selfValue', this.value)
   },
 }
 </script>
