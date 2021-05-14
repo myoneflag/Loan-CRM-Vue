@@ -3,7 +3,7 @@
     <b-card-text class="mb-1">
       Basic info
     </b-card-text>
-    <b-media no-body class="mb-2">
+    <b-media v-if="showAvatar" no-body class="mb-2">
       <b-media-aside
         class="mr-1"
       >
@@ -22,7 +22,7 @@
       </b-media-body>
     </b-media>
     <b-row>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="Name"
           label-for="name"
@@ -30,13 +30,14 @@
           <b-form-input
             id="name"
             placeholder="Enter Name"
+            :disabled="editDisabled"
             v-model="items.name"
             @change="e => changeValue('name', e)"
             :state="validateAction ? validations.find(d => d.key === 'name').validate : null"
           />
         </b-form-group>
       </b-col>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="Group"
           label-for="group"
@@ -44,6 +45,7 @@
           <b-dropdown
             id="group"
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            :disabled="editDisabled"
             :text="groups.find(d => d.key === group).name"
             :variant="`outline-${validateAction ? validations.find(d => d.key === 'group').validate ? 'success' : 'danger' : 'dark'}`"
             class="w-100 mb-1 full-width-dropdown"
@@ -58,7 +60,7 @@
           </b-dropdown>
         </b-form-group>
       </b-col>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="Acount ID"
           label-for="acountId"
@@ -66,26 +68,28 @@
           <b-form-input
             id="acountId"
             placeholder="Acount ID"
+            :disabled="editDisabled"
             v-model="items.acountId"
             @change="e => changeValue('acountId', e)"
             :state="validateAction ? validations.find(d => d.key === 'acountId').validate : null"
           />
         </b-form-group>
       </b-col>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="Date of birth"
           label-for="birthday"
         >
           <loan-date-picker
             id="birthday"
+            :disabled="editDisabled"
             :value="items.birthday"
             @change="e => changeValue('birthday', e)"
             :state="validateAction ? validations.find(d => d.key === 'birthday').validate : null"
           />
         </b-form-group>
       </b-col>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="ID Number"
           label-for="idNumber"
@@ -93,13 +97,14 @@
           <b-form-input
             id="idNumber"
             placeholder="ID Number"
+            :disabled="editDisabled"
             v-model="items.idNumber"
             @change="e => changeValue('idNumber', e)"
             :state="validateAction ? validations.find(d => d.key === 'idNumber').validate : null"
           />
         </b-form-group>
       </b-col>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="Bank Account"
           label-for="bankAccount"
@@ -107,6 +112,7 @@
           <b-form-input
             id="bankAccount"
             placeholder="Bank Account"
+            :disabled="editDisabled"
             v-model="items.bankAccount"
             @change="e => changeValue('bankAccount', e)"
             :state="validateAction ? validations.find(d => d.key === 'bankAccount').validate : null"
@@ -118,7 +124,7 @@
       Contact
     </b-card-text>
     <b-row>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="Cell Phone"
           label-for="cellPhoneNumber"
@@ -126,13 +132,14 @@
           <b-form-input
             id="cellPhoneNumber"
             placeholder="Phone cellPhoneNumber"
+            :disabled="editDisabled"
             v-model="items.cellPhoneNumber"
             @change="e => changeValue('cellPhoneNumber', e)"
             :state="validateAction ? validations.find(d => d.key === 'cellPhoneNumber').validate : null"
           />
         </b-form-group>
       </b-col>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="Home Phone"
           label-for="homePhoneNumber"
@@ -140,6 +147,7 @@
           <b-form-input
             id="homePhoneNumber"
             placeholder="Phone Number"
+            :disabled="editDisabled"
             v-model="items.homePhoneNumber"
             @change="e => changeValue('homePhoneNumber', e)"
             :state="validateAction ? validations.find(d => d.key === 'homePhoneNumber').validate : null"
@@ -151,7 +159,7 @@
       Address
     </b-card-text>
     <b-row>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="Address"
           label-for="address"
@@ -159,19 +167,21 @@
           <b-form-input
             id="address"
             placeholder="Address"
+            :disabled="editDisabled"
             v-model="items.address"
             @change="e => changeValue('address', e)"
             :state="validateAction ? validations.find(d => d.key === 'address').validate : null"
           />
         </b-form-group>
       </b-col>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="House ownership"
           label-for="houseOwnership"
         >
           <b-form-radio-group
             id="houseOwnership"
+            :disabled="editDisabled"
             v-model="items.houseOwnership"
             @change="e => changeValue('houseOwnership', e)"
           >
@@ -197,7 +207,7 @@
       Company Info
     </b-card-text>
     <b-row>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="Job Occupation"
           label-for="jobOccupation"
@@ -205,13 +215,14 @@
           <b-form-input
             id="jobOccupation"
             placeholder="bussiness man"
+            :disabled="editDisabled"
             v-model="items.jobOccupation"
             @change="e => changeValue('jobOccupation', e)"
             :state="validateAction ? validations.find(d => d.key === 'jobOccupation').validate : null"
           />
         </b-form-group>
       </b-col>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="Company Name"
           label-for="companyName"
@@ -219,13 +230,14 @@
           <b-form-input
             id="companyName"
             placeholder="Company Name"
+            :disabled="editDisabled"
             v-model="items.companyName"
             @change="e => changeValue('companyName', e)"
             :state="validateAction ? validations.find(d => d.key === 'companyName').validate : null"
           />
         </b-form-group>
       </b-col>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="Company Number"
           label-for="companyPhoneNumber"
@@ -233,13 +245,14 @@
           <b-form-input
             id="companyPhoneNumber"
             placeholder="Company Number"
+            :disabled="editDisabled"
             v-model="items.companyPhoneNumber"
             @change="e => changeValue('companyPhoneNumber', e)"
             :state="validateAction ? validations.find(d => d.key === 'companyPhoneNumber').validate : null"
           />
         </b-form-group>
       </b-col>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
           label="Company Address"
           label-for="companyAddress"
@@ -247,6 +260,7 @@
           <b-form-input
             id="companyAddress"
             placeholder="Company Address"
+            :disabled="editDisabled"
             v-model="items.companyAddress"
             @change="e => changeValue('companyAddress', e)"
             :state="validateAction ? validations.find(d => d.key === 'companyAddress').validate : null"
@@ -287,6 +301,14 @@ export default {
     items: Object,
     validations: Array,
     validateAction: Boolean,
+    showAvatar: {
+      type: Boolean,
+      default: false,
+    },
+    editDisabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

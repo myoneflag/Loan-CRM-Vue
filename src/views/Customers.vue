@@ -115,7 +115,7 @@
                     </b-media-aside>
                     <b-media-body class="my-auto">
                       <b-link
-                        href=""
+                        to="customer"
                       >
                         <h6 class="font-weight-bolder mb-0 text-primary">
                           {{ data.value.name }}
@@ -135,7 +135,7 @@
                 </template>
                 <template #cell(action)="data">
                   <feather-icon
-                    :id="`box-pop-menu-${data.value.id}`"
+                    :id="`box-pop-menu-${data.item.id}`"
                     icon="MoreVerticalIcon"
                     size="18"
                     class="cursor-pointer"

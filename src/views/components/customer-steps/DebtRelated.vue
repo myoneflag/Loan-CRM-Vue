@@ -12,6 +12,7 @@
           <loan-date-picker
             id="debtBorrowingDate"
             :value="items.debtBorrowingDate"
+            :disabled="editDisabled"
             @change="e => changeValue('debtBorrowingDate', e)"
             :state="validateAction ? validations.find(d => d.key === 'debtBorrowingDate').validate : null"
           />
@@ -23,6 +24,7 @@
           <b-form-input
             id="debtChequesAmount"
             placeholder="Cheques Amount"
+            :disabled="editDisabled"
             v-model="items.debtChequesAmount"
             @change="e => changeValue('debtChequesAmount', e)"
             :state="validateAction ? validations.find(d => d.key === 'debtChequesAmount').validate : null"
@@ -37,6 +39,7 @@
           <b-form-input
             id="debtRepaymentMonth"
             placeholder="15天"
+            :disabled="editDisabled"
             v-model="items.debtRepaymentMonth"
             @change="e => changeValue('debtRepaymentMonth', e)"
             :state="validateAction ? validations.find(d => d.key === 'debtRepaymentMonth').validate : null"
@@ -49,6 +52,7 @@
           <b-dropdown
             id="debtChequesState"
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            :disabled="editDisabled"
             :text="statuses.find(d => d.key === status).name"
             :variant="`outline-${validateAction ? validations.find(d => d.key === 'debtChequesState').validate ? 'success' : 'danger' : 'dark'}`"
             class="w-100 mb-1 full-width-dropdown"
@@ -71,7 +75,8 @@
           <b-form-textarea
             id="debtNote"
             placeholder="Content"
-            rows="6"
+            :disabled="editDisabled"
+            rows="4"
             v-model="items.debtNote"
             @change="e => changeValue('debtNote', e)"
             :state="validateAction ? validations.find(d => d.key === 'debtNote').validate : null"
@@ -107,6 +112,10 @@ export default {
     items: Object,
     validations: Array,
     validateAction: Boolean,
+    editDisabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

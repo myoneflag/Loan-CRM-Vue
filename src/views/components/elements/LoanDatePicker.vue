@@ -3,6 +3,7 @@
     v-model="selfValue"
     @input="e => $emit('change', e)"
     :state="state"
+    :disabled="disabled"
   />
 </template>
 
@@ -15,7 +16,11 @@ export default {
   },
   props: {
     value: String,
-    state: Boolean,
+    state: {
+      type: Boolean,
+      default: null,
+    },
+    disabled: Boolean,
   },
   data() {
     return {

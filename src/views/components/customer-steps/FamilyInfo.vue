@@ -12,6 +12,7 @@
           <b-form-input
             id="familyName"
             placeholder="Family Name"
+            :disabled="editDisabled"
             v-model="items.familyName"
             @change="e => changeValue('familyName', e)"
             :state="validateAction ? validations.find(d => d.key === 'familyName').validate : null"
@@ -26,6 +27,7 @@
           <b-form-input
             id="familyPhoneNumber"
             placeholder="Phone Number"
+            :disabled="editDisabled"
             v-model="items.familyPhoneNumber"
             @change="e => changeValue('familyPhoneNumber', e)"
             :state="validateAction ? validations.find(d => d.key === 'familyPhoneNumber').validate : null"
@@ -40,6 +42,7 @@
           <b-form-input
             id="familyAddress"
             placeholder="Address"
+            :disabled="editDisabled"
             v-model="items.familyAddress"
             @change="e => changeValue('familyAddress', e)"
             :state="validateAction ? validations.find(d => d.key === 'familyAddress').validate : null"
@@ -54,6 +57,7 @@
           <b-form-input
             id="familyJobOccupation"
             placeholder="Job occupation"
+            :disabled="editDisabled"
             v-model="items.familyJobOccupation"
             @change="e => changeValue('familyJobOccupation', e)"
             :state="validateAction ? validations.find(d => d.key === 'familyJobOccupation').validate : null"
@@ -68,6 +72,7 @@
           <b-form-input
             id="familyRelationship"
             placeholder="Relationship"
+            :disabled="editDisabled"
             v-model="items.familyRelationship"
             @change="e => changeValue('familyRelationship', e)"
             :state="validateAction ? validations.find(d => d.key === 'familyRelationship').validate : null"
@@ -94,6 +99,10 @@ export default {
     items: Object,
     validations: Array,
     validateAction: Boolean,
+    editDisabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   mounted() {
   },

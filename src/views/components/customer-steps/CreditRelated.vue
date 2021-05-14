@@ -12,6 +12,7 @@
           <b-form-textarea
             id="creditInfo"
             placeholder="Content"
+            :disabled="editDisabled"
             rows="10"
             v-model="items.creditInfo"
             @change="e => changeValue('creditInfo', e)"
@@ -39,6 +40,10 @@ export default {
     items: Object,
     validations: Array,
     validateAction: Boolean,
+    editDisabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   mounted() {
   },

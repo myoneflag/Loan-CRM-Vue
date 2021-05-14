@@ -1,5 +1,5 @@
 <template>
-  <div :class="`d-flex align-items-center step-label ${step.active ? 'active' : ''}`">
+  <div :class="`d-flex align-items-center mb-1 step-label ${step.active ? 'active' : ''}`">
     <span class="label-box">{{ step.index + 1 }}</span>
     <span class="label-text mx-50">{{ step.title }}</span>
     <feather-icon

@@ -5,7 +5,7 @@
         Add Member
       </b-card-text>
     </b-card-header>
-    <div class="d-flex px-2 pb-1 border-bottom">
+    <div class="d-flex px-2 border-bottom flex-wrap">
       <step-lable v-for="(step, index) in steps" :key="step.id" :step="{...step, index}" :isLast="index === steps.length-1"/>
     </div>
     <div class="step-content p-2">
@@ -14,12 +14,13 @@
         :items="allStepsItmes[steps[stepNumber].id]"
         :validations="validations"
         :validateAction="validateAction"
+        :showAvatar="true"
         @change="changeValue"
       />
     </div>
     <b-card-footer class="d-flex justify-content-between border-0">
       <b-button variant="outline-primary" @click="backStep">Back</b-button>
-      <b-button variant="primary" @click="nextStep">Next</b-button>
+      <b-button variant="primary" @click="nextStep">{{ nextButtonText }}</b-button>
     </b-card-footer>
   </b-card>
 </template>
@@ -82,6 +83,7 @@ export default {
       allStepsItmes: Object,
       validations: [],
       validateAction: false,
+      nextButtonText: 'Next',
     }
   },
   watch: {
@@ -92,10 +94,15 @@ export default {
         key: itemKey,
         validate: this.allStepsItmes[this.steps[newValue].id][itemKey] !== '',
       })))
+      if (newValue === this.steps.length - 1) {
+        this.$set(this, 'nextButtonText', 'Finish')
+      } else {
+        this.$set(this, 'nextButtonText', 'Next')
+      }
     },
   },
   created() {
-    this.$set(this, 'allStepsItmes', { ...this.$store.state.app.customerRegister })
+    this.$set(this, 'allStepsItmes', { ...this.$store.state.app.customerInfo })
     this.$set(this, 'validations', Object.keys(this.allStepsItmes[this.steps[this.stepNumber].id]).map(itemKey => ({
       key: itemKey,
       validate: this.allStepsItmes[this.steps[this.stepNumber].id][itemKey] !== '',

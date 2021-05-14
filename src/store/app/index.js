@@ -9,7 +9,38 @@ export default {
       buttonShow: false,
       backName: 'index',
     },
-    customerRegister: {
+    customerInfo: {
+      profile: {
+        cid: '001',
+        name: 'WangMing',
+        email: 'eleanor@gmail.com',
+        status: 'observed',
+        avatar: '@/assets/images/portrait/small/avatar-s-2.jpg',
+      },
+      transaction: [
+        {
+          tid: '001',
+          date: '2020/03/25',
+          loan: '50000',
+          rate: 10,
+          payable: 5000,
+          penalty: 500,
+          received: 4500,
+          total: 50500,
+          note: 'content',
+        },
+        {
+          tid: '002',
+          date: '2020/03/25',
+          loan: '50000',
+          rate: 10,
+          payable: 5000,
+          penalty: 500,
+          received: 4500,
+          total: 50500,
+          note: 'content',
+        },
+      ],
       basic: {
         name: '',
         group: '',
