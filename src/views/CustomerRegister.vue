@@ -47,7 +47,8 @@ export default {
   },
   data() {
     return {
-      stepNumber: 0,
+      stepNumber: 0, // Current step's number
+      /** Array of all the steps, that each step has the properties of 'id', 'title', 'active', 'component'  */
       steps: [
         {
           id: 'basic',
@@ -80,20 +81,21 @@ export default {
           component: DebtRelated,
         },
       ],
-      allStepsItmes: Object,
-      validations: [],
-      validateAction: false,
-      nextButtonText: 'Next',
+      allStepsItmes: Object, // Collection of all the FIELDS in all the steps
+      validations: [], // Array of all the VALIDATIONS for all the fields
+      validateAction: false, // Variable to indicate if all the field controls in a current step would show/hide the validation property when 'Next' button will be clicked
+      nextButtonText: 'Next', // Title of a next button in a current step
     }
   },
   watch: {
-    stepNumber(newValue, oldValue) {
+    stepNumber(newValue, oldValue) { // When the step number is changed
       this.steps[newValue].active = true
       this.steps[oldValue].active = false
       this.$set(this, 'validations', Object.keys(this.allStepsItmes[this.steps[newValue].id]).map(itemKey => ({
         key: itemKey,
         validate: this.allStepsItmes[this.steps[newValue].id][itemKey] !== '',
       })))
+      /** Set if the current step has 'Finish' or 'Next' status  */
       if (newValue === this.steps.length - 1) {
         this.$set(this, 'nextButtonText', 'Finish')
       } else {
@@ -102,48 +104,55 @@ export default {
     },
   },
   created() {
+    /** Set State (allStepsItmes) from Store for the customerInfo  */
     this.$set(this, 'allStepsItmes', { ...this.$store.state.app.customerInfo })
+    /** Set State (validations) from allStepsItmes for a validation of each field */
     this.$set(this, 'validations', Object.keys(this.allStepsItmes[this.steps[this.stepNumber].id]).map(itemKey => ({
       key: itemKey,
       validate: this.allStepsItmes[this.steps[this.stepNumber].id][itemKey] !== '',
     })))
   },
   mounted() {
+    /** Set to show in Store for a Back button  */
     store.commit('app/UPDATE_NAV_BACK_BUTTON', { buttonShow: true, backName: 'customers' })
   },
   beforeRouteLeave(to, from, next) {
+    /** Set to hide in Store for a Back button  */
     store.commit('app/UPDATE_NAV_BACK_BUTTON', { buttonShow: false, backName: 'customers' })
     next()
   },
   computed: {
-    validate() {
+    validate() { // Get a validation for all the fields of the current step
       return !(this.validations.map(d => d.validate).indexOf(false) > -1)
     },
   },
   methods: {
     changeValue(key, value) {
-      this.$set(this, 'allStepsItmes', {
+      this.$set(this, 'allStepsItmes', { // Update the state for any field changed in the current step
         ...this.allStepsItmes,
         [this.steps[this.stepNumber].id]: {
           ...this.allStepsItmes[[this.steps[this.stepNumber].id]],
           [key]: value,
         },
       })
-      if (value !== '') {
+      if (value !== '') { // A validation of a field changed is true as that is Not empty
         this.validations.find(d => d.key === key).validate = true
-      } else {
+      } else { // A validation of a field changed is false as that is empty
         this.validations.find(d => d.key === key).validate = false
       }
     },
     nextStep() {
-      if (this.validate) {
+      if (this.stepNumber === this.steps.length - 1) { // Finish
+        console.log(this.allStepsItmes)
+      } else if (this.validate) { // To next step
         this.$set(this, 'stepNumber', this.stepNumber === this.steps.length - 1 ? this.stepNumber : this.stepNumber + 1)
         this.$set(this, 'validateAction', false)
-      } else {
+      } else { // Failed validation in the current step
         this.$set(this, 'validateAction', true)
       }
     },
     backStep() {
+      /** To previous step */
       this.$set(this, 'stepNumber', this.stepNumber > 0 ? this.stepNumber - 1 : this.stepNumber)
     },
   },

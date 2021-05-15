@@ -16,17 +16,17 @@
     <!------------------------------ Day Content Start ----------------------------->
     <div v-if="!isWeek">
       <!---------------------------- Summary View Card Start ----------------------->
-      <b-row style="height: 320px">
+      <b-row>
         <b-col lg="4" class="h-100">
           <div class="d-flex flex-column justify-content-between">
             <LabelsPieCard :data="receivableAmount" class="mb-1"/>
             <LabelsPieCard :data="penaltyAmount" class="mb-1"/>
           </div>
         </b-col>
-        <b-col lg="2" class="pb-1 h-100">
+        <b-col lg="2" class="pb-1" style="height: 320px">
           <VerticalLabelsCard :data="otherAmount" class="h-100" />
         </b-col>
-        <b-col lg="6" class="h-100 pb-1">
+        <b-col lg="6" class="pb-1" style="height: 320px">
           <ListCard :data="notesOutcomes" class="h-100" />
         </b-col>
       </b-row>
@@ -90,11 +90,11 @@
                 </b-link>
               </template>
               <!-- Column - Note End -->
-              <!-- Column - Panalty Start -->
-              <template #cell(panalty)="data">
+              <!-- Column - penalty Start -->
+              <template #cell(penalty)="data">
                 <div class="w-100 text-right">{{ data.value }}</div>
               </template>
-              <!-- Column - Panalty End -->
+              <!-- Column - penalty End -->
               <!-- Column - User Start -->
               <template #cell(user)="data">
                 <div class="d-flex align-items-center" style="width: 160px;">
@@ -105,10 +105,12 @@
                   </div>
                   <div>
                     <b-link
-                      href="#"
+                      to="customer"
                     >
-                      {{ data.value.name }}
-                    </b-link><br />
+                      <h6 class="font-weight-bolder mb-0 text-primary">
+                        {{ data.value.name }}
+                      </h6>
+                    </b-link>
                     <small class="m-0">{{ data.value.category + " " + data.value.uid }}</small>
                   </div>
                 </div>
@@ -230,15 +232,15 @@
         </b-col>
       </b-row>
       <!---------------------------- All paid View Card End ------------------------>
-      <!---------------------------- Panalty paid View Card Start ------------------>
+      <!---------------------------- penalty paid View Card Start ------------------>
       <b-row>
         <b-col>
           <b-card no-body class="mb-1">
             <b-table
-              id="panalty-table"
+              id="penalty-table"
               responsive
-              :items="panaltyTableInfo.items"
-              :fields="panaltyTableInfo.fields"
+              :items="penaltyTableInfo.items"
+              :fields="penaltyTableInfo.fields"
               :caption-top="true"
               caption-html="<div class='px-2 text-uppercase'><b>Penalty list</b></div>"
               table-class="custom-table"
@@ -256,7 +258,7 @@
                   <b-dropdown-item
                     v-for="item in statusItems" :key="item.key"
                     :active="item.key === data.value"
-                    @click="handleStatusInPanaltyTable(item.key, data.item.id)"
+                    @click="handleStatusInpenaltyTable(item.key, data.item.id)"
                   >
                     {{ item.name }}
                   </b-dropdown-item>
@@ -273,10 +275,12 @@
                   </div>
                   <div>
                     <b-link
-                      href="#"
+                      to="customer"
                     >
-                      {{ data.value.name }}
-                    </b-link><br />
+                      <h6 class="font-weight-bolder mb-0 text-primary">
+                        {{ data.value.name }}
+                      </h6>
+                    </b-link>
                     <small class="m-0">{{ data.value.category + " " + data.value.uid }}</small>
                   </div>
                 </div>
@@ -290,11 +294,11 @@
                 </div>
               </template>
               <!-- Column - Loan End -->
-              <!-- Column - Panalty Start -->
-              <template #cell(panalty)="data">
+              <!-- Column - penalty Start -->
+              <template #cell(penalty)="data">
                 <p class="m-0">{{ data.item.currency + data.value }}</p>
               </template>
-              <!-- Column - Panalty End -->
+              <!-- Column - penalty End -->
               <!-- Column - Paid Start -->
               <template #cell(paid)="data">
                 <div class="w-100 text-right">
@@ -329,7 +333,7 @@
           </b-card>
         </b-col>
       </b-row>
-      <!---------------------------- Panalty paid View Card End -------------------->
+      <!---------------------------- penalty paid View Card End -------------------->
     </div>
     <!------------------------------ Day Content End ------------------------------->
     <div v-else>
@@ -526,7 +530,7 @@ export default {
           },
           { key: 'paid', label: 'Paid', sortable: true },
           { key: 'allowance', label: 'Allowance', sortable: true },
-          { key: 'panalty', label: 'Panalty', sortable: true },
+          { key: 'penalty', label: 'Penalty', sortable: true },
           { key: 'note', label: 'Note' },
         ],
         items: [
@@ -544,7 +548,7 @@ export default {
             payable: '2450',
             paid: '500',
             allowance: '',
-            panalty: '1950',
+            penalty: '1950',
             note: {
               note: 'Due to',
               date: '03/25/21',
@@ -566,7 +570,7 @@ export default {
             payable: '2450',
             paid: '400',
             allowance: '',
-            panalty: '1950',
+            penalty: '1950',
             note: {
               note: 'Due to',
               date: '03/25/21',
@@ -588,7 +592,7 @@ export default {
             payable: '2450',
             paid: '670',
             allowance: '',
-            panalty: '1950',
+            penalty: '1950',
             note: {
               note: 'Due to',
               date: '03/25/21',
@@ -610,7 +614,7 @@ export default {
             payable: '2450',
             paid: '100',
             allowance: '',
-            panalty: '1950',
+            penalty: '1950',
             note: {
               note: 'Due to',
               date: '03/25/21',
@@ -620,14 +624,14 @@ export default {
           },
         ],
       },
-      panaltyTableInfo: {
+      penaltyTableInfo: {
         fields: [
           { key: 'status', label: 'Status', sortable: true },
           { key: 'user', label: 'User' },
           { key: 'loan', label: 'Loan', class: 'text-right' },
           {
-            key: 'panalty',
-            label: 'Panalty',
+            key: 'penalty',
+            label: 'penalty',
             sortable: true,
             class: 'text-right',
           },
@@ -660,7 +664,7 @@ export default {
               price1: 400000,
               price2: 5550,
             },
-            panalty: 1950,
+            penalty: 1950,
             paid: 600,
             overShort: {
               over: 2300,
@@ -687,7 +691,7 @@ export default {
               price1: 400000,
               price2: 5550,
             },
-            panalty: 1950,
+            penalty: 1950,
             paid: 700,
             overShort: {
               over: 0,
@@ -714,7 +718,7 @@ export default {
               price1: 400000,
               price2: 5550,
             },
-            panalty: 1950,
+            penalty: 1950,
             paid: 500,
             overShort: {
               over: 600,
@@ -741,7 +745,7 @@ export default {
               price1: 400000,
               price2: 5550,
             },
-            panalty: 1950,
+            penalty: 1950,
             paid: 500,
             overShort: {
               over: 600,
@@ -1087,10 +1091,10 @@ export default {
       tableData.items.find(d => d.id === rowId).status = key
       this.$set(this, 'allTableInfo', tableData)
     },
-    handleStatusInPanaltyTable(key, rowId) {
-      const tableData = { ...this.panaltyTableInfo }
+    handleStatusInpenaltyTable(key, rowId) {
+      const tableData = { ...this.penaltyTableInfo }
       tableData.items.find(d => d.id === rowId).status = key
-      this.$set(this, 'panaltyTableInfo', tableData)
+      this.$set(this, 'penaltyTableInfo', tableData)
     },
     handlePaidModal(row) {
       this.$set(this, 'paidInfo', {

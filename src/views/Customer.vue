@@ -204,7 +204,11 @@ export default {
   },
   data() {
     return {
-      customerInfo: Object,
+      customerInfo: Object, // Customer's total information
+      /**
+        Collection of the cusotmer's finance statistic information included
+        'total received', 'total penalty', 'promissory', 'loan amount', 'next payment infomation', 'currency'
+      */
       financeSummary: {
         totalReceived: 3000,
         totalPenalty: 2000,
@@ -220,6 +224,7 @@ export default {
         },
         currency: '$',
       },
+      /** processing, observed, closed, bad_debt */
       statusItems: [
         {
           key: 'processing',
@@ -242,6 +247,10 @@ export default {
           type: 'danger',
         },
       ],
+      /**
+        Lending history Array
+        - each element has the properties of date, amount, currency, type(color variant)
+      */
       historyList: [
         {
           date: '2020/04/30',
@@ -292,6 +301,11 @@ export default {
           type: 'primary',
         },
       ],
+      /**
+        Array of the buttons to category the customer information
+        - transaction, basic, family, guarantor, credit, debt -
+        This button group has the radio feature
+      */
       groupButtons: [
         {
           key: 'transaction',
@@ -324,44 +338,60 @@ export default {
           component: DebtRelated,
         },
       ],
+      /** Array of all the VALIDATIONS for all the fields in a category in customer information */
       validations: [],
+      /** Key of a button activated(clicked) */
       activeInfoBtnGroup: 'transaction',
+      /** Variable to indicate if all the field controls in a current category would show/hide the validation property when 'Save' button will be clicked */
       validateAction: false,
+      /** Variable to indicate if all the field controls in a current category would be edit disabled/enabled the validation property when 'Edit' button will be clicked */
       editDisabled: true,
     }
   },
   watch: {
-    activeInfoBtnGroup(newValue) {
+    activeInfoBtnGroup(newValue) { // When each button is clicked
       this.$set(this, 'validations', Object.keys(this.customerInfo[newValue]).map(itemKey => ({
         key: itemKey,
         validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '',
       })))
+      /**
+        validateAction is false when a group button is clicked.
+        This'll be updated when Save button is clicked.
+      */
       this.$set(this, 'validateAction', false)
+      /**
+        editDisabled is false when a group button is clicked.
+        This'll be updated as ture when a "Edit" button is clicked,
+      */
       this.$set(this, 'editDisabled', true)
     },
   },
   created() {
+    /** Set State (customerInfo) from Store for the customerInfo  */
     this.$set(this, 'customerInfo', { ...this.$store.state.app.customerInfo })
+    /** Set State (validations) from customerInfo for a validation of each field */
     this.$set(this, 'validations', Object.keys(this.customerInfo[this.activeInfoBtnGroup]).map(itemKey => ({
       key: itemKey,
       validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '',
     })))
   },
   mounted() {
+    /** Set to show in Store for a Back button  */
     store.commit('app/UPDATE_NAV_BACK_BUTTON', { buttonShow: true, backName: 'customers' })
   },
   beforeRouteLeave(to, from, next) {
+    /** Set to hide in Store for a Back button  */
     store.commit('app/UPDATE_NAV_BACK_BUTTON', { buttonShow: false, backName: 'customers' })
     next()
   },
   computed: {
-    validate() {
+    validate() { // Get a validation for all the fields of the current category
       return !(this.validations.map(d => d.validate).indexOf(false) > -1)
     },
   },
   methods: {
     changeStatus(key) {
-      this.$set(this, 'customerInfo', {
+      this.$set(this, 'customerInfo', { // Update the state(customerInfo.profile.status) for status(observed, processing, closed, bad debt) of a customer
         ...this.customerInfo,
         profile: {
           ...this.customerInfo.profile,
@@ -369,36 +399,36 @@ export default {
         },
       })
     },
-    setActiveInfoBtnGroup(key) {
+    setActiveInfoBtnGroup(key) { // Update group button key when any button is cliecked in button group
       this.$set(this, 'activeInfoBtnGroup', key)
     },
     changeValue(key, value) {
-      this.$set(this, 'customerInfo', {
+      this.$set(this, 'customerInfo', { // Update the state for any field changed in the current category
         ...this.customerInfo,
         [this.activeInfoBtnGroup]: {
           ...this.customerInfo[this.activeInfoBtnGroup],
           [key]: value,
         },
       })
-      if (value !== '') {
+      if (value !== '') { // A validation of a field changed is true as that is Not empty
         this.validations.find(d => d.key === key).validate = true
-      } else {
+      } else { // A validation of a field changed is false as that is empty
         this.validations.find(d => d.key === key).validate = false
       }
     },
     editActionClick() {
-      if (this.editDisabled) {
+      if (this.editDisabled) { // When "Edit" button is clicked
         this.$set(this, 'validateAction', false)
         this.$set(this, 'editDisabled', false)
-      } else if (this.validate) {
+      } else if (this.validate) { // If a validation for all the fields is true When "Save" button is clicked
         this.$set(this, 'validateAction', false)
         this.$set(this, 'editDisabled', true)
-      } else {
+      } else { // If a validation for all the fields is false When "Save" button is clicked
         this.$set(this, 'validateAction', true)
         this.$set(this, 'editDisabled', false)
       }
     },
-    cancelActionClick() {
+    cancelActionClick() { // When "Cancel" button is clicked
       this.$set(this, 'validateAction', false)
       this.$set(this, 'editDisabled', true)
     },

@@ -9,9 +9,11 @@ export default {
       buttonShow: false,
       backName: 'index',
     },
+    customers: [],
     customerInfo: {
+      cid: '001',
+      sid: '001',
       profile: {
-        cid: '001',
         name: 'WangMing',
         email: 'eleanor@gmail.com',
         status: 'observed',
