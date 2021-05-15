@@ -175,6 +175,7 @@ import Ripple from 'vue-ripple-directive'
 // import VueApexCharts from 'vue-apexcharts'
 import StatisticCardWithAreaChart from './components/StatisticCardWithAreaChart.vue'
 import CardStatisticsGroup from './components/CardStatisticsGroup.vue'
+import { db, firebase } from '../firebase'
 
 export default {
   components: {
@@ -419,7 +420,62 @@ export default {
       this.$router.push({ name: 'customer-register' })
     },
   },
-  mounted() {
+  async mounted() {
+    /* Get Collection Arrray (Realtime) */
+    let customers = []
+    const data = await firebase.db.collection('customers')
+    data.onSnapshot(snapshot => {
+      customers = snapshot.docs.map(item => ({ id: item.id, ...item.data() }))
+      console.log('all customers', customers)
+    })
+
+    /* Get Document by id (Realtime) */
+    let customer
+    const data2 = await firebase.db.collection('customers').doc('NHUxK2w7zttZk1ynFaCw')
+    data2.onSnapshot(snapshot => {
+      customer = snapshot.data()
+      console.log('one customer by id', customer)
+    })
+
+    /* Get Collection Documents Array (Not realtime) */
+    await db.getAllDocs({
+      collectionName: 'customers',
+    })
+    /* Get a Document (Not realtime) */
+    await db.getOneDoc({
+      collectionName: 'customers',
+      id: 'NHUxK2w7zttZk1ynFaCw',
+    })
+
+    /* Update a Document by id */
+    await db.updateOneDoc({
+      collectionName: 'customers',
+      id: 'NHUxK2w7zttZk1ynFaCw',
+      accountNumber: 1,
+      'bankInfo.bank_account': 'ABC',
+    })
+
+    /* Set (Update or Create if not exist id) a Document */
+    await db.setOneDoc({
+      collectionName: 'customers',
+      id: 'findOrCreateNewId',
+      accountNumber: 1,
+      'bankInfo.bank_account': 'ABC',
+    })
+
+    /* Create a new Document with auto id */
+    await db.addOneDoc({
+      collectionName: 'customers',
+      accountNumber: 1,
+      'bankInfo.bank_account': 'ABC',
+    })
+
+    /* Delete docuemnt by id */
+    await db.deleteOneDoc({
+      collectionName: 'customers',
+      id: 'findOrCreateNewId',
+    })
+
     // Set the initial number of items
     this.totalRows = this.customersTableInfo.items.length
   },
