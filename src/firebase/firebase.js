@@ -23,10 +23,11 @@ if (!firebase.apps.length) {
 
 // separting database API and authentication
 const db = firebase.firestore()
+const storage = firebase.storage()
 const auth = firebase.auth()
 const googleProvider = new firebase.auth.GoogleAuthProvider()
 const facebookProvider = new firebase.auth.FacebookAuthProvider()
 
 export {
-  db, auth, googleProvider, facebookProvider,
+  db, auth, googleProvider, facebookProvider, storage,
 }

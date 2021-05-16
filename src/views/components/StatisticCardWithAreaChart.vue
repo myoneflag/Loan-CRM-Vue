@@ -32,7 +32,6 @@ export default {
   props: {
     statistic: {
       type: [Number, String],
-      required: true,
     },
     statisticTitle: {
       type: String,

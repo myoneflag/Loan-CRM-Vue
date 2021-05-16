@@ -1,33 +1,43 @@
 <template>
-  <b-card no-body>
-    <b-card-header>
-      <b-card-text class="font-weight-bolder mb-0">
-        Add Member
-      </b-card-text>
-    </b-card-header>
-    <div class="d-flex px-2 border-bottom flex-wrap">
-      <step-lable v-for="(step, index) in steps" :key="step.id" :step="{...step, index}" :isLast="index === steps.length-1"/>
-    </div>
-    <div class="step-content p-2">
-      <component
-        :is="steps[stepNumber].component"
-        :items="allStepsItmes[steps[stepNumber].id]"
-        :validations="validations"
-        :validateAction="validateAction"
-        :showAvatar="true"
-        @change="changeValue"
-      />
-    </div>
-    <b-card-footer class="d-flex justify-content-between border-0">
-      <b-button variant="outline-primary" @click="backStep">Back</b-button>
-      <b-button variant="primary" @click="nextStep">{{ nextButtonText }}</b-button>
-    </b-card-footer>
-  </b-card>
+  <b-overlay
+    id="overlay-background"
+    :show="saveSpinner"
+    opacity="0.6"
+    variant="transparent"
+    blur="2px"
+    rounded="sm"
+    style="background-color: #161d31 !important;"
+  >
+    <b-card no-body>
+      <b-card-header>
+        <b-card-text class="font-weight-bolder mb-0">
+          Add Member
+        </b-card-text>
+      </b-card-header>
+      <div class="d-flex px-2 border-bottom flex-wrap">
+        <step-lable v-for="(step, index) in steps" :key="step.id" :step="{...step, index}" :isLast="index === steps.length-1"/>
+      </div>
+      <div class="step-content p-2">
+        <component
+          :is="steps[stepNumber].component"
+          :items="allStepsItmes[steps[stepNumber].id]"
+          :validations="validations"
+          :validateAction="validateAction"
+          :showAvatar="true"
+          @change="changeValue"
+        />
+      </div>
+      <b-card-footer class="d-flex justify-content-between border-0">
+        <b-button variant="outline-primary" @click="backStep">Back</b-button>
+        <b-button variant="primary" @click="nextStep">{{ nextButtonText }}</b-button>
+      </b-card-footer>
+    </b-card>
+  </b-overlay>
 </template>
 <script>
 import store from '@/store'
 import {
-  BCard, BCardHeader, BCardFooter, BCardText, BButton,
+  BCard, BCardHeader, BCardFooter, BCardText, BButton, BOverlay,
 } from 'bootstrap-vue'
 import StepLable from './components/StepLabel.vue'
 import BasicInfo from './components/customer-steps/BasicInfo.vue'
@@ -44,6 +54,7 @@ export default {
     BCardText,
     StepLable,
     BButton,
+    BOverlay,
   },
   data() {
     return {
@@ -85,6 +96,7 @@ export default {
       validations: [], // Array of all the VALIDATIONS for all the fields
       validateAction: false, // Variable to indicate if all the field controls in a current step would show/hide the validation property when 'Next' button will be clicked
       nextButtonText: 'Next', // Title of a next button in a current step
+      saveSpinner: false, // Spinner hide/show while saving or edit
     }
   },
   watch: {
@@ -143,7 +155,20 @@ export default {
     },
     nextStep() {
       if (this.stepNumber === this.steps.length - 1) { // Finish
-        console.log(this.allStepsItmes)
+        // console.log(this.allStepsItmes)
+        this.$set(this, 'saveSpinner', true)
+        store.dispatch('app/addCustomer', this.allStepsItmes).then(res => {
+          // console.log(res)
+          if (res) {
+            this.$set(this, 'saveSpinner', false)
+            this.$bvToast.toast('A customer was registered successfully.', {
+              title: 'Success',
+              variant: 'success',
+              solid: true,
+              toaster: 'b-toaster-top-center',
+            })
+          }
+        })
       } else if (this.validate) { // To next step
         this.$set(this, 'stepNumber', this.stepNumber === this.steps.length - 1 ? this.stepNumber : this.stepNumber + 1)
         this.$set(this, 'validateAction', false)

@@ -7,10 +7,13 @@
       <b-media-aside
         class="mr-1"
       >
-        <b-avatar
-          :src="require('@/assets/images/portrait/small/avatar-s-20.jpg')"
-          size="6rem"
-        />
+        <label for="fileInput">
+          <input type="file" hidden id="fileInput" @change="fileChange" accept="image/*"/>
+          <b-avatar
+            :src="imgFile"
+            size="6rem"
+          />
+        </label>
       </b-media-aside>
       <b-media-body class="my-auto font-small-3">
         <b-card-text  class="mb-0">
@@ -131,7 +134,7 @@
         >
           <b-form-input
             id="cellPhoneNumber"
-            placeholder="Phone cellPhoneNumber"
+            placeholder="Phone Number"
             :disabled="editDisabled"
             v-model="items.cellPhoneNumber"
             @change="e => changeValue('cellPhoneNumber', e)"
@@ -271,11 +274,13 @@
   </div>
 </template>
 <script>
+import store from '@/store'
 import {
   BCardText, BMedia, BMediaAside, BMediaBody, BAvatar, BFormGroup, BFormInput, BRow, BCol, BDropdown, BDropdownItem, BFormRadio, BFormRadioGroup,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import LoanDatePicker from '@/views/components/elements/LoanDatePicker.vue'
+// import { firebase } from '@/firebase'
 
 export default {
   components: {
@@ -323,6 +328,7 @@ export default {
         },
       ],
       group: '',
+      imgFile: null,
     }
   },
   watch: {
@@ -341,6 +347,17 @@ export default {
         this.$set(this, 'group', value)
       } else {
         this.$emit('change', key, value)
+      }
+    },
+    fileChange(event) {
+      const file = event.target.files[0]
+      if (file) {
+        store.dispatch('app/setAvatarFile', file)
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => {
+          this.$set(this, 'imgFile', reader.result)
+        }
       }
     },
   },

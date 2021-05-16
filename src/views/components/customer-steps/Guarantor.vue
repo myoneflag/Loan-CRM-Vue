@@ -54,14 +54,20 @@
           label="Guaranteed Amount"
           label-for="guarantorAmount"
         >
-          <b-form-input
+          <b-input-group
             id="guarantorAmount"
-            placeholder="Guaranteed Amount"
+            prepend="$"
+            append=".00"
+            class="input-group-merge"
             :disabled="editDisabled"
-            v-model="items.guarantorAmount"
-            @change="e => changeValue('guarantorAmount', e)"
             :state="validateAction ? validations.find(d => d.key === 'guarantorAmount').validate : null"
-          />
+          >
+            <b-form-input
+              @change="e => changeValue('guarantorAmount', e)"
+              v-model="items.guarantorAmount"
+              placeholder="0"
+            />
+          </b-input-group>
         </b-form-group>
       </b-col>
       <b-col cols="4">
@@ -69,14 +75,19 @@
           label="Guaranteed Days"
           label-for="guarantorDays"
         >
-          <b-form-input
+          <b-input-group
             id="guarantorDays"
-            placeholder="Guaranteed Days"
+            append="Days"
+            class="input-group-merge"
             :disabled="editDisabled"
-            v-model="items.guarantorDays"
-            @change="e => changeValue('guarantorDays', e)"
             :state="validateAction ? validations.find(d => d.key === 'guarantorDays').validate : null"
-          />
+          >
+            <b-form-input
+              @change="e => changeValue('guarantorDays', e)"
+              v-model="items.guarantorDays"
+              placeholder="0"
+            />
+          </b-input-group>
         </b-form-group>
       </b-col>
       <b-col cols="12">
@@ -100,7 +111,7 @@
 </template>
 <script>
 import {
-  BCardText, BRow, BCol, BFormGroup, BFormInput, BFormTextarea,
+  BCardText, BRow, BCol, BFormGroup, BFormInput, BFormTextarea, BInputGroup,
 } from 'bootstrap-vue'
 
 export default {
@@ -110,6 +121,7 @@ export default {
     BCol,
     BFormGroup,
     BFormInput,
+    BInputGroup,
     BFormTextarea,
   },
   props: {

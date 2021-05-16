@@ -21,14 +21,20 @@
           label="Cheques Amount"
           label-for="debtChequesAmount"
         >
-          <b-form-input
+          <b-input-group
             id="debtChequesAmount"
-            placeholder="Cheques Amount"
+            prepend="$"
+            append=".00"
+            class="input-group-merge"
             :disabled="editDisabled"
-            v-model="items.debtChequesAmount"
-            @change="e => changeValue('debtChequesAmount', e)"
             :state="validateAction ? validations.find(d => d.key === 'debtChequesAmount').validate : null"
-          />
+          >
+            <b-form-input
+              v-model="items.debtChequesAmount"
+              @change="e => changeValue('debtChequesAmount', e)"
+              placeholder="0"
+            />
+          </b-input-group>
         </b-form-group>
       </b-col>
       <b-col cols="4">
@@ -36,14 +42,25 @@
           label="Repayment/Month"
           label-for="debtRepaymentMonth"
         >
-          <b-form-input
+          <!-- <b-form-input
             id="debtRepaymentMonth"
             placeholder="15天"
             :disabled="editDisabled"
             v-model="items.debtRepaymentMonth"
             @change="e => changeValue('debtRepaymentMonth', e)"
             :state="validateAction ? validations.find(d => d.key === 'debtRepaymentMonth').validate : null"
-          />
+          /> -->
+          <b-input-group
+            id="debtRepaymentMonth"
+            append="天"
+            class="input-group-merge"
+            :disabled="editDisabled"
+            v-model="items.debtRepaymentMonth"
+            @change="e => changeValue('debtRepaymentMonth', e.target.value)"
+            :state="validateAction ? validations.find(d => d.key === 'debtRepaymentMonth').validate : null"
+          >
+            <b-form-input placeholder="0" />
+          </b-input-group>
         </b-form-group>
         <b-form-group
           label="Cheques Status"
@@ -88,7 +105,7 @@
 </template>
 <script>
 import {
-  BCardText, BRow, BCol, BFormGroup, BFormTextarea, BFormInput, BDropdown, BDropdownItem,
+  BCardText, BRow, BCol, BFormGroup, BFormTextarea, BFormInput, BInputGroup, BDropdown, BDropdownItem,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import LoanDatePicker from '@/views/components/elements/LoanDatePicker.vue'
@@ -100,6 +117,7 @@ export default {
     BCol,
     BFormGroup,
     BFormInput,
+    BInputGroup,
     BFormTextarea,
     BDropdown,
     BDropdownItem,
