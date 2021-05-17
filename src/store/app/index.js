@@ -165,11 +165,8 @@ export default {
     customerInfo: {
       cid: '001',
       sid: '001',
-      profile: {
-        name: 'WangMing',
-        status: 'observed',
-        avatar: '@/assets/images/portrait/small/avatar-s-2.jpg',
-      },
+      status: 'observed',
+      avatar: '@/assets/images/portrait/small/avatar-s-2.jpg',
       transaction: [
         {
           tid: '001',
@@ -195,7 +192,7 @@ export default {
         },
       ],
       basic: {
-        name: '',
+        name: 'WangMing',
         group: '',
         acountId: '',
         birthday: '',
@@ -248,6 +245,7 @@ export default {
       return 'xs'
     },
     getCustomers: state => state.customers,
+    getCustomerInfo: state => state.customerInfo,
   },
   mutations: {
     UPDATE_WINDOW_WIDTH(state, val) {
@@ -264,6 +262,9 @@ export default {
     SET_CUSTOMERS(state, val) {
       state.customers = [...val]
     },
+    SET_CUSTOMERINFO(state, val) {
+      state.customerInfo = { ...val }
+    },
     ADD_CUSTOMER(state, val) {
       state.customers.push(val)
     },
@@ -272,23 +273,71 @@ export default {
     },
   },
   actions: {
+    /**
+      Get all customers already registered by a user authenticated from the firestore db. (Dispatch Function)
+      * Required authenticate user's id
+      * Query all the customers that authenticated user has from firestore
+      * Map the got each customer's fields to the schema in vuex store. <-- function: mapCustomerFieldsFromDb() -->
+      * Commit an customer's array mapped
+    */
     getCustomersFromDb(context) {
-      return db.getAllDocs({
-        collectionName: 'customers',
-      }).then(res => {
-        if (res.docs) {
-          const rawCustomers = res.docs.map(item => ({ id: item.id, ...item.data() }))
-          const mappedCustomers = rawCustomers.map(item => ({
-            ...mapCustomerFieldsFromDb(item),
-            transaction: context.state.customerInfo.transaction, // Demo(static) data
-          }))
-          context.commit('SET_CUSTOMERS', mappedCustomers)
-        }
-      })
+      const { currentUser } = firebase.auth
+      try {
+        return firebase.db.collection('customers').where('sid', '==', currentUser.uid).get()
+          .then(res => {
+            if (res.docs.length > 0) {
+              const rawCustomers = res.docs.map(item => ({ id: item.id, ...item.data() }))
+              const mappedCustomers = rawCustomers.map(item => ({
+                ...mapCustomerFieldsFromDb(item),
+                transaction: context.state.customerInfo.transaction, // Demo(static) data
+              }))
+              context.commit('SET_CUSTOMERS', mappedCustomers)
+            }
+          })
+      } catch (error) {
+        return { status: 'error', errorText: error }
+      }
     },
+
+    /**
+      Get a customer already registered by customer's id from the firestore db. (Dispatch Function)
+      * Query special customer with customer's id from firestore
+      * Map the got customer's fields to the schema in vuex store. <-- function: mapCustomerFieldsFromDb() -->
+      * Commit an customer object mapped
+    */
+    getCustomerWithIdFromDb(context, cid) {
+      try {
+        return db.getOneDoc({ collectionName: 'customers', id: cid })
+          .then(res => {
+            if (res.exists) {
+              const rawCustomer = res.data()
+              const mappedCustomer = {
+                ...mapCustomerFieldsFromDb({ id: cid, ...rawCustomer }),
+                transaction: context.state.customerInfo.transaction, // Demo(static) data
+              }
+              context.commit('SET_CUSTOMERINFO', mappedCustomer)
+            }
+          })
+      } catch (error) {
+        return { status: 'error', errorText: error }
+      }
+    },
+
+    /**
+      Store a customer to db (A dispatch Function that is called in any component)
+      * Map the customer's fields to the schema in firestore db. <-- function: mapCustomerFieldsToDb() -->
+      * Add authenticated user's id to customer object
+      * Initialize status to empty string as it wasn't chosen yet
+      * Store avatar image to firebase storage if that image file is available. <-- function: uploadFile() -->
+      * Store only a cutomer object to firebase firestore if that image file isn't available
+      * Get an URL to access to an image stored and Add it to customer object
+      * Store a customer object to firebase firestore
+    */
     addCustomer(context, customerInfo) {
       const customer = { ...mapCustomerFieldsToDb(customerInfo) }
-      customer.status = ''
+      const { currentUser } = firebase.auth
+      customer.sid = currentUser.uid
+      customer.status = 'none'
       customer.photoURL = ''
       if (context.state.avatarFile !== null) {
         try {
@@ -320,6 +369,10 @@ export default {
         return { status: 'error', errorText: error }
       }
     },
+
+    /**
+      Dispatch Function to update an avatar image file in the store
+    */
     setAvatarFile(context, file) {
       context.commit('SET_AVATAR_FILE', file)
     },

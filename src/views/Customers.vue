@@ -99,6 +99,7 @@
                 :current-page="currentPage"
                 table-class="custom-table"
               >
+                <!------------------- Status column ----------------->
                 <template #cell(status)="data">
                   <b-badge
                     v-if="statusItems.find(d => d.key === data.value)"
@@ -108,6 +109,7 @@
                     {{ statusItems.find(d => d.key === data.value).name }}
                   </b-badge>
                 </template>
+                <!------------------- User column ------------------->
                 <template #cell(user)="data">
                   <b-media no-body style="width: 130px;">
                     <b-media-aside
@@ -119,7 +121,7 @@
                     </b-media-aside>
                     <b-media-body class="my-auto text-left">
                       <b-link
-                        to="customer"
+                        :to="{ path: 'customer', query: { id: data.item.id } }"
                       >
                         <h6 class="font-weight-bolder mb-0 text-primary">
                           {{ data.value.name }}
@@ -131,12 +133,15 @@
                     </b-media-body>
                   </b-media>
                 </template>
+                <!------------------- Rate column ------------------->
                 <template #cell(rate)="data">
                   {{ data.value + '%' }}
                 </template>
+                <!------------------- TotalLoan column -------------->
                  <template #cell(totalLoan)="data">
                   {{ data.item.currency + data.value }}
                 </template>
+                <!------------------- Action column ----------------->
                 <template #cell(action)="data">
                   <feather-icon
                     :id="`box-pop-menu-${data.item.id}`"
@@ -181,7 +186,6 @@ import Ripple from 'vue-ripple-directive'
 import _ from 'lodash'
 import StatisticCardWithAreaChart from './components/StatisticCardWithAreaChart.vue'
 import CardStatisticsGroup from './components/CardStatisticsGroup.vue'
-// import { db, firebase } from '../firebase'
 
 export default {
   components: {
@@ -216,11 +220,11 @@ export default {
         series: [
           {
             name: 'Revenue',
-            data: [350, 275, 400, 300, 350, 300, 450],
+            data: [],
           },
         ],
         analyticsData: {
-          revenue: 97500,
+          total: 0,
         },
       },
       statisticsItems: [
@@ -228,28 +232,28 @@ export default {
           icon: 'TrendingUpIcon',
           color: 'light-primary',
           title: 'Processing',
-          value: 15,
+          value: 0,
           customClass: 'mb-2 mb-xl-0',
         },
         {
           icon: 'UserIcon',
           color: 'light-danger',
           title: 'Bad Debt',
-          value: 9,
+          value: 0,
           customClass: 'mb-2 mb-xl-0',
         },
         {
           icon: 'BoxIcon',
           color: 'light-warning',
           title: 'Observed',
-          value: 41,
+          value: 0,
           customClass: 'mb-2 mb-sm-0',
         },
         {
           icon: 'DollarSignIcon',
           color: 'light-success',
           title: 'Closed',
-          value: 11,
+          value: 0,
           customClass: '',
         },
       ],
@@ -421,9 +425,16 @@ export default {
     }
   },
   computed: {
+    /**
+      Call getter function(in store) to get customers
+    */
     ...mapGetters({
       getCustomers: 'app/getCustomers',
     }),
+
+    /**
+      Get items(Status dropdown) to filter by status from customer's array
+    */
     filterStatusItems() {
       return [
         {
@@ -436,6 +447,10 @@ export default {
         })),
       ]
     },
+
+    /**
+      Get items(Group dropdown) to filter by group from customer's array
+    */
     filterGroupItems() {
       return [
         {
@@ -448,6 +463,10 @@ export default {
         })),
       ]
     },
+
+    /**
+      Filter customers table by status and group chosen
+    */
     filteredRows() {
       let filtered = []
       if (this.group !== 'all' && this.status !== 'all') {
@@ -463,6 +482,10 @@ export default {
     },
   },
   watch: {
+    /**
+      * Map each customer's fields from db to the schema in vuex store when the customers array in store is changed
+      * Calculate the customers counts
+    */
     getCustomers(newVal) {
       const filterCustomers = newVal.map(customer => {
         const row = {
@@ -489,6 +512,10 @@ export default {
       this.$set(this, 'customers', filterCustomers)
       this.$set(this, 'totalRows', filterCustomers.length)
     },
+
+    /**
+      Calculate Total loan amount(line chart) and Total member's statistic when the customers array in state is changed
+    */
     customers(newVal) {
       const groupByStatus = _.groupBy(newVal, 'status')
       const summaryStatus = this.statusItems.map(item => ({
@@ -508,10 +535,13 @@ export default {
           total: newVal.map(d => d.totalLoan).reduce((a, b) => a.totalLoan + b.totalLoan) || 0,
         },
       })
-      // console.log(newVal)
+      console.log(newVal)
     },
   },
   created() {
+    /**
+      Dispatch a getCustomersFromDb() Function in the vuex store to get customers by authenticated user's id from db
+    */
     store.dispatch('app/getCustomersFromDb')
   },
   mounted() {
@@ -569,15 +599,25 @@ export default {
     //   collectionName: 'customers',
     //   id: 'findOrCreateNewId',
     // })
-
   },
   methods: {
+    /**
+      Trigger when a status filter(dropdown menu) is changed
+    */
     handleStatus(key) {
       this.$set(this, 'status', key)
     },
+
+    /**
+      Trigger when a group filter(dropdown menu) is changed
+    */
     handleGroup(key) {
       this.$set(this, 'group', key)
     },
+
+    /**
+      Trigger when a button to add customer is clicked
+    */
     handleAddCustomer() {
       this.$router.push({ name: 'customer-register' })
     },

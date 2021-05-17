@@ -10,27 +10,28 @@
                   class="mr-1"
                 >
                   <b-avatar
-                    :src="require('@/assets/images/portrait/small/avatar-s-2.jpg')"
+                    :src="customerInfo.avatar"
                     size="5.5rem"
                   />
                 </b-media-aside>
                 <b-media-body class="my-auto">
                   <b-card-text  class="font-small-4 font-weight-bolder mb-0">
-                    {{ customerInfo.profile.name }}
+                    {{ customerInfo.basic.name || '' }}
                   </b-card-text >
                   <b-card-text class="font-small-3 mb-50">
-                    {{ customerInfo.profile.email }}
+                    {{ customerInfo.basic.acountId }}
                   </b-card-text>
                   <b-dropdown
-                    :text="statusItems.find(d => d.key === customerInfo.profile.status).name"
-                    :variant="`flat-${statusItems.find(d => d.key === customerInfo.profile.status).type}`"
+                    v-if="customerInfo.status"
+                    :text="statusItems.find(d => d.key === customerInfo.status).name"
+                    :variant="`flat-${statusItems.find(d => d.key === customerInfo.status).type}`"
                     v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                     size="sm"
                     style="width: 100px;"
                   >
                     <b-dropdown-item
                       v-for="item in statusItems" :key="item.key"
-                      :active="item.key === customerInfo.profile.status"
+                      :active="item.key === customerInfo.status"
                       @click="changeStatus(item.key)"
                     >
                       {{ item.name }}
@@ -165,6 +166,7 @@
 </template>
 <script>
 import store from '@/store'
+import { mapGetters } from 'vuex'
 import {
   BCard, BRow, BCol, BMedia, BMediaAside, BMediaBody, BAvatar, BCardText, BDropdown, BDropdownItem, BButton,
 } from 'bootstrap-vue'
@@ -177,6 +179,8 @@ import FamilyInfo from './components/customer-steps/FamilyInfo.vue'
 import Guarantor from './components/customer-steps/Guarantor.vue'
 import CreditRelated from './components/customer-steps/CreditRelated.vue'
 import DebtRelated from './components/customer-steps/DebtRelated.vue'
+
+const validationKeys = ['basic', 'family', 'guarantor', 'credit', 'debt']
 
 export default {
   components: {
@@ -204,7 +208,10 @@ export default {
   },
   data() {
     return {
-      customerInfo: Object, // Customer's total information
+      customerInfo: Object, // Customer's all information
+
+      customerId: '', // Customer's id
+
       /**
         Collection of the cusotmer's finance statistic information included
         'total received', 'total penalty', 'promissory', 'loan amount', 'next payment infomation', 'currency'
@@ -224,8 +231,14 @@ export default {
         },
         currency: '$',
       },
+
       /** processing, observed, closed, bad_debt */
       statusItems: [
+        {
+          key: 'none',
+          name: 'None',
+          type: 'secondary',
+        },
         {
           key: 'processing',
           name: 'Processing',
@@ -247,6 +260,7 @@ export default {
           type: 'danger',
         },
       ],
+
       /**
         Lending history Array
         - each element has the properties of date, amount, currency, type(color variant)
@@ -301,6 +315,7 @@ export default {
           type: 'primary',
         },
       ],
+
       /**
         Array of the buttons to category the customer information
         - transaction, basic, family, guarantor, credit, debt -
@@ -338,27 +353,46 @@ export default {
           component: DebtRelated,
         },
       ],
+
       /** Array of all the VALIDATIONS for all the fields in a category in customer information */
       validations: [],
+
       /** Key of a button activated(clicked) */
       activeInfoBtnGroup: 'transaction',
+
       /** Variable to indicate if all the field controls in a current category would show/hide the validation property when 'Save' button will be clicked */
       validateAction: false,
+
       /** Variable to indicate if all the field controls in a current category would be edit disabled/enabled the validation property when 'Edit' button will be clicked */
       editDisabled: true,
     }
   },
   watch: {
+    getCustomerInfo(newVal) {
+      this.$set(this, 'customerInfo', { ...newVal })
+      /** Set State (validations) from customerInfo for a validation of each field */
+      if (validationKeys.includes(this.activeInfoBtnGroup)) {
+        this.$set(this, 'validations', Object.keys(newVal[this.activeInfoBtnGroup]).map(itemKey => ({
+          key: itemKey,
+          validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '',
+        })))
+      }
+    },
+
     activeInfoBtnGroup(newValue) { // When each button is clicked
-      this.$set(this, 'validations', Object.keys(this.customerInfo[newValue]).map(itemKey => ({
-        key: itemKey,
-        validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '',
-      })))
+      if (validationKeys.includes(newValue)) {
+        this.$set(this, 'validations', Object.keys(this.customerInfo[newValue]).map(itemKey => ({
+          key: itemKey,
+          validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '',
+        })))
+      }
+
       /**
         validateAction is false when a group button is clicked.
         This'll be updated when Save button is clicked.
       */
       this.$set(this, 'validateAction', false)
+
       /**
         editDisabled is false when a group button is clicked.
         This'll be updated as ture when a "Edit" button is clicked,
@@ -366,14 +400,13 @@ export default {
       this.$set(this, 'editDisabled', true)
     },
   },
+
   created() {
+    this.$set(this, 'customerId', this.$route.query.id)
+    store.dispatch('app/getCustomerWithIdFromDb', this.$route.query.id)
+
     /** Set State (customerInfo) from Store for the customerInfo  */
     this.$set(this, 'customerInfo', { ...this.$store.state.app.customerInfo })
-    /** Set State (validations) from customerInfo for a validation of each field */
-    this.$set(this, 'validations', Object.keys(this.customerInfo[this.activeInfoBtnGroup]).map(itemKey => ({
-      key: itemKey,
-      validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '',
-    })))
   },
   mounted() {
     /** Set to show in Store for a Back button  */
@@ -385,6 +418,13 @@ export default {
     next()
   },
   computed: {
+    /**
+      Call getter function(in store) to get a customer
+    */
+    ...mapGetters({
+      getCustomerInfo: 'app/getCustomerInfo',
+    }),
+
     validate() { // Get a validation for all the fields of the current category
       return !(this.validations.map(d => d.validate).indexOf(false) > -1)
     },
@@ -393,10 +433,7 @@ export default {
     changeStatus(key) {
       this.$set(this, 'customerInfo', { // Update the state(customerInfo.profile.status) for status(observed, processing, closed, bad debt) of a customer
         ...this.customerInfo,
-        profile: {
-          ...this.customerInfo.profile,
-          status: key,
-        },
+        status: key,
       })
     },
     setActiveInfoBtnGroup(key) { // Update group button key when any button is cliecked in button group
