@@ -13,69 +13,69 @@
             id="familyName"
             placeholder="Family Name"
             :disabled="editDisabled"
-            v-model="items.familyName"
-            @change="e => changeValue('familyName', e)"
-            :state="validateAction ? validations.find(d => d.key === 'familyName').validate : null"
+            v-model="items.name"
+            @change="e => changeValue('name', e)"
+            :state="validateAction ? validations.find(d => d.key === 'name').validate : null"
           />
         </b-form-group>
       </b-col>
       <b-col cols="4">
         <b-form-group
           label="Phone Number"
-          label-for="familyPhoneNumber"
+          label-for="phoneNumber"
         >
           <b-form-input
-            id="familyPhoneNumber"
+            id="phoneNumber"
             placeholder="Phone Number"
             :disabled="editDisabled"
-            v-model="items.familyPhoneNumber"
-            @change="e => changeValue('familyPhoneNumber', e)"
-            :state="validateAction ? validations.find(d => d.key === 'familyPhoneNumber').validate : null"
+            v-model="items.phoneNumber"
+            @change="e => changeValue('phoneNumber', e)"
+            :state="validateAction ? validations.find(d => d.key === 'phoneNumber').validate : null"
           />
         </b-form-group>
       </b-col>
       <b-col cols="4">
         <b-form-group
           label="Address"
-          label-for="familyAddress"
+          label-for="address"
         >
           <b-form-input
-            id="familyAddress"
+            id="address"
             placeholder="Address"
             :disabled="editDisabled"
-            v-model="items.familyAddress"
-            @change="e => changeValue('familyAddress', e)"
-            :state="validateAction ? validations.find(d => d.key === 'familyAddress').validate : null"
+            v-model="items.address"
+            @change="e => changeValue('address', e)"
+            :state="validateAction ? validations.find(d => d.key === 'address').validate : null"
           />
         </b-form-group>
       </b-col>
       <b-col cols="4">
         <b-form-group
           label="Job occupation"
-          label-for="familyJobOccupation"
+          label-for="jobOccupation"
         >
           <b-form-input
-            id="familyJobOccupation"
+            id="jobOccupation"
             placeholder="Job occupation"
             :disabled="editDisabled"
-            v-model="items.familyJobOccupation"
-            @change="e => changeValue('familyJobOccupation', e)"
-            :state="validateAction ? validations.find(d => d.key === 'familyJobOccupation').validate : null"
+            v-model="items.jobOccupation"
+            @change="e => changeValue('jobOccupation', e)"
+            :state="validateAction ? validations.find(d => d.key === 'jobOccupation').validate : null"
           />
         </b-form-group>
       </b-col>
       <b-col cols="4">
         <b-form-group
           label="Relationship"
-          label-for="familyRelationship"
+          label-for="relationship"
         >
           <b-form-input
-            id="familyRelationship"
+            id="relationship"
             placeholder="Relationship"
             :disabled="editDisabled"
-            v-model="items.familyRelationship"
-            @change="e => changeValue('familyRelationship', e)"
-            :state="validateAction ? validations.find(d => d.key === 'familyRelationship').validate : null"
+            v-model="items.relationship"
+            @change="e => changeValue('relationship', e)"
+            :state="validateAction ? validations.find(d => d.key === 'relationship').validate : null"
           />
         </b-form-group>
       </b-col>

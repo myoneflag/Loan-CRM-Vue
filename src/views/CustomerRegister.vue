@@ -39,6 +39,7 @@ import store from '@/store'
 import {
   BCard, BCardHeader, BCardFooter, BCardText, BButton, BOverlay,
 } from 'bootstrap-vue'
+import _ from 'lodash'
 import StepLable from './components/StepLabel.vue'
 import BasicInfo from './components/customer-steps/BasicInfo.vue'
 import FamilyInfo from './components/customer-steps/FamilyInfo.vue'
@@ -62,31 +63,31 @@ export default {
       /** Array of all the steps, that each step has the properties of 'id', 'title', 'active', 'component'  */
       steps: [
         {
-          id: 'basic',
+          id: 'basicInfo',
           title: 'Basic info',
           active: true,
           component: BasicInfo,
         },
         {
-          id: 'family',
-          title: 'Family info',
+          id: 'familyInfo',
+          title: 'Family Info',
           active: false,
           component: FamilyInfo,
         },
         {
-          id: 'guarantor',
+          id: 'guarantorInfo',
           title: 'Guarantor',
           active: false,
           component: Guarantor,
         },
         {
-          id: 'credit',
+          id: 'creditInfo',
           title: 'Credit-related',
           active: false,
           component: CreditRelated,
         },
         {
-          id: 'debt',
+          id: 'debtInfo',
           title: 'Debt-related',
           active: false,
           component: DebtRelated,
@@ -117,7 +118,8 @@ export default {
   },
   created() {
     /** Set State (allStepsItmes) from Store for the customerInfo  */
-    this.$set(this, 'allStepsItmes', { ...this.$store.state.app.customerInfo })
+    this.$set(this, 'allStepsItmes', { ...this.$store.state.app.blankCustomerInfo })
+
     /** Set State (validations) from allStepsItmes for a validation of each field */
     this.$set(this, 'validations', Object.keys(this.allStepsItmes[this.steps[this.stepNumber].id]).map(itemKey => ({
       key: itemKey,
@@ -140,26 +142,31 @@ export default {
   },
   methods: {
     changeValue(key, value) {
+      const obj = { ...this.allStepsItmes[[this.steps[this.stepNumber].id]] }
+      _.set(obj, key, value)
       this.$set(this, 'allStepsItmes', { // Update the state for any field changed in the current step
+        ...this.allStepsItmes,
+        [this.steps[this.stepNumber].id]: { ...obj },
+      })
+      /* this.$set(this, 'allStepsItmes', { // Update the state for any field changed in the current step
         ...this.allStepsItmes,
         [this.steps[this.stepNumber].id]: {
           ...this.allStepsItmes[[this.steps[this.stepNumber].id]],
           [key]: value,
         },
-      })
+      }) */
       if (value !== '') { // A validation of a field changed is true as that is Not empty
-        this.validations.find(d => d.key === key).validate = true
+        this.validations.find(d => d.key === key.split('.')[0]).validate = true
       } else { // A validation of a field changed is false as that is empty
-        this.validations.find(d => d.key === key).validate = false
+        this.validations.find(d => d.key === key.split('.')[0]).validate = false
       }
     },
     nextStep() {
-      if (this.stepNumber === this.steps.length - 1) { // Finish
-        // console.log(this.allStepsItmes)
+      if (this.stepNumber === this.steps.length - 1 && this.validate) { // Finish
         this.$set(this, 'saveSpinner', true)
         store.dispatch('app/addCustomer', this.allStepsItmes).then(res => {
           // console.log(res)
-          if (res) {
+          if (res.status === 'success') {
             this.$set(this, 'saveSpinner', false)
             this.$bvToast.toast('A customer was registered successfully.', {
               title: 'Success',

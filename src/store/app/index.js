@@ -34,124 +34,6 @@ function uploadFile(file) {
   return result
 }
 
-function mapCustomerFieldsToDb(customer) {
-  return {
-    // cid: customer.cid,
-    sid: customer.sid,
-    accountNumber: customer.basic.acountId,
-    status: customer.status,
-    group: customer.basic.group,
-    fullName: customer.basic.name,
-    idNumber: customer.basic.idNumber,
-    birthday: customer.basic.birthday,
-    photoURL: customer.avatar,
-    homePhone: customer.basic.homePhoneNumber,
-    cellPhone: customer.basic.cellPhoneNumber,
-    occupation: customer.basic.jobOccupation,
-    companyAddress: customer.basic.companyAddress,
-    companyName: customer.basic.companyName,
-    companyPhoneNumber: customer.basic.companyPhoneNumber,
-    bankInfo: {
-      bank_name: '',
-      bank_code: '',
-      bank_account: customer.basic.bankAccount,
-    },
-    residenceAddress: '',
-    address: customer.basic.address,
-    addressOwner: customer.basic.houseOwnership === 'own',
-    familyInfo: {
-      name: customer.family.familyName,
-      phoneNumber: customer.family.familyPhoneNumber,
-      address: customer.family.familyAddress,
-      occupation: customer.family.familyJobOccupation,
-      relationship: customer.family.familyRelationship,
-    },
-    guarantor: {
-      name: customer.guarantor.guarantorName,
-      phoneNumber: customer.guarantor.guarantorContactNumber,
-      note: customer.guarantor.guarantorContent,
-      days: customer.guarantor.guarantorDays,
-      amount: customer.guarantor.guarantorAmount,
-      address: customer.guarantor.guarantorAddress,
-    },
-    credit: customer.credit.creditInfo,
-    debt: {
-      debtBorrowingDate: customer.debt.debtBorrowingDate,
-      debtRepaymentMonth: customer.debt.debtRepaymentMonth,
-      debtChequesAmount: customer.debt.debtChequesAmount,
-      debtChequesState: customer.debt.debtChequesState,
-      debtNote: customer.debt.debtNote,
-    },
-    promissoryNotesAmount: 0,
-    promissoryNotesStatus: '',
-    loan: {
-      loanDateTime: '',
-      principal: 0,
-      interestRate: 0,
-      paymentDuration: 0,
-      payable: 0,
-      dueDateTime: '',
-      penalty: 0,
-    },
-    loanHistories: [],
-    totalReceived: {
-      paymentReceived: 0,
-      penaltyRecieved: 0,
-      allowanceReceived: 0,
-    },
-  }
-}
-
-function mapCustomerFieldsFromDb(customer) {
-  return {
-    cid: customer.id,
-    sid: customer.sid,
-    status: customer.status,
-    avatar: customer.photoURL,
-    basic: {
-      name: customer.fullName,
-      group: customer.group,
-      acountId: customer.accountNumber,
-      birthday: customer.birthday,
-      idNumber: customer.idNumber,
-      bankAccount: customer.bankInfo.bank_account,
-      cellPhoneNumber: customer.cellPhone,
-      homePhoneNumber: customer.homePhone,
-      address: customer.address,
-      houseOwnership: customer.addressOwner ? 'own' : 'rent',
-      jobOccupation: customer.occupation,
-      companyAddress: customer.companyAddress,
-      companyName: customer.companyName,
-      companyPhoneNumber: customer.companyPhoneNumber,
-    },
-    family: {
-      familyName: customer.familyInfo.name,
-      familyPhoneNumber: customer.familyInfo.phoneNumber,
-      familyAddress: customer.familyInfo.address,
-      familyJobOccupation: customer.familyInfo.occupation,
-      familyRelationship: customer.familyInfo.relationship,
-    },
-    guarantor: {
-      guarantorName: customer.guarantor.name,
-      guarantorContactNumber: customer.guarantor.phoneNumber,
-      guarantorAddress: customer.guarantor.address,
-      guarantorAmount: customer.guarantor.amount,
-      guarantorDays: customer.guarantor.days,
-      guarantorContent: customer.guarantor.note,
-    },
-    credit: {
-      creditInfo: customer.credit,
-    },
-    debt: {
-      debtBorrowingDate: customer.debt.debtBorrowingDate,
-      debtRepaymentMonth: customer.debt.debtRepaymentMonth,
-      debtChequesAmount: customer.debt.debtChequesAmount,
-      debtChequesState: customer.debt.debtChequesState,
-      debtNote: customer.debt.debtNote,
-    },
-  }
-}
-
 export default {
   namespaced: true,
   state: {
@@ -162,7 +44,7 @@ export default {
       backName: 'index',
     },
     customers: [],
-    customerInfo: {
+    /* customerInfo: {
       cid: '001',
       sid: '001',
       status: 'observed',
@@ -232,7 +114,101 @@ export default {
         debtChequesState: '',
         debtNote: '',
       },
+    }, */
+    customerInfo: Object,
+    blankCustomerInfo: {
+      id: '',
+      sid: '',
+      status: '',
+      photoURL: '',
+      promissoryNotesAmount: 0,
+      promissoryNotesStatus: '',
+      basicInfo: {
+        fullName: '',
+        group: '',
+        accountNumber: '',
+        birthday: '',
+        idNumber: '',
+        bankInfo: {
+          bankName: '',
+          bankCode: '',
+          bankAccount: '',
+        },
+        cellPhoneNumber: '',
+        homePhoneNumber: '',
+        residenceAddress: 'none',
+        address: '',
+        houseOwnership: 'own',
+        jobOccupation: '',
+        companyAddress: '',
+        companyName: '',
+        companyPhoneNumber: '',
+      },
+      familyInfo: {
+        name: '',
+        phoneNumber: '',
+        address: '',
+        jobOccupation: '',
+        relationship: '',
+      },
+      guarantorInfo: {
+        name: '',
+        phoneNumber: '',
+        address: '',
+        amount: 0,
+        days: 0,
+        note: '',
+      },
+      creditInfo: {
+        credit: '',
+      },
+      debtInfo: {
+        borrowingDate: '',
+        repaymentMonth: 0,
+        chequesAmount: 0,
+        chequesState: '',
+        note: '',
+      },
+      loan: {
+        loanDateTime: '',
+        principal: 0,
+        interestRate: 0,
+        paymentDuration: 0,
+        payable: 0,
+        dueDateTime: '',
+        penalty: 0,
+      },
+      loanHistories: [],
+      totalReceived: {
+        paymentReceived: 0,
+        penaltyRecieved: 0,
+        allowanceReceived: 0,
+      },
     },
+    customerTransactions: [
+      {
+        tid: '001',
+        date: '2020/03/25',
+        loan: '50000',
+        rate: 10,
+        payable: 5000,
+        penalty: 500,
+        received: 4500,
+        total: 50500,
+        note: 'content',
+      },
+      {
+        tid: '002',
+        date: '2020/03/25',
+        loan: '50000',
+        rate: 10,
+        payable: 5000,
+        penalty: 500,
+        received: 4500,
+        total: 50500,
+        note: 'content',
+      },
+    ],
     avatarFile: null,
   },
   getters: {
@@ -288,7 +264,7 @@ export default {
             if (res.docs.length > 0) {
               const rawCustomers = res.docs.map(item => ({ id: item.id, ...item.data() }))
               const mappedCustomers = rawCustomers.map(item => ({
-                ...mapCustomerFieldsFromDb(item),
+                ...item,
                 transaction: context.state.customerInfo.transaction, // Demo(static) data
               }))
               context.commit('SET_CUSTOMERS', mappedCustomers)
@@ -312,8 +288,9 @@ export default {
             if (res.exists) {
               const rawCustomer = res.data()
               const mappedCustomer = {
-                ...mapCustomerFieldsFromDb({ id: cid, ...rawCustomer }),
-                transaction: context.state.customerInfo.transaction, // Demo(static) data
+                ...rawCustomer,
+                id: cid,
+                transaction: context.state.customerTransactions, // Demo(static) data
               }
               context.commit('SET_CUSTOMERINFO', mappedCustomer)
             }
@@ -333,8 +310,8 @@ export default {
       * Get an URL to access to an image stored and Add it to customer object
       * Store a customer object to firebase firestore
     */
-    addCustomer(context, customerInfo) {
-      const customer = { ...mapCustomerFieldsToDb(customerInfo) }
+    addCustomer(context, data) {
+      const customer = { ...data }
       const { currentUser } = firebase.auth
       customer.sid = currentUser.uid
       customer.status = 'none'
@@ -343,7 +320,6 @@ export default {
         try {
           return uploadFile(context.state.avatarFile).then(res => {
             customer.photoURL = res.tokenUrl
-            console.log(customer)
             context.commit('SET_AVATAR_FILE', null)
             return db.addOneDoc({
               collectionName: 'customers',
@@ -371,10 +347,49 @@ export default {
     },
 
     /**
+      Update a customer already registered by customer's id in the firestore db. (Dispatch Function)
+      * Update db
+      * Commit an customer object mapped
+    */
+    updateCustomerWithIdFromDb(context, { id, update }) {
+      try {
+        return db.updateOneDoc({ collectionName: 'customers', id, ...update })
+          .then(() => {
+            context.commit('SET_CUSTOMERINFO', {
+              ...context.state.customerInfo,
+              ...update,
+            })
+          })
+      } catch (error) {
+        return { status: 'error', errorText: error }
+      }
+    },
+
+    /**
       Dispatch Function to update an avatar image file in the store
     */
-    setAvatarFile(context, file) {
+    setAvatarFile(context, { file, save }) {
       context.commit('SET_AVATAR_FILE', file)
+      const customer = { ...context.state.customerInfo }
+      if (save && file !== null) {
+        try {
+          return uploadFile(file).then(res => {
+            customer.photoURL = res.tokenUrl
+            context.commit('SET_AVATAR_FILE', null)
+            return db.updateOneDoc({
+              collectionName: 'customers',
+              id: customer.id,
+              photoURL: res.tokenUrl,
+            }).then(res1 => {
+              context.commit('SET_CUSTOMERINFO', customer)
+              return { ...res, ...res1, status: 'success' }
+            })
+          })
+        } catch (error) {
+          return { status: 'error', errorText: error }
+        }
+      }
+      return customer
     },
   },
 }

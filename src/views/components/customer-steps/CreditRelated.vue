@@ -7,16 +7,16 @@
       <b-col cols="12">
         <b-form-group
           label="Credit Info"
-          label-for="creditInfo"
+          label-for="credit"
         >
           <b-form-textarea
-            id="creditInfo"
+            id="credit"
             placeholder="Content"
             :disabled="editDisabled"
             rows="10"
-            v-model="items.creditInfo"
-            @change="e => changeValue('creditInfo', e)"
-            :state="validateAction ? validations.find(d => d.key === 'creditInfo').validate : null"
+            v-model="items.credit"
+            @change="e => changeValue('credit', e)"
+            :state="validateAction ? validations.find(d => d.key === 'credit').validate : null"
           />
         </b-form-group>
       </b-col>

@@ -28,15 +28,15 @@
       <b-col sm="4">
         <b-form-group
           label="Name"
-          label-for="name"
+          label-for="fullName"
         >
           <b-form-input
-            id="name"
+            id="fullName"
             placeholder="Enter Name"
             :disabled="editDisabled"
-            v-model="items.name"
-            @change="e => changeValue('name', e)"
-            :state="validateAction ? validations.find(d => d.key === 'name').validate : null"
+            v-model="items.fullName"
+            @change="e => changeValue('fullName', e)"
+            :state="validateAction ? validations.find(d => d.key === 'fullName').validate : null"
           />
         </b-form-group>
       </b-col>
@@ -66,15 +66,15 @@
       <b-col sm="4">
         <b-form-group
           label="Acount ID"
-          label-for="acountId"
+          label-for="accountNumber"
         >
           <b-form-input
-            id="acountId"
+            id="accountNumber"
             placeholder="Acount ID"
             :disabled="editDisabled"
-            v-model="items.acountId"
-            @change="e => changeValue('acountId', e)"
-            :state="validateAction ? validations.find(d => d.key === 'acountId').validate : null"
+            v-model="items.accountNumber"
+            @change="e => changeValue('accountNumber', e)"
+            :state="validateAction ? validations.find(d => d.key === 'accountNumber').validate : null"
           />
         </b-form-group>
       </b-col>
@@ -116,9 +116,9 @@
             id="bankAccount"
             placeholder="Bank Account"
             :disabled="editDisabled"
-            v-model="items.bankAccount"
-            @change="e => changeValue('bankAccount', e)"
-            :state="validateAction ? validations.find(d => d.key === 'bankAccount').validate : null"
+            v-model="items.bankInfo.bankAccount"
+            @change="e => changeValue('bankInfo.bankAccount', e)"
+            :state="validateAction ? validations.find(d => d.key === 'bankInfo').validate : null"
           />
         </b-form-group>
       </b-col>
@@ -338,6 +338,14 @@ export default {
   },
   created() {
     this.group = this.items.group ? this.items.group : this.groups[0].key
+    const file = this.$store.state.app.avatarFile
+    if (file) {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => {
+        this.$set(this, 'imgFile', reader.result)
+      }
+    }
   },
   mounted() {
   },
@@ -352,7 +360,7 @@ export default {
     fileChange(event) {
       const file = event.target.files[0]
       if (file) {
-        store.dispatch('app/setAvatarFile', file)
+        store.dispatch('app/setAvatarFile', { file, save: false })
         const reader = new FileReader()
         reader.readAsDataURL(file)
         reader.onload = () => {

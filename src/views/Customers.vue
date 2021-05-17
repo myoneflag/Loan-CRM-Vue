@@ -441,7 +441,7 @@ export default {
           key: 'all',
           name: 'All',
         },
-        ...Object.keys(_.groupBy(_.filter(this.customers, customer => customer.status !== ''), 'status')).map(key => ({
+        ...Object.keys(_.groupBy(_.filter(this.customers, customer => customer.status !== 'none'), 'status')).map(key => ({
           key,
           name: this.statusItems.find(d => d.key === key) ? this.statusItems.find(d => d.key === key).name : '',
         })),
@@ -489,16 +489,16 @@ export default {
     getCustomers(newVal) {
       const filterCustomers = newVal.map(customer => {
         const row = {
-          id: customer.cid,
+          id: customer.id,
           status: customer.status,
-          group: customer.basic.group,
+          group: customer.basicInfo.group,
           user: {
-            name: customer.basic.name,
-            acountId: customer.basic.acountId,
-            group: customer.basic.group,
-            avatar: customer.avatar,
+            name: customer.basicInfo.fullName,
+            acountId: customer.basicInfo.accountNumber,
+            group: customer.basicInfo.group,
+            avatar: customer.photoURL,
           },
-          phone: customer.basic.cellPhoneNumber,
+          phone: customer.basicInfo.cellPhoneNumber,
           rate: 0,
           nextPayment: 0,
           duration: 0,
@@ -535,7 +535,7 @@ export default {
           total: newVal.map(d => d.totalLoan).reduce((a, b) => a.totalLoan + b.totalLoan) || 0,
         },
       })
-      console.log(newVal)
+      // console.log(newVal)
     },
   },
   created() {

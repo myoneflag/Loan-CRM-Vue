@@ -13,9 +13,9 @@
             id="guarantorName"
             placeholder="Guarantor Name"
             :disabled="editDisabled"
-            v-model="items.guarantorName"
-            @change="e => changeValue('guarantorName', e)"
-            :state="validateAction ? validations.find(d => d.key === 'guarantorName').validate : null"
+            v-model="items.name"
+            @change="e => changeValue('name', e)"
+            :state="validateAction ? validations.find(d => d.key === 'name').validate : null"
           />
         </b-form-group>
       </b-col>
@@ -28,9 +28,9 @@
             id="guarantorContactNumber"
             placeholder="Contact Number"
             :disabled="editDisabled"
-            v-model="items.guarantorContactNumber"
-            @change="e => changeValue('guarantorContactNumber', e)"
-            :state="validateAction ? validations.find(d => d.key === 'guarantorContactNumber').validate : null"
+            v-model="items.phoneNumber"
+            @change="e => changeValue('phoneNumber', e)"
+            :state="validateAction ? validations.find(d => d.key === 'phoneNumber').validate : null"
           />
         </b-form-group>
       </b-col>
@@ -43,9 +43,9 @@
             id="guarantorAddress"
             placeholder="Address"
             :disabled="editDisabled"
-            v-model="items.guarantorAddress"
-            @change="e => changeValue('guarantorAddress', e)"
-            :state="validateAction ? validations.find(d => d.key === 'guarantorAddress').validate : null"
+            v-model="items.address"
+            @change="e => changeValue('address', e)"
+            :state="validateAction ? validations.find(d => d.key === 'address').validate : null"
           />
         </b-form-group>
       </b-col>
@@ -59,12 +59,12 @@
             prepend="$"
             append=".00"
             class="input-group-merge"
-            :disabled="editDisabled"
-            :state="validateAction ? validations.find(d => d.key === 'guarantorAmount').validate : null"
+            :state="validateAction ? validations.find(d => d.key === 'amount').validate : null"
           >
             <b-form-input
-              @change="e => changeValue('guarantorAmount', e)"
-              v-model="items.guarantorAmount"
+              @change="e => changeValue('amount', e)"
+              :disabled="editDisabled"
+              v-model="items.amount"
               placeholder="0"
             />
           </b-input-group>
@@ -79,12 +79,12 @@
             id="guarantorDays"
             append="Days"
             class="input-group-merge"
-            :disabled="editDisabled"
-            :state="validateAction ? validations.find(d => d.key === 'guarantorDays').validate : null"
+            :state="validateAction ? validations.find(d => d.key === 'days').validate : null"
           >
             <b-form-input
-              @change="e => changeValue('guarantorDays', e)"
-              v-model="items.guarantorDays"
+              @change="e => changeValue('days', e)"
+              :disabled="editDisabled"
+              v-model="items.days"
               placeholder="0"
             />
           </b-input-group>
@@ -100,9 +100,9 @@
             placeholder="Content"
             :disabled="editDisabled"
             rows="5"
-            v-model="items.guarantorContent"
-            @change="e => changeValue('guarantorContent', e)"
-            :state="validateAction ? validations.find(d => d.key === 'guarantorContent').validate : null"
+            v-model="items.note"
+            @change="e => changeValue('note', e)"
+            :state="validateAction ? validations.find(d => d.key === 'note').validate : null"
           />
         </b-form-group>
       </b-col>

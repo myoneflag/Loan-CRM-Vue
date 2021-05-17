@@ -7,31 +7,31 @@
       <b-col cols="4">
         <b-form-group
           label="Borrowing Date"
-          label-for="debtBorrowingDate"
+          label-for="borrowingDate"
         >
           <loan-date-picker
-            id="debtBorrowingDate"
-            :value="items.debtBorrowingDate"
+            id="borrowingDate"
+            :value="items.borrowingDate"
             :disabled="editDisabled"
-            @change="e => changeValue('debtBorrowingDate', e)"
-            :state="validateAction ? validations.find(d => d.key === 'debtBorrowingDate').validate : null"
+            @change="e => changeValue('borrowingDate', e)"
+            :state="validateAction ? validations.find(d => d.key === 'borrowingDate').validate : null"
           />
         </b-form-group>
         <b-form-group
           label="Cheques Amount"
-          label-for="debtChequesAmount"
+          label-for="chequesAmount"
         >
           <b-input-group
-            id="debtChequesAmount"
+            id="chequesAmount"
             prepend="$"
             append=".00"
             class="input-group-merge"
-            :disabled="editDisabled"
-            :state="validateAction ? validations.find(d => d.key === 'debtChequesAmount').validate : null"
+            :state="validateAction ? validations.find(d => d.key === 'chequesAmount').validate : null"
           >
             <b-form-input
-              v-model="items.debtChequesAmount"
-              @change="e => changeValue('debtChequesAmount', e)"
+              v-model="items.chequesAmount"
+              @change="e => changeValue('chequesAmount', e)"
+              :disabled="editDisabled"
               placeholder="0"
             />
           </b-input-group>
@@ -40,44 +40,46 @@
       <b-col cols="4">
         <b-form-group
           label="Repayment/Month"
-          label-for="debtRepaymentMonth"
+          label-for="repaymentMonth"
         >
           <!-- <b-form-input
-            id="debtRepaymentMonth"
+            id="repaymentMonth"
             placeholder="15天"
             :disabled="editDisabled"
-            v-model="items.debtRepaymentMonth"
-            @change="e => changeValue('debtRepaymentMonth', e)"
-            :state="validateAction ? validations.find(d => d.key === 'debtRepaymentMonth').validate : null"
+            v-model="items.repaymentMonth"
+            @change="e => changeValue('repaymentMonth', e)"
+            :state="validateAction ? validations.find(d => d.key === 'repaymentMonth').validate : null"
           /> -->
           <b-input-group
-            id="debtRepaymentMonth"
+            id="repaymentMonth"
             append="天"
             class="input-group-merge"
-            :disabled="editDisabled"
-            v-model="items.debtRepaymentMonth"
-            @change="e => changeValue('debtRepaymentMonth', e.target.value)"
-            :state="validateAction ? validations.find(d => d.key === 'debtRepaymentMonth').validate : null"
+            :state="validateAction ? validations.find(d => d.key === 'repaymentMonth').validate : null"
           >
-            <b-form-input placeholder="0" />
+            <b-form-input
+              :disabled="editDisabled"
+              v-model="items.repaymentMonth"
+              @change="e => changeValue('repaymentMonth', e)"
+              placeholder="0"
+            />
           </b-input-group>
         </b-form-group>
         <b-form-group
           label="Cheques Status"
-          label-for="debtChequesState"
+          label-for="chequesState"
         >
           <b-dropdown
-            id="debtChequesState"
+            id="chequesState"
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
             :disabled="editDisabled"
             :text="statuses.find(d => d.key === status).name"
-            :variant="`outline-${validateAction ? validations.find(d => d.key === 'debtChequesState').validate ? 'success' : 'danger' : 'dark'}`"
+            :variant="`outline-${validateAction ? validations.find(d => d.key === 'chequesState').validate ? 'success' : 'danger' : 'dark'}`"
             class="w-100 mb-1 full-width-dropdown"
           >
             <b-dropdown-item
               v-for="item in statuses"
               :key="item.key"
-              @click="changeValue('debtChequesState', item.key)"
+              @click="changeValue('chequesState', item.key)"
             >
               {{ item.name }}
             </b-dropdown-item>
@@ -94,9 +96,9 @@
             placeholder="Content"
             :disabled="editDisabled"
             rows="4"
-            v-model="items.debtNote"
-            @change="e => changeValue('debtNote', e)"
-            :state="validateAction ? validations.find(d => d.key === 'debtNote').validate : null"
+            v-model="items.note"
+            @change="e => changeValue('note', e)"
+            :state="validateAction ? validations.find(d => d.key === 'note').validate : null"
           />
         </b-form-group>
       </b-col>
@@ -152,17 +154,17 @@ export default {
   },
   watch: {
     status(newVal) {
-      this.$emit('change', 'debtChequesState', newVal)
+      this.$emit('change', 'chequesState', newVal)
     },
   },
   created() {
-    this.status = this.items.debtChequesState ? this.items.debtChequesState : this.statuses[0].key
+    this.status = this.items.chequesState ? this.items.chequesState : this.statuses[0].key
   },
   mounted() {
   },
   methods: {
     changeValue(key, value) {
-      if (key === 'debtChequesState') {
+      if (key === 'chequesState') {
         this.$set(this, 'status', value)
       } else {
         this.$emit('change', key, value)
