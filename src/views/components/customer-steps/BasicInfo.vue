@@ -71,7 +71,7 @@
           <b-form-input
             id="accountNumber"
             placeholder="Acount ID"
-            :disabled="editDisabled"
+            :disabled="true"
             v-model="items.accountNumber"
             @change="e => changeValue('accountNumber', e)"
             :state="validateAction ? validations.find(d => d.key === 'accountNumber').validate : null"

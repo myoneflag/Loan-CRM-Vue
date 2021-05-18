@@ -47,6 +47,16 @@ import Guarantor from './components/customer-steps/Guarantor.vue'
 import CreditRelated from './components/customer-steps/CreditRelated.vue'
 import DebtRelated from './components/customer-steps/DebtRelated.vue'
 
+function makeId(length) {
+  const result = []
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  const charactersLength = characters.length
+  for (let i = 0; i < length; i += 1) {
+    result.push(characters.charAt(Math.floor(Math.random() * charactersLength)))
+  }
+  return result.join('')
+}
+
 export default {
   components: {
     BCard,
@@ -118,7 +128,13 @@ export default {
   },
   created() {
     /** Set State (allStepsItmes) from Store for the customerInfo  */
-    this.$set(this, 'allStepsItmes', { ...this.$store.state.app.blankCustomerInfo })
+    this.$set(this, 'allStepsItmes', {
+      ...this.$store.state.app.blankCustomerInfo,
+      basicInfo: {
+        ...this.$store.state.app.blankCustomerInfo.basicInfo,
+        accountNumber: makeId(12),
+      },
+    })
 
     /** Set State (validations) from allStepsItmes for a validation of each field */
     this.$set(this, 'validations', Object.keys(this.allStepsItmes[this.steps[this.stepNumber].id]).map(itemKey => ({
@@ -148,24 +164,17 @@ export default {
         ...this.allStepsItmes,
         [this.steps[this.stepNumber].id]: { ...obj },
       })
-      /* this.$set(this, 'allStepsItmes', { // Update the state for any field changed in the current step
-        ...this.allStepsItmes,
-        [this.steps[this.stepNumber].id]: {
-          ...this.allStepsItmes[[this.steps[this.stepNumber].id]],
-          [key]: value,
-        },
-      }) */
       if (value !== '') { // A validation of a field changed is true as that is Not empty
         this.validations.find(d => d.key === key.split('.')[0]).validate = true
       } else { // A validation of a field changed is false as that is empty
         this.validations.find(d => d.key === key.split('.')[0]).validate = false
       }
+      // console.log(this.validations)
     },
     nextStep() {
       if (this.stepNumber === this.steps.length - 1 && this.validate) { // Finish
         this.$set(this, 'saveSpinner', true)
         store.dispatch('app/addCustomer', this.allStepsItmes).then(res => {
-          // console.log(res)
           if (res.status === 'success') {
             this.$set(this, 'saveSpinner', false)
             this.$bvToast.toast('A customer was registered successfully.', {
@@ -174,6 +183,7 @@ export default {
               solid: true,
               toaster: 'b-toaster-top-center',
             })
+            this.$router.push({ path: 'customer', query: { id: res.id } })
           }
         })
       } else if (this.validate) { // To next step

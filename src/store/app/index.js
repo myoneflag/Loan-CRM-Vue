@@ -342,8 +342,14 @@ export default {
               collectionName: 'customers',
               ...customer,
             }).then(res1 => {
+              customer.id = res1.id
               context.commit('ADD_CUSTOMER', customer)
-              return { ...res, ...res1, status: 'success' }
+              return {
+                ...res,
+                ...res1,
+                id: res1.id,
+                status: 'success',
+              }
             })
           })
         } catch (error) {
@@ -355,8 +361,9 @@ export default {
           collectionName: 'customers',
           ...customer,
         }).then(res => {
+          customer.id = res.id
           context.commit('ADD_CUSTOMER', customer)
-          return { ...res, status: 'success' }
+          return { ...res, id: res.id, status: 'success' }
         })
       } catch (error) {
         return { status: 'error', errorText: error }
