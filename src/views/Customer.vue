@@ -131,7 +131,10 @@
                 variant='primary'
                 @activeKey="setActiveInfoBtnGroup"
               />
-              <div class="flex-grow-1 text-right">
+              <div
+                 v-show="activeInfoBtnGroup === 'transaction'"
+                class="flex-grow-1 text-right"
+              >
                 <b-button
                   v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                   variant="primary"
@@ -380,9 +383,9 @@ export default {
       /** Variable to indicate if all the field controls in a current category would be edit disabled/enabled the validation property when 'Edit' button will be clicked */
       editDisabled: true,
 
-      imgFile: null,
+      imgFile: null, // Avatar image
 
-      saveSpinner: false,
+      saveSpinner: false, // Ovrelay and Spinner durring access to db
     }
   },
   watch: {
@@ -524,11 +527,18 @@ export default {
       if (file) {
         this.$set(this, 'saveSpinner', true)
         store.dispatch('app/setAvatarFile', { file, save: true }).then(res => {
+          this.$set(this, 'saveSpinner', false)
           if (res.status === 'success') {
-            this.$set(this, 'saveSpinner', false)
             this.$bvToast.toast('Your profile image was updated successfully.', {
               title: 'Success',
               variant: 'success',
+              solid: true,
+              toaster: 'b-toaster-top-center',
+            })
+          } else {
+            this.$bvToast.toast(res.error, {
+              title: 'Failed',
+              variant: 'danger',
               solid: true,
               toaster: 'b-toaster-top-center',
             })

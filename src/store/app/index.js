@@ -34,6 +34,16 @@ function uploadFile(file) {
   return result
 }
 
+function deleteFile(fileName) {
+  // Create a reference to the file to delete
+  const storageRef = firebase.storage.ref()
+  const desertRef = storageRef.child(`avatarImages/${fileName}`)
+
+  // Delete the file
+  const result = desertRef.delete().then(() => ({ status: 'success' })).catch(error => ({ error }))
+  return result
+}
+
 export default {
   namespaced: true,
   state: {
@@ -253,7 +263,8 @@ export default {
       Get all customers already registered by a user authenticated from the firestore db. (Dispatch Function)
       * Required authenticate user's id
       * Query all the customers that authenticated user has from firestore
-      * Map the got each customer's fields to the schema in vuex store. <-- function: mapCustomerFieldsFromDb() -->
+      * Map the got each customer's fields to the schema in vuex store.
+        <-- function: mapCustomerFieldsFromDb() -->
       * Commit an customer's array mapped
     */
     getCustomersFromDb(context) {
@@ -278,7 +289,8 @@ export default {
     /**
       Get a customer already registered by customer's id from the firestore db. (Dispatch Function)
       * Query special customer with customer's id from firestore
-      * Map the got customer's fields to the schema in vuex store. <-- function: mapCustomerFieldsFromDb() -->
+      * Map the got customer's fields to the schema in vuex store.
+        <-- function: mapCustomerFieldsFromDb() -->
       * Commit an customer object mapped
     */
     getCustomerWithIdFromDb(context, cid) {
@@ -302,10 +314,13 @@ export default {
 
     /**
       Store a customer to db (A dispatch Function that is called in any component)
-      * Map the customer's fields to the schema in firestore db. <-- function: mapCustomerFieldsToDb() -->
+        - data: customer information (object)
+      * Map the customer's fields to the schema in firestore db.
+        <-- function: mapCustomerFieldsToDb() -->
       * Add authenticated user's id to customer object
       * Initialize status to empty string as it wasn't chosen yet
-      * Store avatar image to firebase storage if that image file is available. <-- function: uploadFile() -->
+      * Store avatar image to firebase storage if that image file is available.
+        <-- function: uploadFile() -->
       * Store only a cutomer object to firebase firestore if that image file isn't available
       * Get an URL to access to an image stored and Add it to customer object
       * Store a customer object to firebase firestore
@@ -316,10 +331,12 @@ export default {
       customer.sid = currentUser.uid
       customer.status = 'none'
       customer.photoURL = ''
+      customer.photoName = ''
       if (context.state.avatarFile !== null) {
         try {
           return uploadFile(context.state.avatarFile).then(res => {
             customer.photoURL = res.tokenUrl
+            customer.photoName = res.snapshot.metadata.name
             context.commit('SET_AVATAR_FILE', null)
             return db.addOneDoc({
               collectionName: 'customers',
@@ -349,6 +366,8 @@ export default {
     /**
       Update a customer already registered by customer's id in the firestore db. (Dispatch Function)
       * Update db
+        - id: customer's id (string)
+        - update: object of the fields to updating (object)
       * Commit an customer object mapped
     */
     updateCustomerWithIdFromDb(context, { id, update }) {
@@ -367,6 +386,11 @@ export default {
 
     /**
       Dispatch Function to update an avatar image file in the store
+        - file: Updating image file (file)
+        - save: Will update or not a file to firestore (true/false)
+      * Update customer in store(vuex) with image file
+      * Store a new image
+      * Update customer's avatar image url in db
     */
     setAvatarFile(context, { file, save }) {
       context.commit('SET_AVATAR_FILE', file)
@@ -374,14 +398,30 @@ export default {
       if (save && file !== null) {
         try {
           return uploadFile(file).then(res => {
+            const deleteFileName = customer.photoName
             customer.photoURL = res.tokenUrl
+            customer.photoName = res.snapshot.metadata.name || ''
             context.commit('SET_AVATAR_FILE', null)
             return db.updateOneDoc({
               collectionName: 'customers',
               id: customer.id,
               photoURL: res.tokenUrl,
+              photoName: customer.photoName,
             }).then(res1 => {
               context.commit('SET_CUSTOMERINFO', customer)
+              if (deleteFileName) {
+                return deleteFile(deleteFileName).then(res2 => {
+                  if (res2.status === 'success') {
+                    return { ...res, ...res1, status: 'success' }
+                  }
+                  return {
+                    ...res,
+                    ...res1,
+                    status: 'success',
+                    error: res2,
+                  }
+                })
+              }
               return { ...res, ...res1, status: 'success' }
             })
           })

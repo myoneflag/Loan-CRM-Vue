@@ -15,7 +15,7 @@
       <b-row>
         <b-col
           v-for="item in statisticsItems"
-          :key="item.icon"
+          :key="item.title"
           class="d-flex flex-column align-items-center justify-content-center"
           style="height: 100px;"
         >
