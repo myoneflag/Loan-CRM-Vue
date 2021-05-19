@@ -72,8 +72,7 @@
             id="accountNumber"
             placeholder="Acount ID"
             :disabled="true"
-            v-model="items.accountNumber"
-            @change="e => changeValue('accountNumber', e)"
+            :value="items.accountNumber"
             :state="validateAction ? validations.find(d => d.key === 'accountNumber').validate : null"
           />
         </b-form-group>

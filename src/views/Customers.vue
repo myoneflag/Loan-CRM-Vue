@@ -154,7 +154,8 @@
             </b-col>
             <b-col cols="6">
               <b-card-text class="font-small-3 mb-0 ml-1">
-                {{ perPage*(currentPage-1)+perPage > totalRows ?
+                {{ totalRows === 0 ? `Showing 0 - ${totalRows} of ${totalRows} entries` :
+                  perPage*(currentPage-1)+perPage > totalRows ?
                   `Showing ${perPage*(currentPage-1)+1} - ${totalRows} of ${totalRows} entries` :
                   `Showing ${perPage*(currentPage-1)+1} - ${perPage*(currentPage-1)+perPage} of ${totalRows} entries`
                 }}
@@ -305,7 +306,7 @@ export default {
         fields: [
           { key: 'status', label: 'Status' },
           { key: 'user', label: 'User', class: 'text-center' },
-          { key: 'phone', label: 'Phone' },
+          { key: 'phone', label: 'Phone', class: 'text-center' },
           { key: 'rate', label: 'Interest Rate', class: 'text-right' },
           {
             key: 'nextPayment',
@@ -487,7 +488,7 @@ export default {
       * Calculate the customers counts
     */
     getCustomers(newVal) {
-      const filterCustomers = newVal.map(customer => {
+      const filterCustomers = _.sortBy(newVal, ['updatedAt']).reverse().map(customer => {
         const row = {
           id: customer.id,
           status: customer.status,
@@ -499,9 +500,9 @@ export default {
             avatar: customer.photoURL,
           },
           phone: customer.basicInfo.cellPhoneNumber,
-          rate: 0,
+          rate: customer.loan.interestRate,
           nextPayment: 0,
-          duration: 0,
+          duration: customer.loan.paymentDuration,
           lendDate: '',
           totalLoan: 0,
           promissoryNote: '',
@@ -510,7 +511,6 @@ export default {
         return row
       })
       this.$set(this, 'customers', filterCustomers)
-      this.$set(this, 'totalRows', filterCustomers.length)
     },
 
     /**
@@ -536,6 +536,10 @@ export default {
         },
       })
       // console.log(newVal)
+    },
+
+    filteredRows(newVal) {
+      this.$set(this, 'totalRows', newVal.length)
     },
   },
   created() {

@@ -40,22 +40,13 @@ import {
   BCard, BCardHeader, BCardFooter, BCardText, BButton, BOverlay,
 } from 'bootstrap-vue'
 import _ from 'lodash'
+import common from '@/libs/loan'
 import StepLable from './components/StepLabel.vue'
 import BasicInfo from './components/customer-steps/BasicInfo.vue'
 import FamilyInfo from './components/customer-steps/FamilyInfo.vue'
 import Guarantor from './components/customer-steps/Guarantor.vue'
 import CreditRelated from './components/customer-steps/CreditRelated.vue'
 import DebtRelated from './components/customer-steps/DebtRelated.vue'
-
-function makeId(length) {
-  const result = []
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  const charactersLength = characters.length
-  for (let i = 0; i < length; i += 1) {
-    result.push(characters.charAt(Math.floor(Math.random() * charactersLength)))
-  }
-  return result.join('')
-}
 
 export default {
   components: {
@@ -132,7 +123,7 @@ export default {
       ...this.$store.state.app.blankCustomerInfo,
       basicInfo: {
         ...this.$store.state.app.blankCustomerInfo.basicInfo,
-        accountNumber: makeId(12),
+        accountNumber: common.makeIdUpercase(12),
       },
     })
 
