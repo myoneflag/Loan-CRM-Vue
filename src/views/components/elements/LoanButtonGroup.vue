@@ -24,6 +24,10 @@ export default {
   },
   props: {
     buttons: Array,
+    activeKey: {
+      type: String,
+      require: true,
+    },
     variant: {
       type: String,
       default: 'primary',
@@ -38,7 +42,7 @@ export default {
     }
   },
   created() {
-    this.$set(this, 'active', this.buttons.length > 0 ? this.buttons[0].key : '')
+    this.$set(this, 'active', this.activeKey)
   },
   methods: {
     handleClick(key) {

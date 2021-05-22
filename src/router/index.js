@@ -21,7 +21,7 @@ const router = new VueRouter({
       },
     },
     {
-      path: '/',
+      path: '/customers',
       name: 'customers',
       component: () => import('@/views/Customers.vue'),
       meta: {
@@ -44,6 +44,15 @@ const router = new VueRouter({
       component: () => import('@/views/Customer.vue'),
       meta: {
         pageTitle: 'Customer',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/transactions',
+      name: 'transactions',
+      component: () => import('@/views/Transactions.vue'),
+      meta: {
+        pageTitle: 'Transactions',
         requiresAuth: true,
       },
     },

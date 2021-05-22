@@ -76,6 +76,10 @@
                   />
                 </b-form-group>
                 <!-------------------------- Search box End -------------------------->
+
+                <!--
+                  Button to add a customer
+                -->
                 <b-button
                   v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                   variant="primary"
@@ -143,12 +147,39 @@
                 </template>
                 <!------------------- Action column ----------------->
                 <template #cell(action)="data">
-                  <feather-icon
-                    :id="`box-pop-menu-${data.item.id}`"
-                    icon="MoreVerticalIcon"
-                    size="18"
-                    class="cursor-pointer"
-                  />
+                  <b-dropdown
+                    v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                    toggle-class="px-0 py-50 bg-transparent"
+                    variant="flat-dark"
+                    no-caret
+                    right
+                  >
+                    <template
+                      v-slot:button-content
+                    >
+                      <feather-icon
+                        :id="`box-pop-menu-${data.item.id}`"
+                        icon="MoreVerticalIcon"
+                        size="18"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                    <b-dropdown-item
+                      v-b-modal.customer-payment-edit-modal
+                    >
+                      Payment
+                    </b-dropdown-item>
+                    <b-dropdown-item
+                      v-b-modal.customer-loan-edit-modal
+                    >
+                      Loan
+                    </b-dropdown-item>
+                    <b-dropdown-item
+                      @click="editClickHandle(data.item.id)"
+                    >
+                      Edit
+                    </b-dropdown-item>
+                  </b-dropdown>
                 </template>
               </b-table>
             </b-col>
@@ -175,13 +206,86 @@
         </b-card>
       </b-col>
     </b-row>
+
+    <!--
+      Modal to edit the payment of each customer in the customer table
+    -->
+    <b-modal
+      id="customer-payment-edit-modal"
+      title="Lending"
+      ok-title="Save"
+      cancel-title="cancel"
+      cancel-variant="outline-primary"
+      footer-class="justify-content-end flex-row-reverse"
+      centered
+    >
+      <b-form-group
+        label="Date"
+        label-for="lending-datepicker"
+      >
+        <b-form-datepicker
+          id="lending-datepicker"
+          class="mb-1"
+        />
+      </b-form-group>
+      <b-form-group
+        label="Amount"
+        label-for="lending-amount"
+      >
+        <b-input-group
+          id="lending-amount"
+          prepend="$"
+          append=".00"
+          class="input-group-merge"
+        >
+          <b-form-input placeholder="Amount" />
+        </b-input-group>
+      </b-form-group>
+    </b-modal>
+
+    <!--
+      Modal to edit the loan of each customer in the customer table
+    -->
+    <b-modal
+      id="customer-loan-edit-modal"
+      title="Loan"
+      ok-title="Save"
+      cancel-title="cancel"
+      cancel-variant="outline-primary"
+      footer-class="justify-content-end flex-row-reverse"
+      centered
+    >
+      <b-form-group
+        label="Date"
+        label-for="lending-datepicker"
+      >
+        <b-form-datepicker
+          id="lending-datepicker"
+          class="mb-1"
+        />
+      </b-form-group>
+      <b-form-group
+        label="Amount"
+        label-for="lending-amount"
+      >
+        <b-input-group
+          id="lending-amount"
+          prepend="$"
+          append=".00"
+          class="input-group-merge"
+        >
+          <b-form-input placeholder="Amount" />
+        </b-input-group>
+      </b-form-group>
+    </b-modal>
+
   </div>
 </template>
 <script>
 import store from '@/store'
 import { mapGetters } from 'vuex'
 import {
-  BRow, BCol, BCard, BCardHeader, BCardText, BDropdown, BDropdownItem, BFormGroup, BFormInput, BButton, BTable, BBadge, BMedia, BMediaAside, BMediaBody, BAvatar, BLink, BPagination,
+  BRow, BCol, BCard, BCardHeader, BCardText, BDropdown, BDropdownItem, BFormGroup, BInputGroup, BFormInput, BButton, BTable, BBadge, BMedia, BMediaAside, BMediaBody, BAvatar, BLink, BPagination, BModal, VBModal, BFormDatepicker,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import _ from 'lodash'
@@ -198,6 +302,7 @@ export default {
     BDropdown,
     BDropdownItem,
     BFormGroup,
+    BInputGroup,
     BFormInput,
     BButton,
     BTable,
@@ -208,10 +313,13 @@ export default {
     BAvatar,
     BLink,
     BPagination,
+    BModal,
+    BFormDatepicker,
     StatisticCardWithAreaChart,
     CardStatisticsGroup,
   },
   directives: {
+    'b-modal': VBModal,
     Ripple,
   },
   data() {
@@ -435,7 +543,7 @@ export default {
 
     /**
       Get items(Status dropdown) to filter by status from customer's array
-    */
+     */
     filterStatusItems() {
       return [
         {
@@ -451,7 +559,7 @@ export default {
 
     /**
       Get items(Group dropdown) to filter by group from customer's array
-    */
+     */
     filterGroupItems() {
       return [
         {
@@ -467,7 +575,7 @@ export default {
 
     /**
       Filter customers table by status and group chosen
-    */
+     */
     filteredRows() {
       let filtered = []
       if (this.group !== 'all' && this.status !== 'all') {
@@ -484,9 +592,9 @@ export default {
   },
   watch: {
     /**
-      * Map each customer's fields from db to the schema in vuex store when the customers array in store is changed
-      * Calculate the customers counts
-    */
+     * Map each customer's fields from db to the schema in vuex store when the customers array in store is changed
+     * Calculate the customers counts
+     */
     getCustomers(newVal) {
       const filterCustomers = _.sortBy(newVal, ['updatedAt']).reverse().map(customer => {
         const row = {
@@ -514,8 +622,8 @@ export default {
     },
 
     /**
-      Calculate Total loan amount(line chart) and Total member's statistic when the customers array in state is changed
-    */
+     Calculate Total loan amount(line chart) and Total member's statistic when the customers array in state is changed
+     */
     customers(newVal) {
       const groupByStatus = _.groupBy(newVal, 'status')
       const summaryStatus = this.statusItems.map(item => ({
@@ -538,15 +646,26 @@ export default {
       // console.log(newVal)
     },
 
+    /**
+     * Set the row counts of the table whenever table is filtered by the group and status
+     */
     filteredRows(newVal) {
       this.$set(this, 'totalRows', newVal.length)
     },
   },
   created() {
     /**
-      Dispatch a getCustomersFromDb() Function in the vuex store to get customers by authenticated user's id from db
-    */
+     Dispatch a getCustomersFromDb() Function in the vuex store to get customers by authenticated user's id from db
+     */
     store.dispatch('app/getCustomersFromDb')
+
+    /**
+     * Dispatch function that is called manually currently
+     * This will be process automatically later
+     */
+    /* store.dispatch('app/addStore').then(res => {
+      console.log(res)
+    }) */
   },
   mounted() {
     /* Get Collection Arrray (Realtime) */
@@ -606,24 +725,34 @@ export default {
   },
   methods: {
     /**
-      Trigger when a status filter(dropdown menu) is changed
-    */
+     Trigger when a status filter(dropdown menu) is changed
+     */
     handleStatus(key) {
       this.$set(this, 'status', key)
     },
 
     /**
-      Trigger when a group filter(dropdown menu) is changed
-    */
+     Trigger when a group filter(dropdown menu) is changed
+     */
     handleGroup(key) {
       this.$set(this, 'group', key)
     },
 
     /**
-      Trigger when a button to add customer is clicked
-    */
+     Trigger when a button to add customer is clicked
+     */
     handleAddCustomer() {
       this.$router.push({ name: 'customer-register' })
+    },
+
+    editClickHandle(customerId) {
+      this.$router.push({
+        path: 'customer',
+        query: {
+          id: customerId,
+          section: 'basicInfo',
+        },
+      })
     },
   },
 }

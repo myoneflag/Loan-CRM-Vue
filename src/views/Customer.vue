@@ -126,29 +126,67 @@
         <b-col cols="12">
           <b-card>
             <div class="d-flex">
+
+              <!--
+                Botton group
+                Return a key emitted from a button clicked
+              -->
               <loan-button-group
                 :buttons="groupButtons"
+                :activeKey="activeInfoBtnGroup"
                 variant='primary'
                 @activeKey="setActiveInfoBtnGroup"
               />
+
+              <!--
+                Dropdown menu - Actions for a customer
+                * Edit // Edit a customer's note (Modal view)
+                * Delete // Delete a current customer from db (Modal confirm)
+              -->
               <div
-                 v-show="activeInfoBtnGroup === 'transaction'"
                 class="flex-grow-1 text-right"
               >
-                <b-button
+                <b-dropdown
                   v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                  variant="primary"
-                  size="sm"
-                  class="btn-icon mb-1"
+                  toggle-class="px-0 py-50 bg-transparent"
+                  variant="flat-dark"
+                  no-caret
+                  right
                 >
-                  <feather-icon
-                    icon="MoreVerticalIcon"
-                    size="18"
-                    class="cursor-pointer"
-                  />
-                </b-button>
+                  <template
+                    v-slot:button-content
+                  >
+                    <feather-icon
+                      id="customer-action"
+                      icon="MoreVerticalIcon"
+                      size="18"
+                      class="cursor-pointer"
+                    />
+                  </template>
+                  <b-dropdown-item
+                    v-b-modal.customer-note-edit-modal
+                  >
+                    Edit
+                  </b-dropdown-item>
+                  <b-dropdown-item
+                    v-b-modal.customer-delete-modal
+                  >
+                    Delete
+                  </b-dropdown-item>
+                </b-dropdown>
               </div>
             </div>
+
+            <!--
+              Component for a Section selected by group button
+              Transaction, Basic Info, Family Info, Guarantor, Credit-related, Debt-related
+              * is: A section component
+              * items: The fields diplayed in each section (type: object)
+              * validations: Array of the validation(key, validate) for each field in a section selected
+              * validateAction: Boolean value to indicate either a section will be validates or not
+              * editDisabled: Boolean value to inticate either a section is editable or not
+              * change: Function called whenever each field is changed in a section
+            -->
             <component
               :is="groupButtons.find(d => d.key === activeInfoBtnGroup).component"
               :items="customerInfo[activeInfoBtnGroup]"
@@ -157,6 +195,14 @@
               :editDisabled="editDisabled"
               @change="changeValue"
             />
+
+            <!--
+              Edit or Save, Cancel buttons of a section selected
+              * Edit // Active editable status
+              * Save // Save the changes of the currect section
+              * Cancel // Return to disable the active status of the current section
+              Hide for a Transaction section
+            -->
             <div v-show="activeInfoBtnGroup !== 'transaction'">
               <b-button
                 v-ripple.400="'rgba(255, 255, 255, 0.15)'"
@@ -174,9 +220,59 @@
                 Cancel
               </b-button>
             </div>
+
           </b-card>
         </b-col>
       </b-row>
+
+      <!--------------------- Customer note edit Modal --------------------->
+      <b-modal
+        id="customer-note-edit-modal"
+        title="Edit"
+        ok-title="Save"
+        cancel-title="Cancel"
+        cancel-variant="outline-primary"
+        footer-class="justify-content-end flex-row-reverse"
+        centered
+      >
+        <b-form-group
+          label="Note"
+          label-for="note-edit"
+        >
+          <b-form-textarea
+            id="note-edit"
+            rows="6"
+            placeholder="Content"
+          />
+        </b-form-group>
+      </b-modal>
+
+      <!--------------------- Customer delete Modal --------------------->
+      <b-modal
+        id="customer-delete-modal"
+        ok-title="Yes, delete it!"
+        cancel-title="cancel"
+        footer-class="justify-content-center flex-row-reverse"
+        body-class="text-center"
+        cancel-variant="outline-danger"
+        size="md"
+        hide-header
+        centered
+        @ok="deleteCustomer"
+      >
+        <div class="d-flex justify-content-center py-1">
+          <feather-icon
+            icon="AlertCircleIcon"
+            size="80"
+            style="color: #FF9F43;"
+          />
+        </div>
+        <h4 class="px-2 mb-2">Are you sure to delete this customer?</h4>
+        <h6 class="text-muted">
+          You won’t be able to revert this!
+        </h6>
+      </b-modal>
+
     </b-overlay>
   </div>
 </template>
@@ -184,7 +280,7 @@
 import store from '@/store'
 import { mapGetters } from 'vuex'
 import {
-  BCard, BRow, BCol, BMedia, BMediaAside, BMediaBody, BAvatar, BCardText, BDropdown, BDropdownItem, BButton, BOverlay,
+  BCard, BRow, BCol, BMedia, BMediaAside, BMediaBody, BAvatar, BCardText, BDropdown, BDropdownItem, BButton, BOverlay, BModal, VBModal, BFormGroup, BFormTextarea,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import HistoryList from './components/HistoryList.vue'
@@ -210,17 +306,22 @@ export default {
     BCardText,
     BDropdown,
     BDropdownItem,
-    HistoryList,
     BButton,
+    BOverlay,
+    BModal,
+    BFormGroup,
+    BFormTextarea,
+
+    HistoryList,
     LoanButtonGroup,
     BasicInfo,
     FamilyInfo,
     Guarantor,
     CreditRelated,
     DebtRelated,
-    BOverlay,
   },
   directives: {
+    'b-modal': VBModal,
     Ripple,
   },
   data() {
@@ -376,6 +477,7 @@ export default {
 
       /** Key of a button activated(clicked) */
       activeInfoBtnGroup: 'transaction',
+      actionSectionKey: '',
 
       /** Variable to indicate if all the field controls in a current category would show/hide the validation property when 'Save' button will be clicked */
       validateAction: false,
@@ -391,12 +493,18 @@ export default {
   watch: {
     getCustomerInfo(newVal) {
       this.$set(this, 'customerInfo', { ...newVal })
+
       /** Set State (validations) from customerInfo for a validation of each field */
       if (validationKeys.includes(this.activeInfoBtnGroup)) {
         this.$set(this, 'validations', Object.keys(newVal[this.activeInfoBtnGroup]).map(itemKey => ({
           key: itemKey,
           validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '',
         })))
+      }
+
+      if (this.actionSectionKey !== '') {
+        this.$set(this, 'activeInfoBtnGroup', this.actionSectionKey)
+        this.$set(this, 'actionSectionKey', '')
       }
     },
 
@@ -424,6 +532,9 @@ export default {
 
   created() {
     this.$set(this, 'customerId', this.$route.query.id)
+    if (this.$route.query.section && this.$route.query.section !== '') {
+      this.$set(this, 'actionSectionKey', this.$route.query.section)
+    }
     store.dispatch('app/getCustomerWithIdFromDb', this.$route.query.id)
 
     /** Set State (customerInfo) from Store for the customerInfo  */
@@ -460,6 +571,9 @@ export default {
     },
   },
   methods: {
+    /**
+     When customer's status is changed (dropdown menu)
+     */
     changeStatus(key) {
       this.$set(this, 'customerInfo', { // Update the state(customerInfo.profile.status) for status(observed, processing, closed, bad debt) of a customer
         ...this.customerInfo,
@@ -476,9 +590,14 @@ export default {
         })
       })
     },
-    setActiveInfoBtnGroup(key) { // Update group button key when any button is cliecked in button group
+
+    /**
+     Update group button key when any button is cliecked in button group
+     */
+    setActiveInfoBtnGroup(key) {
       this.$set(this, 'activeInfoBtnGroup', key)
     },
+
     changeValue(key, value) {
       this.$set(this, 'customerInfo', { // Update the state for any field changed in the current category
         ...this.customerInfo,
@@ -493,6 +612,10 @@ export default {
         this.validations.find(d => d.key === key).validate = false
       }
     },
+
+    /**
+     When "Edit/Save" button is clicked
+     */
     editActionClick() {
       if (this.editDisabled) { // When "Edit" button is clicked
         this.$set(this, 'validateAction', false)
@@ -518,10 +641,15 @@ export default {
         this.$set(this, 'editDisabled', false)
       }
     },
+
     cancelActionClick() { // When "Cancel" button is clicked
       this.$set(this, 'validateAction', false)
       this.$set(this, 'editDisabled', true)
     },
+
+    /**
+     When avatar image is changed (avatar image)
+     */
     fileChange(event) {
       const file = event.target.files[0]
       if (file) {
@@ -550,6 +678,32 @@ export default {
           this.$set(this, 'imgFile', reader.result)
         }
       }
+    },
+
+    /**
+     When "Yes, delete it!" button is clicked
+     */
+    deleteCustomer() {
+      this.$set(this, 'saveSpinner', true)
+      store.dispatch('app/deleteCustomer', this.customerInfo).then(res => {
+        if (res.status === 'success') {
+          this.$bvToast.toast('A customer was deleted successfully.', {
+            title: 'Success',
+            variant: 'success',
+            solid: true,
+            toaster: 'b-toaster-top-center',
+          })
+          this.$router.push({ name: 'customers' })
+        } else {
+          this.$bvToast.toast(res.error, {
+            title: 'Failed',
+            variant: 'danger',
+            solid: true,
+            toaster: 'b-toaster-top-center',
+          })
+        }
+        this.$set(this, 'saveSpinner', false)
+      })
     },
   },
 }

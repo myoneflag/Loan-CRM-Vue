@@ -44,84 +44,28 @@ export default {
       buttonShow: false,
       backName: 'index',
     },
+    avatarFile: null,
     customers: [],
-    /* customerInfo: {
-      cid: '001',
-      sid: '001',
-      status: 'observed',
-      avatar: '@/assets/images/portrait/small/avatar-s-2.jpg',
-      transaction: [
-        {
-          tid: '001',
-          date: '2020/03/25',
-          loan: '50000',
-          rate: 10,
-          payable: 5000,
-          penalty: 500,
-          received: 4500,
-          total: 50500,
-          note: 'content',
-        },
-        {
-          tid: '002',
-          date: '2020/03/25',
-          loan: '50000',
-          rate: 10,
-          payable: 5000,
-          penalty: 500,
-          received: 4500,
-          total: 50500,
-          note: 'content',
-        },
-      ],
-      basic: {
-        name: 'WangMing',
-        group: '',
-        acountId: '',
-        birthday: '',
-        idNumber: '',
-        bankAccount: '',
-        cellPhoneNumber: '',
-        homePhoneNumber: '',
-        address: '',
-        houseOwnership: 'own',
-        jobOccupation: '',
-        companyAddress: '',
-        companyName: '',
-        companyPhoneNumber: '',
-      },
-      family: {
-        familyName: '',
-        familyPhoneNumber: '',
-        familyAddress: '',
-        familyJobOccupation: '',
-        familyRelationship: '',
-      },
-      guarantor: {
-        guarantorName: '',
-        guarantorContactNumber: '',
-        guarantorAddress: '',
-        guarantorAmount: 0,
-        guarantorDays: 0,
-        guarantorContent: '',
-      },
-      credit: {
-        creditInfo: '',
-      },
-      debt: {
-        debtBorrowingDate: '',
-        debtRepaymentMonth: '',
-        debtChequesAmount: 0,
-        debtChequesState: '',
-        debtNote: '',
-      },
-    }, */
     customerInfo: Object,
+    storeInfo: Object,
+    blankStore: {
+      id: '',
+      storeName: 'loan',
+      storeImage: 'https://console.firebase.google.com/project/beesummer/firestore/data~2Fcustomers~2F9i0K3QeYVzNXmRKlYu6k',
+      themeColor: '#7367f0',
+      groups: [],
+      customerStatusAutoChange: [],
+      customerStatusExtend: [],
+      promissoryNotesStatusExtend: [],
+      roles: [],
+      accountMembers: [],
+    },
     blankCustomerInfo: {
       id: '',
       sid: '',
       status: '',
       photoURL: '',
+      photoName: '',
       promissoryNotesAmount: 0,
       promissoryNotesStatus: '',
       basicInfo: {
@@ -210,7 +154,6 @@ export default {
         note: 'content',
       },
     ],
-    avatarFile: null,
   },
   getters: {
     currentBreakPoint: state => {
@@ -232,9 +175,7 @@ export default {
       state.shallShowOverlay = val !== undefined ? val : !state.shallShowOverlay
     },
     UPDATE_NAV_BACK_BUTTON(state, val) {
-      state.navBackInfo = {
-        ...val,
-      }
+      state.navBackInfo = { ...val }
     },
     SET_CUSTOMERS(state, val) {
       state.customers = [...val]
@@ -248,16 +189,22 @@ export default {
     SET_AVATAR_FILE(state, val) {
       state.avatarFile = val
     },
+    SET_STOREINFO(state, val) {
+      state.storeInfo = { ...val }
+    },
+    DELETE_CUSTOMER(state, val) {
+      state.customers = [...state.customers.filter(d => d.id !== val)]
+    },
   },
   actions: {
     /**
-      Get all customers already registered by a user authenticated from the firestore db. (Dispatch Function)
-      * Required authenticate user's id
-      * Query all the customers that authenticated user has from firestore
-      * Map the got each customer's fields to the schema in vuex store.
-        <-- function: mapCustomerFieldsFromDb() -->
-      * Commit an customer's array mapped
-    */
+     Get all customers already registered by a user authenticated from the firestore db. (Dispatch Function)
+     * Required authenticate user's id
+     * Query all the customers that authenticated user has from firestore
+     * Map the got each customer's fields to the schema in vuex store.
+      <-- function: mapCustomerFieldsFromDb() -->
+     * Commit an customer's array mapped
+     */
     getCustomersFromDb(context) {
       const { currentUser } = firebase.auth
       try {
@@ -278,12 +225,12 @@ export default {
     },
 
     /**
-      Get a customer already registered by customer's id from the firestore db. (Dispatch Function)
-      * Query special customer with customer's id from firestore
-      * Map the got customer's fields to the schema in vuex store.
-        <-- function: mapCustomerFieldsFromDb() -->
-      * Commit an customer object mapped
-    */
+     Get a customer already registered by customer's id from the firestore db. (Dispatch Function)
+     * Query special customer with customer's id from firestore
+     * Map the got customer's fields to the schema in vuex store.
+      <-- function: mapCustomerFieldsFromDb() -->
+     * Commit an customer object mapped
+     */
     getCustomerWithIdFromDb(context, cid) {
       try {
         return db.getOneDoc({ collectionName: 'customers', id: cid })
@@ -304,18 +251,18 @@ export default {
     },
 
     /**
-      Store a customer to db (A dispatch Function that is called in any component)
-        - data: customer information (object)
-      * Map the customer's fields to the schema in firestore db.
-        <-- function: mapCustomerFieldsToDb() -->
-      * Add authenticated user's id to customer object
-      * Initialize status to empty string as it wasn't chosen yet
-      * Store avatar image to firebase storage if that image file is available.
-        <-- function: uploadFile() -->
-      * Store only a cutomer object to firebase firestore if that image file isn't available
-      * Get an URL to access to an image stored and Add it to customer object
-      * Store a customer object to firebase firestore
-    */
+     Store a customer to db (A dispatch Function that is called in any component)
+      - data: customer information (object)
+     * Map the customer's fields to the schema in firestore db.
+      <-- function: mapCustomerFieldsToDb() -->
+     * Add authenticated user's id to customer object
+     * Initialize status to empty string as it wasn't chosen yet
+     * Store avatar image to firebase storage if that image file is available.
+      <-- function: uploadFile() -->
+     * Store only a cutomer object into db if that image file isn't available
+     * Get an URL to access to an image stored and Add it to customer object
+     * Store a customer object into db
+     */
     addCustomer(context, data) {
       const customer = { ...data }
       const { currentUser } = firebase.auth
@@ -362,12 +309,12 @@ export default {
     },
 
     /**
-      Update a customer already registered by customer's id in the firestore db. (Dispatch Function)
-      * Update db
-        - id: customer's id (string)
-        - update: object of the fields to updating (object)
-      * Commit an customer object mapped
-    */
+     Update a customer already registered by customer's id in the firestore db. (Dispatch Function)
+     * Update db
+      - id: customer's id (string)
+      - update: object of the fields to updating (object)
+     * Commit an customer object mapped
+     */
     updateCustomerWithIdFromDb(context, { id, update }) {
       try {
         return db.updateOneDoc({ collectionName: 'customers', id, ...update })
@@ -383,16 +330,19 @@ export default {
     },
 
     /**
-      Dispatch Function to update an avatar image file in the store
-        - file: Updating image file (file)
-        - save: Will update or not a file to firestore (true/false)
-      * Update customer in store(vuex) with image file
-      * Store a new image
-      * Update customer's avatar image url in db
-    */
+     Dispatch Function to update an avatar image file in the store
+      - file: Updating image file (file)
+      - save: Will update or not a file to firestore (true/false)
+     * Update customer in store(vuex) with image file
+     * Store a new image file into db
+     * Retrieve an url of an image file just stored from db.
+     * Update customer's avatar image url in db
+     * Update customer information in store(vuex) with a new image url
+     * Delete an old image file in db
+     */
     setAvatarFile(context, { file, save }) {
-      context.commit('SET_AVATAR_FILE', file)
       const customer = { ...context.state.customerInfo }
+      context.commit('SET_AVATAR_FILE', file)
       if (save && file !== null) {
         try {
           return uploadFile(file).then(res => {
@@ -428,6 +378,59 @@ export default {
         }
       }
       return customer
+    },
+
+    /**
+     * Add a Store(bussiness) into db
+     */
+    addStore(context) {
+      const blankStore = { ...context.state.blankStore }
+      try {
+        return db.addOneDoc({
+          collectionName: 'stores',
+          ...blankStore,
+        }).then(res => {
+          blankStore.id = res.id
+          context.commit('SET_STOREINFO', blankStore)
+          return { ...res, id: res.id, status: 'success' }
+        })
+      } catch (error) {
+        return { status: 'error', error }
+      }
+    },
+
+    /**
+     Delete a customer by id
+     * Delete a customer from db
+     * Delete a customer's avatar image file from db
+     * Update customers in store(vuex)
+     */
+    deleteCustomer(context, customer) {
+      try {
+        return db.deleteOneDoc({
+          collectionName: 'customers',
+          id: customer.id,
+        }).then(res1 => {
+          context.commit('DELETE_CUSTOMER', customer.id)
+          // context.commit('SET_CUSTOMERINFO', {})
+          if (customer.photoName !== '') {
+            return deleteFile(customer.photoName).then(res2 => {
+              if (res2.status === 'success') {
+                return { ...res1, ...res2, status: 'success' }
+              }
+              return {
+                ...res1,
+                ...res2,
+                status: 'success',
+                error: res2,
+              }
+            })
+          }
+          return { ...res1, status: 'success' }
+        })
+      } catch (error) {
+        return { status: 'error', error }
+      }
     },
   },
 }
