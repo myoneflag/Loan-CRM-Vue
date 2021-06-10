@@ -35,7 +35,7 @@
                     </b-card-text>
                     <b-dropdown
                       v-if="customerInfo.status"
-                      :text="statusItems.find(d => d.key === customerInfo.status).name"
+                      :text="$t(statusItems.find(d => d.key === customerInfo.status).name)"
                       :variant="`flat-${statusItems.find(d => d.key === customerInfo.status).type}`"
                       v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                       size="sm"
@@ -46,7 +46,7 @@
                         :active="item.key === customerInfo.status"
                         @click="changeStatus(item.key)"
                       >
-                        {{ item.name }}
+                        {{ $t(item.name) }}
                       </b-dropdown-item>
                     </b-dropdown>
                   </b-media-body>
@@ -59,7 +59,7 @@
                       {{ financeSummary.currency + financeSummary.totalReceived }}
                     </b-card-text >
                     <b-card-text class="font-small-2 line-height-1 text-muted mb-0">
-                      Total Received
+                      {{ $t('Total Received') }}
                     </b-card-text>
                   </b-col>
                   <b-col cols="4" class="mb-2">
@@ -67,15 +67,15 @@
                       {{ financeSummary.currency + financeSummary.totalPenalty }}
                     </b-card-text >
                     <b-card-text class="font-small-2 line-height-1 text-muted mb-0">
-                      Total Penalty
+                      {{ $t('Total Penalty') }}
                     </b-card-text>
                   </b-col>
                   <b-col cols="5" class="mb-2">
                     <b-card-text  class="font-small-4 font-weight-bolder line-height-2 mb-0">
-                      {{ financeSummary.currency + financeSummary.promissory.amount + ' (' + financeSummary.promissory.note + ')' }}
+                      {{ financeSummary.currency + financeSummary.promissory.amount + ' (' + $t(financeSummary.promissory.note) + ')' }}
                     </b-card-text >
                     <b-card-text class="font-small-2 line-height-1 text-muted mb-0">
-                      Promissory Notes
+                      {{ $t('Total Notes') }}
                     </b-card-text>
                   </b-col>
                 </b-row>
@@ -85,7 +85,7 @@
                       {{ financeSummary.currency + financeSummary.loanAmount }}
                     </b-card-text >
                     <b-card-text class="font-small-2 line-height-1 text-muted mb-0">
-                      Loan Amount
+                      {{ $t('Loan Amount') }}
                     </b-card-text>
                   </b-col>
                   <b-col cols="4" class="mb-2">
@@ -93,7 +93,7 @@
                       {{ financeSummary.nextPayment.date }}
                     </b-card-text >
                     <b-card-text class="font-small-2 line-height-1 text-muted mb-0">
-                      {{ `next payment（${financeSummary.nextPayment.days}days）` }}
+                      {{ `${$t('Next payment')}（${financeSummary.nextPayment.days}days）` }}
                     </b-card-text>
                   </b-col>
                   <b-col cols="5" class="mb-2">
@@ -101,7 +101,7 @@
                       {{ financeSummary.currency + financeSummary.nextPayment.amount }}
                     </b-card-text >
                     <b-card-text class="font-small-2 line-height-1 text-muted mb-0">
-                      Next payment amount
+                      {{ $t('Next payment amount') }}
                     </b-card-text>
                   </b-col>
                 </b-row>
@@ -112,7 +112,7 @@
         <b-col lg="4">
           <b-card style="height: 149px;">
             <b-card-text  class="font-weight-bolder mb-50">
-              Lending history
+              {{ $t('Lending history') }}
             </b-card-text >
             <div class="font-small-3 overflow-auto pr-1" style="height: 80px;">
               <history-list
@@ -166,12 +166,12 @@
                   <b-dropdown-item
                     v-b-modal.customer-note-edit-modal
                   >
-                    Edit
+                    {{ $t('Edit') }}
                   </b-dropdown-item>
                   <b-dropdown-item
                     v-b-modal.customer-delete-modal
                   >
-                    Delete
+                    {{ $t('Delete') }}
                   </b-dropdown-item>
                 </b-dropdown>
               </div>
@@ -217,7 +217,7 @@
                 variant="outline-dark"
                 @click="cancelActionClick"
               >
-                Cancel
+                {{ $t('Cancel') }}
               </b-button>
             </div>
 
@@ -339,7 +339,7 @@ export default {
         totalPenalty: 2000,
         promissory: {
           amount: 35500,
-          note: 'kept',
+          note: 'Kept',
         },
         loanAmount: 50000,
         nextPayment: {
@@ -352,11 +352,6 @@ export default {
 
       /** processing, observed, closed, bad_debt */
       statusItems: [
-        {
-          key: 'none',
-          name: 'None',
-          type: 'secondary',
-        },
         {
           key: 'processing',
           name: 'Processing',
@@ -376,6 +371,16 @@ export default {
           key: 'bad_debt',
           name: 'Bad debt',
           type: 'danger',
+        },
+        {
+          key: 'active',
+          name: 'Active',
+          type: 'info',
+        },
+        {
+          key: 'inactive',
+          name: 'Inactive',
+          type: 'secondary',
         },
       ],
 
@@ -442,17 +447,17 @@ export default {
       groupButtons: [
         {
           key: 'transaction',
-          name: 'Transaction',
+          name: 'Transactions',
           component: TransactionInfo,
         },
         {
           key: 'basicInfo',
-          name: 'Basic Info',
+          name: 'Basic info',
           component: BasicInfo,
         },
         {
           key: 'familyInfo',
-          name: 'Family Info',
+          name: 'Family info',
           component: FamilyInfo,
         },
         {

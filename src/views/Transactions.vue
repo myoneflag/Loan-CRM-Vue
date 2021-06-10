@@ -21,14 +21,14 @@
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
             variant="outline-secondary"
             class="full-width-dropdown w-100"
-            :text="featureItems.find(d => d.key === feature).name"
+            :text="$t(featureItems.find(d => d.key === feature).name)"
           >
             <b-dropdown-item
               v-for="item in featureItems"
               :key="item.key"
               @click="handleFeatures(item.key)"
             >
-              {{ item.name.charAt(0).toUpperCase() + item.name.slice(1) }}
+              {{ $t(item.name.charAt(0).toUpperCase() + item.name.slice(1)) }}
             </b-dropdown-item>
           </b-dropdown>
         </b-col>
@@ -40,7 +40,7 @@
           <div class="mb-2 flex-grow-1">
             <b-form-input
               id="search_input"
-              placeholder="Search..."
+              :placeholder="$t('Search') + '...'"
               style="min-width: 233px;"
             />
           </div>
@@ -59,7 +59,7 @@
                 class="mr-50"
                 size="16"
               />
-              <span class="align-middle">Download</span>
+              <span class="align-middle">{{ $t('Download') }}</span>
             </b-button>
 
             <b-button
@@ -82,14 +82,14 @@
       <b-col sm="8">
         <b-card no-body>
           <b-card-header>
-            <b-card-title>Revenue</b-card-title>
+            <b-card-title>{{ $t('Revenue') }}</b-card-title>
           </b-card-header>
 
           <b-card-body class="pb-0">
             <div class="d-flex justify-content-start mb-1">
               <div class="mr-2">
                 <b-card-text class="mb-50">
-                  This Month
+                  {{ $t('This month') }}
                 </b-card-text>
                 <h3 class="font-weight-bolder">
                   <sup class="font-medium-1">$ </sup>
@@ -98,7 +98,7 @@
               </div>
               <div>
                 <b-card-text class="mb-50">
-                  Last Month
+                  {{ $t('Last month') }}
                 </b-card-text>
                 <h3 class="font-weight-bolder">
                   <sup class="font-medium-1">$ </sup>
@@ -178,6 +178,11 @@
             :src="data.value.photoURL"
           />
         </template>
+        <template #head()="data">
+          <div style="min-width: 30px;">
+            {{ $t(data.label) }}
+          </div>
+        </template>
       </b-table>
       <b-row>
         <b-col cols="6">
@@ -215,16 +220,16 @@
       centered
     >
       <b-form-group
-        label="Title"
+        :label="$t('Title')"
         label-for="outcome-title"
       >
         <b-form-input
           id="outcome-title"
-          placeholder="Title"
+          :placeholder="$t('Title')"
         />
       </b-form-group>
       <b-form-group
-        label="Date"
+        :label="$t('Date')"
         label-for="outcome-date"
       >
         <b-form-datepicker
@@ -232,7 +237,7 @@
         />
       </b-form-group>
       <b-form-group
-        label="Amount"
+        :label="$t('Amount')"
         label-for="outcome-amount"
       >
         <b-input-group
@@ -241,7 +246,7 @@
           append=".00"
           class="input-group-merge"
         >
-          <b-form-input placeholder="Amount" />
+          <b-form-input :placeholder="$t('Amount')" />
         </b-input-group>
       </b-form-group>
     </b-modal>
@@ -434,7 +439,7 @@ export default {
         },
         {
           key: 'customer',
-          label: 'Customer',
+          label: 'Customers',
           sortable: true,
           class: 'text-center',
         },
@@ -507,9 +512,10 @@ export default {
             fillColors: this.incomeValues.map(() => 'transparent'),
             radius: 12,
           },
+          // formatter: seriesName => this.$i18n.messages[this.$i18n.locale][seriesName.charAt(0).toUpperCase() + seriesName.slice(1)],
         },
         comparedResult: [2, -3, 8],
-        labels: this.incomeValues.map(d => d.name),
+        labels: this.incomeValues.map(d => this.$i18n.messages[this.$i18n.locale][d.name.charAt(0).toUpperCase() + d.name.slice(1)]),
         stroke: { width: 0 },
         colors: [this.colorSet.primary, this.colorSet.info, this.colorSet.danger],
         grid: {
@@ -542,7 +548,7 @@ export default {
                 total: {
                   show: true,
                   offsetY: 15,
-                  label: 'Total',
+                  label: this.$i18n.messages[this.$i18n.locale].total || 'Total',
                   fontSize: '11px',
                   color: '#D0D2D6',
                   formatter: () => (

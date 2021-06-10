@@ -1,14 +1,23 @@
 <template>
-  <div
-    id="app"
-    class="h-100"
-    :class="[skinClasses]"
+  <b-overlay
+    id="overlay-background"
+    :show="loadSpinner"
+    opacity="0.6"
+    variant="transparent"
+    blur="2px"
+    rounded="sm"
+    style="background-color: #161d31 !important;"
   >
-    <component :is="layout">
-      <router-view />
-    </component>
-
-  </div>
+    <div
+      id="app"
+      class="h-100"
+      :class="[skinClasses]"
+    >
+      <component :is="layout">
+        <router-view />
+      </component>
+    </div>
+  </b-overlay>
 </template>
 
 <script>
@@ -20,6 +29,9 @@ import { watch } from '@vue/composition-api'
 import useAppConfig from '@core/app-config/useAppConfig'
 
 import { useWindowSize, useCssVar } from '@vueuse/core'
+import {
+  BOverlay,
+} from 'bootstrap-vue'
 
 import store from '@/store'
 
@@ -35,6 +47,12 @@ export default {
     LayoutVertical,
     LayoutFull,
 
+    BOverlay,
+  },
+  data() {
+    return {
+      loadSpinner: false,
+    }
   },
   // ! We can move this computed: layout & contentLayoutType once we get to use Vue 3
   // Currently, router.currentRoute is not reactive and doesn't trigger any change
@@ -67,6 +85,18 @@ export default {
     // Set RTL
     const { isRTL } = $themeConfig.layout
     document.documentElement.setAttribute('dir', isRTL ? 'rtl' : 'ltr')
+  },
+  created() {
+    this.$set(this, 'loadSpinner', true)
+    const { fullPath } = this.$router.currentRoute
+    store.dispatch('app/loadUserInfo').then(res1 => {
+      if (res1.status === 'success' && res1.stores.length > 0) {
+        this.$router.push({ path: fullPath })
+      } else {
+        this.$router.push({ path: '/store-connect' })
+      }
+      this.$set(this, 'loadSpinner', false)
+    })
   },
   setup() {
     const { skin, skinClasses } = useAppConfig()

@@ -32,7 +32,7 @@
           <b-col>
             <b-dropdown
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              :text="groups.find(d => d.key === group).name"
+              :text="$t(groups.find(d => d.key === group).name)"
               variant="outline-primary"
               class="w-100 mb-1 full-width-dropdown"
             >
@@ -41,7 +41,7 @@
                 :key="item.key"
                 @click="handleGroup(item.key)"
               >
-                {{ item.name }}
+                {{ $t(item.name) }}
               </b-dropdown-item>
             </b-dropdown>
           </b-col>
@@ -50,7 +50,7 @@
           <b-col>
             <b-dropdown
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              :text="statuses.find(d => d.key === status).name"
+              :text="$t(statuses.find(d => d.key === status).name)"
               variant="outline-primary"
               class="w-100 mb-1 full-width-dropdown"
             >
@@ -59,7 +59,7 @@
                 :key="item.key"
                 @click="handleStatus(item.key)"
               >
-                {{ item.name }}
+                {{ $t(item.name) }}
               </b-dropdown-item>
             </b-dropdown>
           </b-col>
@@ -74,7 +74,7 @@
               <b-form-group class="m-0">
                 <b-form-input
                   id="search_input"
-                  placeholder="Search..."
+                  :placeholder="$t('Search') + '...'"
                   class="mb-1"
                   style="min-width: 233px;"
                 />
@@ -99,7 +99,7 @@
     <!---------------------- Add modal Start ------------------------>
     <b-modal
       id="modal-add"
-      title="Add"
+      :title="$t('Add')"
       footer-class="justify-content-end flex-row-reverse"
       ok-title="Income"
       cancel-variant="outline-secondary"
@@ -109,7 +109,7 @@
         <b-row>
           <b-col>
             <b-form-group
-              label="Add"
+              :label="$t('Add')"
               label-for="add-type"
             >
               <b-dropdown
@@ -118,14 +118,14 @@
                 v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                 variant="outline-primary"
                 block
-                :text="incometypes.find(d => d.key === addInfo.type).name"
+                :text="$t(incometypes.find(d => d.key === addInfo.type).name)"
               >
                 <b-dropdown-item
                   v-for="item in incometypes"
                   :key="item.key"
                   @click="handleIncomeType(item.key)"
                 >
-                  {{ item.name }}
+                  {{ $t(item.name) }}
                 </b-dropdown-item>
               </b-dropdown>
             </b-form-group>
@@ -177,7 +177,7 @@
         <b-row v-if="addInfo.type === 'expense'">
           <b-col>
             <b-form-group
-              label="Description"
+              :label="$t('Description')"
               label-for="add-description"
             >
               <b-form-input
@@ -190,7 +190,7 @@
         <b-row>
           <b-col cols="6">
             <b-form-group
-              label="Income date"
+              :label="$t('Income date')"
               label-for="add-date"
             >
               <LoanDatePicker
@@ -202,7 +202,7 @@
           </b-col>
           <b-col cols="6">
             <b-form-group
-              label="Income time"
+              :label="$t('Income time')"
               label-for="add-time"
             >
               <b-form-timepicker
@@ -216,7 +216,7 @@
         <b-row>
           <b-col>
             <b-form-group
-              label="Amount"
+              :label="$t('Amount')"
               label-for="add-amount"
             >
               <b-input-group
@@ -275,8 +275,8 @@ export default {
     return {
       selectedRadioDayWeek: 'day',
       optionsRadioDayWeek: [
-        { text: 'Day', value: 'day' },
-        { text: 'Week', value: 'week' },
+        { text: this.$i18n.messages[this.$i18n.locale].Day, value: 'day' },
+        { text: this.$i18n.messages[this.$i18n.locale].Week, value: 'week' },
       ],
       datePickerId: 'dashboard-daily-date-picker',
       status: this.statuses[0].key,

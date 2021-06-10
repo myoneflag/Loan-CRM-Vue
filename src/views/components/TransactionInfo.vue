@@ -30,14 +30,20 @@
           <b-dropdown-item
             v-b-modal.transaction-loan-edit-modal
           >
-            Loan
+            {{ $t('Loan') }}
           </b-dropdown-item>
           <b-dropdown-item
             v-b-modal.transaction-delete-modal
           >
-            Delete
+            {{ $t('Delete') }}
           </b-dropdown-item>
         </b-dropdown>
+      </template>
+
+      <template #head()="data">
+        <div style="min-width: 30px;">
+          {{ $t(data.label) }}
+        </div>
       </template>
 
     </b-table>
@@ -135,7 +141,7 @@ export default {
         },
         {
           key: 'rate',
-          label: 'Rate',
+          label: 'Interest rate',
           sortable: true,
           class: 'text-center',
         },

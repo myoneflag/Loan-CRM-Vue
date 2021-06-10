@@ -20,7 +20,7 @@
           style="height: 100px;"
         >
           <b-badge class="circle-rounded px-1 font-weight-normal mb-50" :variant="item.color">
-            {{ item.title }}
+            {{ $t(item.title) }}
           </b-badge>
           <h6 class="mb-25 font-weight-bolder">
             {{ item.value }}

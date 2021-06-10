@@ -8,7 +8,7 @@
       class="mr-1 mb-1"
       @click="handleClick(button.key)"
     >
-      {{ button.name }}
+      {{ $t(button.name) }}
     </b-button>
   </div>
 </template>

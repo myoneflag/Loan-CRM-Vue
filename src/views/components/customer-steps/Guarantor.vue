@@ -1,17 +1,17 @@
 <template>
   <div>
     <b-card-text class="mb-1">
-      Guarantor
+      {{ $t('Guarantor') }}
     </b-card-text>
     <b-row>
       <b-col cols="4">
         <b-form-group
-          label="Guarantor Name"
+          :label="$t('Guarantor name')"
           label-for="guarantorName"
         >
           <b-form-input
             id="guarantorName"
-            placeholder="Guarantor Name"
+            :placeholder="$t('Guarantor name')"
             :disabled="editDisabled"
             v-model="items.name"
             @change="e => changeValue('name', e)"
@@ -21,12 +21,12 @@
       </b-col>
       <b-col cols="4">
         <b-form-group
-          label="Contact Number"
+          :label="$t('Contact number')"
           label-for="guarantorContactNumber"
         >
           <b-form-input
             id="guarantorContactNumber"
-            placeholder="Contact Number"
+            :placeholder="$t('Contact number')"
             :disabled="editDisabled"
             v-model="items.phoneNumber"
             @change="e => changeValue('phoneNumber', e)"
@@ -36,12 +36,12 @@
       </b-col>
       <b-col cols="4">
         <b-form-group
-          label="Address"
+          :label="$t('Address')"
           label-for="guarantorAddress"
         >
           <b-form-input
             id="guarantorAddress"
-            placeholder="Address"
+            :placeholder="$t('Address')"
             :disabled="editDisabled"
             v-model="items.address"
             @change="e => changeValue('address', e)"
@@ -51,7 +51,7 @@
       </b-col>
       <b-col cols="4">
         <b-form-group
-          label="Guaranteed Amount"
+          :label="$t('Guaranteed amount')"
           label-for="guarantorAmount"
         >
           <b-input-group
@@ -72,12 +72,12 @@
       </b-col>
       <b-col cols="4">
         <b-form-group
-          label="Guaranteed Days"
+          :label="$t('Guaranteed days')"
           label-for="guarantorDays"
         >
           <b-input-group
             id="guarantorDays"
-            append="Days"
+            :append="$t('Days')"
             class="input-group-merge"
             :state="validateAction ? validations.find(d => d.key === 'days').validate : null"
           >
@@ -92,12 +92,12 @@
       </b-col>
       <b-col cols="12">
         <b-form-group
-          label="Guarantor Content"
+          :label="$t('Guarantor content')"
           label-for="guarantorContent"
         >
           <b-form-textarea
             id="guarantorContent"
-            placeholder="Content"
+            :placeholder="$t('Guarantor content')"
             :disabled="editDisabled"
             rows="5"
             v-model="items.note"

@@ -44,10 +44,12 @@ export default {
       buttonShow: false,
       backName: 'index',
     },
+    userInfo: null,
     avatarFile: null,
     customers: [],
     customerInfo: Object,
     storeInfo: Object,
+    stores: [],
     blankStore: {
       id: '',
       storeName: 'loan',
@@ -164,6 +166,8 @@ export default {
       if (windowWidth >= $themeBreakpoints.sm) return 'sm'
       return 'xs'
     },
+    getUserInfo: state => state.userInfo,
+    getStores: state => state.stores,
     getCustomers: state => state.customers,
     getCustomerInfo: state => state.customerInfo,
   },
@@ -177,6 +181,9 @@ export default {
     UPDATE_NAV_BACK_BUTTON(state, val) {
       state.navBackInfo = { ...val }
     },
+    SET_USERINFO(state, val) {
+      state.userInfo = { ...val }
+    },
     SET_CUSTOMERS(state, val) {
       state.customers = [...val]
     },
@@ -186,14 +193,17 @@ export default {
     ADD_CUSTOMER(state, val) {
       state.customers.push(val)
     },
+    DELETE_CUSTOMER(state, val) {
+      state.customers = [...state.customers.filter(d => d.id !== val)]
+    },
     SET_AVATAR_FILE(state, val) {
       state.avatarFile = val
     },
     SET_STOREINFO(state, val) {
       state.storeInfo = { ...val }
     },
-    DELETE_CUSTOMER(state, val) {
-      state.customers = [...state.customers.filter(d => d.id !== val)]
+    SET_STORES(state, val) {
+      state.stores = [...val]
     },
   },
   actions: {
@@ -267,7 +277,7 @@ export default {
       const customer = { ...data }
       const { currentUser } = firebase.auth
       customer.sid = currentUser.uid
-      customer.status = 'none'
+      customer.status = 'inactive'
       customer.photoURL = ''
       customer.photoName = ''
       if (context.state.avatarFile !== null) {
@@ -313,19 +323,34 @@ export default {
      * Update db
       - id: customer's id (string)
       - update: object of the fields to updating (object)
-     * Commit an customer object mapped
+     * Update a customer from db
+     * Update a customerInfo in store(vuex)
+     * Update customers's array in store(vuex)
      */
     updateCustomerWithIdFromDb(context, { id, update }) {
       try {
         return db.updateOneDoc({ collectionName: 'customers', id, ...update })
           .then(() => {
-            context.commit('SET_CUSTOMERINFO', {
-              ...context.state.customerInfo,
-              ...update,
+            if (context.state.customerInfo.id === id) {
+              context.commit('SET_CUSTOMERINFO', {
+                ...context.state.customerInfo,
+                ...update,
+              })
+            }
+            const customers = context.state.customers.map(d => {
+              if (d.id === id) {
+                return {
+                  ...d,
+                  ...update,
+                }
+              }
+              return d
             })
+            context.commit('SET_CUSTOMERS', customers)
+            return { status: 'success' }
           })
       } catch (error) {
-        return { status: 'error', errorText: error }
+        return { status: 'error', error }
       }
     },
 
@@ -381,25 +406,6 @@ export default {
     },
 
     /**
-     * Add a Store(bussiness) into db
-     */
-    addStore(context) {
-      const blankStore = { ...context.state.blankStore }
-      try {
-        return db.addOneDoc({
-          collectionName: 'stores',
-          ...blankStore,
-        }).then(res => {
-          blankStore.id = res.id
-          context.commit('SET_STOREINFO', blankStore)
-          return { ...res, id: res.id, status: 'success' }
-        })
-      } catch (error) {
-        return { status: 'error', error }
-      }
-    },
-
-    /**
      Delete a customer by id
      * Delete a customer from db
      * Delete a customer's avatar image file from db
@@ -431,6 +437,83 @@ export default {
       } catch (error) {
         return { status: 'error', error }
       }
+    },
+
+    /**
+     * Add a Store(bussiness) into db
+     * Update stores(vuex)
+     */
+    addStore(context) {
+      const blankStore = { ...context.state.blankStore }
+      try {
+        return db.addOneDoc({
+          collectionName: 'stores',
+          ...blankStore,
+        }).then(res => {
+          blankStore.id = res.id
+          context.commit('SET_STORES', [...context.state.stores, blankStore])
+          return { ...res, id: res.id, status: 'success' }
+        })
+      } catch (error) {
+        return { status: 'error', error }
+      }
+    },
+
+    /**
+     * Get the logined user's profile
+     * Get the logined user's stores
+     * Set the user's information(profile) in vuex
+     * Set the user's stores in vuex
+     * Returen the user's profile and stores
+
+    This method is called bascally when an user logined and any logined page is reloaded
+     */
+    loadUserInfo(context) {
+      const { currentUser } = firebase.auth
+      try {
+        return db.getWhereEqualDocs({ collectionName: 'users', fieldName: 'uid', value: currentUser.uid })
+          .then(res => {
+            if (res.size > 0) {
+              const user = res.docs[0]
+              if (user.exists) {
+                const userInfo = user.data()
+                context.commit('SET_USERINFO', userInfo)
+
+                try {
+                  return db.getAllDocs({ collectionName: 'stores' })
+                    .then(res1 => {
+                      if (!res1.empty) {
+                        const stores = []
+                        res1.docs.forEach(item => {
+                          const store = { ...item.data(), id: item.id }
+                          if (userInfo.stores.indexOf(item.id) > -1) {
+                            stores.push(store)
+                          }
+                        })
+                        context.commit('SET_STORES', stores)
+                        return { status: 'success', user, stores }
+                      }
+                      return { status: 'success', user, stores: [] }
+                    })
+                } catch (error) {
+                  return { status: 'error', errorText: error }
+                }
+              }
+              return { status: 'success', user, stores: [] }
+            }
+            return { status: 'success', user: null, stores: [] }
+          })
+      } catch (error) {
+        return { status: 'error', errorText: error }
+      }
+
+      /* try {
+        return db.getWhereDocs({
+          collectionName: 'stores',
+        })
+      } catch (error) {
+        return { status: 'error', error }
+      } */
     },
   },
 }

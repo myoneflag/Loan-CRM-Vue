@@ -9,7 +9,7 @@
     <h3>
       {{ currency + value }}
     </h3>
-    <h6 class="font-small-3">{{ title }}</h6>
+    <h6 class="font-small-3">{{ $t(title) }}</h6>
   </b-card>
 </template>
 <script>

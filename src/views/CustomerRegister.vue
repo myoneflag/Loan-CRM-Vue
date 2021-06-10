@@ -11,7 +11,7 @@
     <b-card no-body>
       <b-card-header>
         <b-card-text class="font-weight-bolder mb-0">
-          Add Member
+          {{ $t('Add Member') }}
         </b-card-text>
       </b-card-header>
       <div class="d-flex px-2 border-bottom flex-wrap">
@@ -28,8 +28,8 @@
         />
       </div>
       <b-card-footer class="d-flex justify-content-between border-0">
-        <b-button variant="outline-primary" @click="backStep">Back</b-button>
-        <b-button variant="primary" @click="nextStep">{{ nextButtonText }}</b-button>
+        <b-button variant="outline-primary" @click="backStep">{{ $t('Back') }}</b-button>
+        <b-button variant="primary" @click="nextStep">{{ $t(nextButtonText) }}</b-button>
       </b-card-footer>
     </b-card>
   </b-overlay>
@@ -71,7 +71,7 @@ export default {
         },
         {
           id: 'familyInfo',
-          title: 'Family Info',
+          title: 'Family info',
           active: false,
           component: FamilyInfo,
         },

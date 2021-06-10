@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
+import i18n from '@/libs/i18n'
 import { firebase } from './firebase'
 
 import router from './router'
@@ -35,6 +36,7 @@ firebase.auth.onAuthStateChanged(() => {
     app = new Vue({
       store,
       router,
+      i18n,
       render: h => h(App),
     }).$mount('#app')
   }

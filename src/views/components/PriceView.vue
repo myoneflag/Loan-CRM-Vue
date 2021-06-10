@@ -1,7 +1,7 @@
 <template>
   <div class="gross-view">
     <p class="gross-label m-0" v-bind:style="{ fontSize: size === 'small' ? '10px' : '12px', lineHeight: size === 'small' ? '14px' : '16px' }">
-      {{ label }}
+      {{ $t(label) }}
     </p>
     <p class="gross-value m-0" v-bind:style="{ fontSize: size === 'small' ? '14px' : '20px', lineHeight: size === 'small' ? '18px' : '24px' }">
       {{ preString + value }}

@@ -59,40 +59,11 @@
         <b-dropdown-item link-class="d-flex align-items-center">
           <feather-icon
             size="16"
-            icon="UserIcon"
+            icon="SettingsIcon"
             class="mr-50"
           />
-          <span>Profile</span>
+          <span>Settings</span>
         </b-dropdown-item>
-
-        <b-dropdown-item link-class="d-flex align-items-center">
-          <feather-icon
-            size="16"
-            icon="MailIcon"
-            class="mr-50"
-          />
-          <span>Inbox</span>
-        </b-dropdown-item>
-
-        <b-dropdown-item link-class="d-flex align-items-center">
-          <feather-icon
-            size="16"
-            icon="CheckSquareIcon"
-            class="mr-50"
-          />
-          <span>Task</span>
-        </b-dropdown-item>
-
-        <b-dropdown-item link-class="d-flex align-items-center">
-          <feather-icon
-            size="16"
-            icon="MessageSquareIcon"
-            class="mr-50"
-          />
-          <span>Chat</span>
-        </b-dropdown-item>
-
-        <b-dropdown-divider />
 
         <b-dropdown-item
           link-class="d-flex align-items-center"
@@ -104,6 +75,27 @@
             class="mr-50"
           />
           <span>Logout</span>
+        </b-dropdown-item>
+
+        <b-dropdown-divider />
+
+        <b-dropdown-item
+          link-class="d-flex align-items-center"
+        >
+          <b-button
+            variant="primary"
+            class="rounded-circle rounded-text-btn mr-50"
+            @click="langClick('en')"
+          >
+            E
+          </b-button>
+          <b-button
+            variant="warning"
+            class="rounded-circle rounded-text-btn"
+            @click="langClick('tw')"
+          >
+            N
+          </b-button>
         </b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>
@@ -156,10 +148,17 @@ export default {
     back() {
       this.$router.push({ name: this.backButtonInfo.backName })
     },
+    langClick(val) {
+      this.$i18n.locale = val
+    },
   },
 }
 </script>
 
-<style>
-
+<style scoped>
+.rounded-text-btn {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+}
 </style>

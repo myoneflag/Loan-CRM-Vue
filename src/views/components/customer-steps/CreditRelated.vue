@@ -1,12 +1,12 @@
 <template>
   <div>
     <b-card-text class="mb-1">
-      Credit-related
+      {{ $t('Credit-related') }}
     </b-card-text>
     <b-row>
       <b-col cols="12">
         <b-form-group
-          label="Credit Info"
+          :label="$t('Credit info')"
           label-for="credit"
         >
           <b-form-textarea

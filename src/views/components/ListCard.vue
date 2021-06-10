@@ -8,7 +8,7 @@
           icon="ListIcon"
         />
         <b-card-title class="ml-25">
-          Note and Outcome
+          {{ $t('Note and Outcome') }}
         </b-card-title>
       </div>
     </b-card-header>

@@ -1,17 +1,17 @@
 <template>
   <div>
     <b-card-text class="mb-1">
-      Family info
+      {{ $t('Family info') }}
     </b-card-text>
     <b-row>
       <b-col cols="4">
         <b-form-group
-          label="Name"
+          :label="$t('Name')"
           label-for="familyName"
         >
           <b-form-input
             id="familyName"
-            placeholder="Family Name"
+            :placeholder="$t('Name')"
             :disabled="editDisabled"
             v-model="items.name"
             @change="e => changeValue('name', e)"
@@ -21,12 +21,12 @@
       </b-col>
       <b-col cols="4">
         <b-form-group
-          label="Phone Number"
+          :label="$t('Phone Number')"
           label-for="phoneNumber"
         >
           <b-form-input
             id="phoneNumber"
-            placeholder="Phone Number"
+            :placeholder="$t('Phone Number')"
             :disabled="editDisabled"
             v-model="items.phoneNumber"
             @change="e => changeValue('phoneNumber', e)"
@@ -36,12 +36,12 @@
       </b-col>
       <b-col cols="4">
         <b-form-group
-          label="Address"
+          :label="$t('Address')"
           label-for="address"
         >
           <b-form-input
             id="address"
-            placeholder="Address"
+            :placeholder="$t('Address')"
             :disabled="editDisabled"
             v-model="items.address"
             @change="e => changeValue('address', e)"
@@ -51,12 +51,12 @@
       </b-col>
       <b-col cols="4">
         <b-form-group
-          label="Job occupation"
+          :label="$t('Job occupation')"
           label-for="jobOccupation"
         >
           <b-form-input
             id="jobOccupation"
-            placeholder="Job occupation"
+            :placeholder="$t('Job occupation')"
             :disabled="editDisabled"
             v-model="items.jobOccupation"
             @change="e => changeValue('jobOccupation', e)"
@@ -66,12 +66,12 @@
       </b-col>
       <b-col cols="4">
         <b-form-group
-          label="Relationship"
+          :label="$t('Relationship')"
           label-for="relationship"
         >
           <b-form-input
             id="relationship"
-            placeholder="Relationship"
+            :placeholder="$t('Relationship')"
             :disabled="editDisabled"
             v-model="items.relationship"
             @change="e => changeValue('relationship', e)"

@@ -85,3 +85,9 @@ export const getAllDocs = async ({ collectionName }) => {
   const result = await db.collection(collectionName).get()
   return result
 }
+
+// get where docs
+export const getWhereEqualDocs = async ({ collectionName, fieldName, value }) => {
+  const result = await db.collection(collectionName).where(fieldName, '==', value).get()
+  return result
+}

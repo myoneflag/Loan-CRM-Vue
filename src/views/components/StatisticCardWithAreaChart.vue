@@ -4,7 +4,7 @@
       <div class="truncate">
         <span>{{ statisticTitle }}</span>
         <h2 class="mb-25 font-weight-bolder">
-          {{ statistic }}
+          {{ totalAmount }}
         </h2>
       </div>
     </b-card-body>
@@ -114,6 +114,11 @@ export default {
         },
       },
     }
+  },
+  computed: {
+    totalAmount() {
+      return this.chartData[0].data.reduce((a, b) => a + b, 0)
+    },
   },
 }
 </script>

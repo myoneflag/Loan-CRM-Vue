@@ -1,11 +1,18 @@
 <template>
-  <div>
+  <b-overlay
+    id="overlay-background"
+    :show="saveSpinner"
+    opacity="0.6"
+    variant="transparent"
+    blur="2px"
+    rounded="sm"
+    style="background-color: #161d31 !important;"
+  >
     <b-row>
       <b-col sm="4">
         <!----------------- Total loan amount line chart card Start ---------------->
         <statistic-card-with-area-chart
-          :statistic="statisticChartData.analyticsData.total"
-          statistic-title="Total loan amount"
+          :statistic-title="$t('Total loan amount')"
           :chart-data="statisticChartData.series"
         />
         <!----------------- Total loan amount line chart card End ---------------->
@@ -13,7 +20,7 @@
       <b-col sm="8">
         <!----------------- Total member card Start ---------------->
         <card-statistics-group
-          statistic-title="Total Member"
+          :statistic-title="$t('Total members')"
           :statisticsItems="statisticsItems"
         />
         <!----------------- Total member card End ---------------->
@@ -24,7 +31,7 @@
         <b-card no-body>
           <b-card-header>
             <b-card-text class="font-weight-bolder mb-0">
-              Member list
+              {{ $t('Member list') }}
             </b-card-text>
           </b-card-header>
           <b-row class="mb-1 px-2">
@@ -32,7 +39,7 @@
               <!-------------------------- Group filter Dropdwon Start --------------------------->
               <b-dropdown
                 v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                :text="filterGroupItems.find(d => d.key === group).name"
+                :text="$t(filterGroupItems.find(d => d.key === group).name)"
                 variant="outline-primary"
                 class="w-100 mb-1 full-width-dropdown"
               >
@@ -41,7 +48,7 @@
                   :key="item.key"
                   @click="handleGroup(item.key)"
                 >
-                  {{ item.name }}
+                  {{ $t(item.name) }}
                 </b-dropdown-item>
               </b-dropdown>
               <!-------------------------- Group filter Dropdwon End --------------------------->
@@ -50,7 +57,7 @@
               <!-------------------------- Status filter Dropdwon Start -------------------------->
               <b-dropdown
                 v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                :text="filterStatusItems.find(d => d.key === status).name"
+                :text="$t(filterStatusItems.find(d => d.key === status).name)"
                 variant="outline-primary"
                 class="w-100 mb-1 full-width-dropdown"
               >
@@ -59,7 +66,7 @@
                   :key="item.key"
                   @click="handleStatus(item.key)"
                 >
-                  {{ item.name.charAt(0).toUpperCase() + item.name.slice(1) }}
+                  {{ $t(item.name.charAt(0).toUpperCase() + item.name.slice(1)) }}
                 </b-dropdown-item>
               </b-dropdown>
               <!-------------------------- Status filter Dropdwon End -------------------------->
@@ -70,7 +77,7 @@
                 <b-form-group class="m-0">
                   <b-form-input
                     id="search_input"
-                    placeholder="Search..."
+                    :placeholder="$t('Search') + '...'"
                     class="mb-1"
                     style="min-width: 233px;"
                   />
@@ -153,6 +160,7 @@
                     variant="flat-dark"
                     no-caret
                     right
+                    @show="customerSelectHandle(data.item.id)"
                   >
                     <template
                       v-slot:button-content
@@ -167,19 +175,24 @@
                     <b-dropdown-item
                       v-b-modal.customer-payment-edit-modal
                     >
-                      Payment
+                      {{ $t('Payment') }}
                     </b-dropdown-item>
                     <b-dropdown-item
                       v-b-modal.customer-loan-edit-modal
                     >
-                      Loan
+                      {{ $t('Loan') }}
                     </b-dropdown-item>
                     <b-dropdown-item
                       @click="editClickHandle(data.item.id)"
                     >
-                      Edit
+                      {{ $t('Edit') }}
                     </b-dropdown-item>
                   </b-dropdown>
+                </template>
+                <template #head()="data">
+                  <div style="min-width: 30px;">
+                    {{ $t(data.label) }}
+                  </div>
                 </template>
               </b-table>
             </b-col>
@@ -254,38 +267,43 @@
       cancel-variant="outline-primary"
       footer-class="justify-content-end flex-row-reverse"
       centered
+      @ok="loanEditHandle"
     >
       <b-form-group
         label="Date"
-        label-for="lending-datepicker"
+        label-for="loan-datepicker"
       >
         <b-form-datepicker
-          id="lending-datepicker"
+          id="loan-datepicker"
           class="mb-1"
+          @input="onChangeLoanDate"
         />
       </b-form-group>
       <b-form-group
         label="Amount"
-        label-for="lending-amount"
+        label-for="loan-amount"
       >
         <b-input-group
-          id="lending-amount"
+          id="loan-amount"
           prepend="$"
           append=".00"
           class="input-group-merge"
         >
-          <b-form-input placeholder="Amount" />
+          <b-form-input
+            placeholder="Amount"
+            @change="onChangeLoanAmount"
+          />
         </b-input-group>
       </b-form-group>
     </b-modal>
 
-  </div>
+  </b-overlay>
 </template>
 <script>
 import store from '@/store'
 import { mapGetters } from 'vuex'
 import {
-  BRow, BCol, BCard, BCardHeader, BCardText, BDropdown, BDropdownItem, BFormGroup, BInputGroup, BFormInput, BButton, BTable, BBadge, BMedia, BMediaAside, BMediaBody, BAvatar, BLink, BPagination, BModal, VBModal, BFormDatepicker,
+  BRow, BCol, BCard, BCardHeader, BCardText, BDropdown, BDropdownItem, BFormGroup, BInputGroup, BFormInput, BButton, BTable, BBadge, BMedia, BMediaAside, BMediaBody, BAvatar, BLink, BPagination, BModal, VBModal, BFormDatepicker, BOverlay,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import _ from 'lodash'
@@ -315,6 +333,7 @@ export default {
     BPagination,
     BModal,
     BFormDatepicker,
+    BOverlay,
     StatisticCardWithAreaChart,
     CardStatisticsGroup,
   },
@@ -409,35 +428,46 @@ export default {
           color: 'danger',
           icon: 'UserIcon',
         },
+        {
+          key: 'active',
+          name: 'Active',
+          color: 'info',
+          icon: 'UserIcon',
+        },
+        {
+          key: 'inactive',
+          name: 'Inactive',
+          color: 'secondary',
+        },
       ],
       customersTableInfo: {
         fields: [
           { key: 'status', label: 'Status' },
           { key: 'user', label: 'User', class: 'text-center' },
           { key: 'phone', label: 'Phone', class: 'text-center' },
-          { key: 'rate', label: 'Interest Rate', class: 'text-right' },
+          { key: 'rate', label: 'Interest rate', class: 'text-right' },
           {
             key: 'nextPayment',
-            label: 'Next Payment',
+            label: 'Next payment',
             sortable: true,
             class: 'text-center',
           },
           { key: 'duration', label: 'Duration', class: 'text-right' },
           {
             key: 'lendDate',
-            label: 'Lend Date',
+            label: 'Lend date',
             sortable: true,
             class: 'text-center',
           },
           {
             key: 'totalLoan',
-            label: 'Total Loan',
+            label: 'Total loan',
             sortable: true,
             class: 'text-right',
           },
           {
             key: 'promissoryNote',
-            label: 'Promissory Note',
+            label: 'Promissory note',
             class: 'text-center',
           },
           {
@@ -531,6 +561,12 @@ export default {
       pageOptions: [3, 5, 10],
       totalRows: 0,
       currentPage: 1,
+      customerIdHandled: '',
+      customerLoan: {
+        date: '',
+        amount: 0,
+      },
+      saveSpinner: false,
     }
   },
   computed: {
@@ -612,7 +648,8 @@ export default {
           nextPayment: 0,
           duration: customer.loan.paymentDuration,
           lendDate: '',
-          totalLoan: 0,
+          loanDate: customer.loan.loanDateTime,
+          totalLoan: customer.loan.principal,
           promissoryNote: '',
           currency: '$',
         }
@@ -753,6 +790,53 @@ export default {
           section: 'basicInfo',
         },
       })
+    },
+
+    onChangeLoanDate(e) {
+      this.customerLoan.date = e
+    },
+
+    onChangeLoanAmount(e) {
+      this.customerLoan.amount = e
+    },
+
+    /**
+     Update loan of a customer in table
+     */
+    loanEditHandle() {
+      const rawCustomer = store.state.app.customers.find(d => d.id === this.customerIdHandled)
+      this.$set(this, 'saveSpinner', true)
+      store.dispatch('app/updateCustomerWithIdFromDb', {
+        id: this.customerIdHandled,
+        update: {
+          loan: {
+            ...rawCustomer.loan,
+            loanDateTime: this.customerLoan.date,
+            principal: rawCustomer.loan.principal + parseInt(this.customerLoan.amount, 10),
+          },
+        },
+      }).then(res => {
+        if (res.status === 'success') {
+          this.$bvToast.toast(`A loan of a customer-${rawCustomer.basicInfo.fullName} was updated successfully.`, {
+            title: 'Success',
+            variant: 'success',
+            solid: true,
+            toaster: 'b-toaster-top-center',
+          })
+        } else {
+          this.$bvToast.toast(`Failed. ${res.error}`, {
+            title: 'Failed',
+            variant: 'danger',
+            solid: true,
+            toaster: 'b-toaster-top-center',
+          })
+        }
+        this.$set(this, 'saveSpinner', false)
+      })
+    },
+
+    customerSelectHandle(cid) {
+      this.$set(this, 'customerIdHandled', cid)
     },
   },
 }

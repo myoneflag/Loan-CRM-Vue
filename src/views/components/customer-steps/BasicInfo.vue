@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-card-text class="mb-1">
-      Basic info
+      {{ $t('Basic info') }}
     </b-card-text>
     <b-media v-if="showAvatar" no-body class="mb-2">
       <b-media-aside
@@ -17,22 +17,22 @@
       </b-media-aside>
       <b-media-body class="my-auto font-small-3">
         <b-card-text  class="mb-0">
-          Please upload your image
+          {{ $t('Please upload your image') }}
         </b-card-text >
         <b-card-text class="mb-0">
-          JPG, GIF or PNG are allowed. The maximum photo size is 800kB
+          {{ $t('JPG, GIF or PNG are allowed. The maximum photo size is 800kB') }}
         </b-card-text>
       </b-media-body>
     </b-media>
     <b-row>
       <b-col sm="4">
         <b-form-group
-          label="Name"
+          :label="$t('Name')"
           label-for="fullName"
         >
           <b-form-input
             id="fullName"
-            placeholder="Enter Name"
+            :placeholder="$t('Name')"
             :disabled="editDisabled"
             v-model="items.fullName"
             @change="e => changeValue('fullName', e)"
@@ -42,14 +42,14 @@
       </b-col>
       <b-col sm="4">
         <b-form-group
-          label="Group"
+          :label="$t('Group')"
           label-for="group"
         >
           <b-dropdown
             id="group"
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
             :disabled="editDisabled"
-            :text="groups.find(d => d.key === group).name"
+            :text="$t(groups.find(d => d.key === group).name)"
             :variant="`outline-${validateAction ? validations.find(d => d.key === 'group').validate ? 'success' : 'danger' : 'dark'}`"
             class="w-100 mb-1 full-width-dropdown"
           >
@@ -65,7 +65,7 @@
       </b-col>
       <b-col sm="4">
         <b-form-group
-          label="Acount ID"
+          :label="$t('Acount ID')"
           label-for="accountNumber"
         >
           <b-form-input
@@ -79,7 +79,7 @@
       </b-col>
       <b-col sm="4">
         <b-form-group
-          label="Date of birth"
+          :label="$t('Date of birth')"
           label-for="birthday"
         >
           <loan-date-picker
@@ -93,12 +93,12 @@
       </b-col>
       <b-col sm="4">
         <b-form-group
-          label="ID Number"
+          :label="$t('ID Number')"
           label-for="idNumber"
         >
           <b-form-input
             id="idNumber"
-            placeholder="ID Number"
+            :placeholder="$t('ID Number')"
             :disabled="editDisabled"
             v-model="items.idNumber"
             @change="e => changeValue('idNumber', e)"
@@ -108,12 +108,12 @@
       </b-col>
       <b-col sm="4">
         <b-form-group
-          label="Bank Account"
+          :label="$t('Bank account')"
           label-for="bankAccount"
         >
           <b-form-input
             id="bankAccount"
-            placeholder="Bank Account"
+            :placeholder="$t('Bank account')"
             :disabled="editDisabled"
             v-model="items.bankInfo.bankAccount"
             @change="e => changeValue('bankInfo.bankAccount', e)"
@@ -123,17 +123,17 @@
       </b-col>
     </b-row>
     <b-card-text class="mb-1 mt-1">
-      Contact
+      {{ $t('Contact') }}
     </b-card-text>
     <b-row>
       <b-col sm="4">
         <b-form-group
-          label="Cell Phone"
+          :label="$t('Cell Phone')"
           label-for="cellPhoneNumber"
         >
           <b-form-input
             id="cellPhoneNumber"
-            placeholder="Phone Number"
+            :placeholder="$t('Phone Number')"
             :disabled="editDisabled"
             v-model="items.cellPhoneNumber"
             @change="e => changeValue('cellPhoneNumber', e)"
@@ -143,7 +143,7 @@
       </b-col>
       <b-col sm="4">
         <b-form-group
-          label="Home Phone"
+          :label="$t('Home Phone')"
           label-for="homePhoneNumber"
         >
           <b-form-input
@@ -158,17 +158,17 @@
       </b-col>
     </b-row>
     <b-card-text class="mb-1 mt-1">
-      Address
+      {{ $t('Address') }}
     </b-card-text>
     <b-row>
       <b-col sm="4">
         <b-form-group
-          label="Address"
+          :label="$t('Address')"
           label-for="address"
         >
           <b-form-input
             id="address"
-            placeholder="Address"
+            :placeholder="$t('Address')"
             :disabled="editDisabled"
             v-model="items.address"
             @change="e => changeValue('address', e)"
@@ -178,7 +178,7 @@
       </b-col>
       <b-col sm="4">
         <b-form-group
-          label="House ownership"
+          :label="$t('House ownership')"
           label-for="houseOwnership"
         >
           <b-form-radio-group
@@ -192,13 +192,13 @@
                 name="houseOwnership"
                 value="own"
               >
-                Own
+                {{ $t('Own') }}
               </b-form-radio>
               <b-form-radio
                 name="houseOwnership"
                 value="rent"
               >
-                Rent
+                {{ $t('Rent') }}
               </b-form-radio>
             </div>
           </b-form-radio-group>
@@ -206,17 +206,17 @@
       </b-col>
     </b-row>
     <b-card-text class="mb-1 mt-1">
-      Company Info
+      {{ $t('Company info') }}
     </b-card-text>
     <b-row>
       <b-col sm="4">
         <b-form-group
-          label="Job Occupation"
+          :label="$t('Job occupation')"
           label-for="jobOccupation"
         >
           <b-form-input
             id="jobOccupation"
-            placeholder="bussiness man"
+            :placeholder="$t('Job occupation')"
             :disabled="editDisabled"
             v-model="items.jobOccupation"
             @change="e => changeValue('jobOccupation', e)"
@@ -226,12 +226,12 @@
       </b-col>
       <b-col sm="4">
         <b-form-group
-          label="Company Name"
+          :label="$t('Company name')"
           label-for="companyName"
         >
           <b-form-input
             id="companyName"
-            placeholder="Company Name"
+            :placeholder="$t('Company name')"
             :disabled="editDisabled"
             v-model="items.companyName"
             @change="e => changeValue('companyName', e)"
@@ -241,12 +241,12 @@
       </b-col>
       <b-col sm="4">
         <b-form-group
-          label="Company Number"
+          :label="$t('Company number')"
           label-for="companyPhoneNumber"
         >
           <b-form-input
             id="companyPhoneNumber"
-            placeholder="Company Number"
+            :placeholder="$t('Company number')"
             :disabled="editDisabled"
             v-model="items.companyPhoneNumber"
             @change="e => changeValue('companyPhoneNumber', e)"
@@ -256,12 +256,12 @@
       </b-col>
       <b-col sm="4">
         <b-form-group
-          label="Company Address"
+          :label="$t('Company address')"
           label-for="companyAddress"
         >
           <b-form-input
             id="companyAddress"
-            placeholder="Company Address"
+            :placeholder="$t('Company address')"
             :disabled="editDisabled"
             v-model="items.companyAddress"
             @change="e => changeValue('companyAddress', e)"

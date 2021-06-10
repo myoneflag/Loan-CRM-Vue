@@ -1,12 +1,12 @@
 <template>
   <div>
     <b-card-text class="mb-1">
-      Debt-related
+      {{ $t('Debt-related') }}
     </b-card-text>
     <b-row>
       <b-col cols="4">
         <b-form-group
-          label="Borrowing Date"
+          :label="$t('Borrowing Date')"
           label-for="borrowingDate"
         >
           <loan-date-picker
@@ -18,7 +18,7 @@
           />
         </b-form-group>
         <b-form-group
-          label="Cheques Amount"
+          :label="$t('Cheques Amount')"
           label-for="chequesAmount"
         >
           <b-input-group
@@ -39,7 +39,7 @@
       </b-col>
       <b-col cols="4">
         <b-form-group
-          label="Repayment/Month"
+          :label="$t('Repayment/Month')"
           label-for="repaymentMonth"
         >
           <!-- <b-form-input
@@ -65,7 +65,7 @@
           </b-input-group>
         </b-form-group>
         <b-form-group
-          label="Cheques Status"
+          :label="$t('Cheques status')"
           label-for="chequesState"
         >
           <b-dropdown
@@ -81,19 +81,19 @@
               :key="item.key"
               @click="changeValue('chequesState', item.key)"
             >
-              {{ item.name }}
+              {{ $t(item.name) }}
             </b-dropdown-item>
           </b-dropdown>
         </b-form-group>
       </b-col>
       <b-col cols="4">
         <b-form-group
-          label="Note"
+          :label="$t('Note')"
           label-for="debtNote"
         >
           <b-form-textarea
             id="debtNote"
-            placeholder="Content"
+            :placeholder="$t('Note')"
             :disabled="editDisabled"
             rows="4"
             v-model="items.note"

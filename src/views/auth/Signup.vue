@@ -255,10 +255,15 @@ export default {
               // create user in firestore
               db.setOneDoc({
                 collectionName: 'users',
-                id: res.user?.uid,
+                uid: res.user?.uid,
                 email: this.userEmail,
-                name: this.userName,
+                displayName: this.userName,
                 roles: [],
+                status: '',
+                photoURL: '',
+                stores: [],
+                settings: {},
+                isDeleted: '',
                 createdAt: moment().toDate(),
               })
                 .then(() => {

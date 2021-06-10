@@ -180,6 +180,7 @@ import VuexyLogo from '@core/layouts/components/Logo.vue'
 // import store from '@/store/index'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import moment from 'moment'
+import store from '@/store'
 import { db, auth } from '../../firebase'
 
 export default {
@@ -240,11 +241,14 @@ export default {
                 },
               })
 
-              // Redirect to query page
-              // console.log(this.$route)
-
-              // Redirect to home page
-              this.$router.push({ name: 'home' })
+              store.dispatch('app/loadUserInfo').then(res1 => {
+                if (res1.status === 'success' && res1.stores.length > 0) {
+                  // Redirect to home page
+                  this.$router.push({ path: '/' })
+                } else {
+                  this.$router.push({ path: '/store-connect' })
+                }
+              })
             })
             .catch(error => {
               this.$toast({
@@ -259,6 +263,7 @@ export default {
         }
       })
     },
+
     googleSignIn() {
       auth.doGoogleSignIn()
         .then(res => {
@@ -269,35 +274,52 @@ export default {
             createdAt: moment().toDate(),
             noLogging: true,
           })
-          db.setOneDoc({
-            collectionName: 'users',
-            id: res.user?.uid,
-            ...res.additionalUserInfo.profile,
-            roles: [],
-            createdAt: moment().toDate(),
-          })
-            .then(() => {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Success Logged in',
-                  icon: 'StarIcon',
-                  variant: 'success',
-                },
+          if (res.additionalUserInfo.isNewUser) {
+            db.setOneDoc({
+              collectionName: 'users',
+              uid: res.user?.uid,
+              mediaInfo: res.additionalUserInfo.profile,
+              roles: [],
+              email: res.additionalUserInfo.profile.email,
+              displayName: res.additionalUserInfo.profile.name,
+              status: '',
+              photoURL: res.additionalUserInfo.profile.picture,
+              stores: [],
+              settings: {},
+              isDeleted: '',
+              createdAt: moment().toDate(),
+            })
+              .then(() => {
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Success Logged in',
+                    icon: 'StarIcon',
+                    variant: 'success',
+                  },
+                })
+                // Redirect to home page
+                this.$router.push({ name: 'home' })
               })
+              .catch(error => {
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: error.message || 'Failed Sign in',
+                    icon: 'AlertTriangleIcon',
+                    variant: 'error',
+                  },
+                })
+              })
+          }
+          store.dispatch('app/loadUserInfo').then(res1 => {
+            if (res1.status === 'success' && res1.stores.length > 0) {
               // Redirect to home page
-              this.$router.push({ name: 'home' })
-            })
-            .catch(error => {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: error.message || 'Failed Sign in',
-                  icon: 'AlertTriangleIcon',
-                  variant: 'error',
-                },
-              })
-            })
+              this.$router.push({ path: '/' })
+            } else {
+              this.$router.push({ path: '/store-connect' })
+            }
+          })
         })
         .catch(error => {
           this.$toast({
@@ -310,6 +332,7 @@ export default {
           })
         })
     },
+
     faceBookSignIn() {
       auth.doFacebookSignIn()
         .then(res => {
@@ -320,27 +343,39 @@ export default {
             createdAt: moment().toDate(),
             noLogging: true,
           })
-          db.setOneDoc({
-            collectionName: 'users',
-            id: res.user?.uid,
-            // ...response.data
-            roles: [],
-            createdAt: moment().toDate(),
-          })
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Success Logged in',
-              icon: 'StarIcon',
-              variant: 'success',
-            },
-          })
+          if (res.additionalUserInfo.isNewUser) {
+            db.setOneDoc({
+              collectionName: 'users',
+              uid: res.user?.uid,
+              mediaInfo: res.additionalUserInfo.profile,
+              roles: [],
+              email: res.additionalUserInfo.profile.email,
+              displayName: res.additionalUserInfo.profile.name,
+              status: '',
+              photoURL: res.additionalUserInfo.profile.picture,
+              stores: [],
+              settings: {},
+              isDeleted: '',
+              createdAt: moment().toDate(),
+            })
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Success Logged in',
+                icon: 'StarIcon',
+                variant: 'success',
+              },
+            })
+          }
 
-          // Redirect to query page
-          // console.log(this.$route)
-
-          // Redirect to home page
-          this.$router.push({ name: 'home' })
+          store.dispatch('app/loadUserInfo').then(res1 => {
+            if (res1.status === 'success' && res1.stores.length > 0) {
+              // Redirect to home page
+              this.$router.push({ path: '/' })
+            } else {
+              this.$router.push({ path: '/store-connect' })
+            }
+          })
         })
         .catch(error => {
           this.$toast({

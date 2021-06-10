@@ -45,7 +45,7 @@
               <!-- Column - Status Start -->
               <template #cell(status)="data">
                 <b-dropdown
-                  :text="statusItems.find(d => d.key === data.value).name"
+                  :text="$t(statusItems.find(d => d.key === data.value).name)"
                   :variant="`flat-${statusItems.find(d => d.key === data.value).type}`"
                   v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                   size="sm"
@@ -56,7 +56,7 @@
                     :active="item.key === data.value"
                     @click="handleStatusInAllTable(item.key, data.item.id)"
                   >
-                    {{ item.name }}
+                    {{ $t(item.name) }}
                   </b-dropdown-item>
                 </b-dropdown>
               </template>
@@ -116,14 +116,20 @@
                 </div>
               </template>
               <!-- Column - User End -->
+              <template #head()="data">
+                <div style="min-width: 30px;">
+                  {{ $t(data.label) }}
+                </div>
+              </template>
             </b-table>
           </b-card>
           <!-- Paid modal in all table Start -->
           <b-modal
             id="modal-paid"
-            title="Edit"
+            :title="$t('Edit')"
             footer-class="justify-content-end flex-row-reverse"
-            ok-title="Save"
+            :ok-title="$t('Save')"
+            :cancel-title="$t('Cancel')"
             cancel-variant="outline-secondary"
             @ok="paidSubmit"
           >
@@ -131,7 +137,7 @@
               <b-row>
                 <b-col cols="6">
                   <b-form-group
-                    label="Date"
+                    :label="$t('Date')"
                     label-for="paid-date"
                   >
                     <b-form-datepicker
@@ -143,7 +149,7 @@
                 </b-col>
                 <b-col cols="6">
                   <b-form-group
-                    label="Time"
+                    :label="$t('Time')"
                     label-for="paid-time"
                   >
                     <b-form-timepicker
@@ -157,7 +163,7 @@
               <b-row>
                 <b-col>
                   <b-form-group
-                    label="Amount"
+                    :label="$t('Amount')"
                     label-for="paid-amount"
                   >
                     <b-input-group
@@ -178,9 +184,10 @@
           <!-- Note modal in all table Start -->
           <b-modal
             id="modal-note"
-            title="Add/Edit"
+            :title="$t('Add/Edit')"
             footer-class="justify-content-end flex-row-reverse"
-            ok-title="Save"
+            :ok-title="$t('Save')"
+            :cancel-title="$t('Cancel')"
             cancel-variant="outline-secondary"
             @ok="noteSubmit"
           >
@@ -188,7 +195,7 @@
               <b-row>
                 <b-col cols="6">
                   <b-form-group
-                    label="Date"
+                    :label="$t('Date')"
                     label-for="paid-date"
                   >
                     <b-form-datepicker
@@ -200,7 +207,7 @@
                 </b-col>
                 <b-col cols="6">
                   <b-form-group
-                    label="Time"
+                    :label="$t('Time')"
                     label-for="paid-time"
                   >
                     <b-form-timepicker
@@ -214,7 +221,7 @@
               <b-row>
                 <b-col>
                   <b-form-group
-                    label="Note"
+                    :label="$t('Note')"
                     label-for="textarea-note"
                   >
                     <b-form-textarea
@@ -249,7 +256,7 @@
               <!-- Column - Status Start -->
               <template #cell(status)="data">
                 <b-dropdown
-                  :text="statusItems.find(d => d.key === data.value).name"
+                  :text="$t(statusItems.find(d => d.key === data.value).name)"
                   :variant="`flat-${statusItems.find(d => d.key === data.value).type}`"
                   v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                   size="sm"
@@ -260,7 +267,7 @@
                     :active="item.key === data.value"
                     @click="handleStatusInpenaltyTable(item.key, data.item.id)"
                   >
-                    {{ item.name }}
+                    {{ $t(item.name) }}
                   </b-dropdown-item>
                 </b-dropdown>
               </template>
@@ -329,6 +336,11 @@
                 </div>
               </template>
               <!-- Column - Note End -->
+              <template #head()="data">
+                <div style="min-width: 30px;">
+                  {{ $t(data.label) }}
+                </div>
+              </template>
             </b-table>
           </b-card>
         </b-col>
@@ -631,7 +643,7 @@ export default {
           { key: 'loan', label: 'Loan', class: 'text-right' },
           {
             key: 'penalty',
-            label: 'penalty',
+            label: 'Penalty',
             sortable: true,
             class: 'text-right',
           },
