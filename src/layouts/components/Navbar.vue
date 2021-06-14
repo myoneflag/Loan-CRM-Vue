@@ -85,14 +85,14 @@
           <b-button
             variant="primary"
             class="rounded-circle rounded-text-btn mr-50"
-            @click="langClick('en')"
+            @click="storeClick()"
           >
             E
           </b-button>
           <b-button
             variant="warning"
             class="rounded-circle rounded-text-btn"
-            @click="langClick('tw')"
+            @click="storeClick()"
           >
             N
           </b-button>
@@ -148,8 +148,7 @@ export default {
     back() {
       this.$router.push({ name: this.backButtonInfo.backName })
     },
-    langClick(val) {
-      this.$i18n.locale = val
+    storeClick() {
     },
   },
 }

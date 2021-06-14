@@ -92,6 +92,11 @@
             {{ data.value }}
           </div>
         </template>
+        <template #head()="data">
+          <div style="min-width: 30px;">
+            {{ $t(data.label) }}
+          </div>
+        </template>
       </b-table>
       <b-row>
         <b-col cols="6">

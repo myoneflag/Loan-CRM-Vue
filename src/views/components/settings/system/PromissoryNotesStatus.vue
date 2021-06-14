@@ -2,29 +2,30 @@
   <div>
     <div class="d-flex align-items-center mb-1 justify-content-between">
       <b-card-text class="font-weight-bolder mb-0">
-        {{ $t('Groups').toUpperCase() }}
+        {{ $t("Promissory Notes status").toUpperCase() }}
       </b-card-text>
       <b-button
         v-ripple.400="'rgba(255, 255, 255, 0.15)'"
         variant="primary"
         class="btn-icon m-0"
       >
-        {{ $t('Add') }}
+        {{ $t("Add") }}
       </b-button>
     </div>
     <div class="overflow-hidden rounded">
       <b-table
-        id="groups-table"
+        id="customer-status-table"
         responsive
         striped
-        :items="groups"
-        :fields="groupsTableInfo"
-        table-class="custom-table small-row-table"
+        :items="statuses"
+        :fields="statusTableInfo"
+        table-class="custom-table"
         thead-class="text-center"
       >
         <template #cell(action)="data">
           <div class="d-flex justify-content-center">
             <b-dropdown
+              v-if="data.value"
               v-ripple.400="'rgba(255, 255, 255, 0.15)'"
               toggle-class="px-0 py-50 bg-transparent"
               variant="flat-dark"
@@ -32,9 +33,7 @@
               right
               @show="userSelectHandle(data.item.id)"
             >
-              <template
-                v-slot:button-content
-              >
+              <template v-slot:button-content>
                 <feather-icon
                   :id="`box-pop-menu-${data.item.id}`"
                   icon="MoreVerticalIcon"
@@ -42,15 +41,19 @@
                   class="cursor-pointer"
                 />
               </template>
-              <b-dropdown-item
-              >
-                {{ $t('Edit') }}
+              <b-dropdown-item>
+                {{ $t("Edit") }}
               </b-dropdown-item>
-              <b-dropdown-item
-              >
-                {{ $t('Delete') }}
+              <b-dropdown-item>
+                {{ $t("Delete") }}
               </b-dropdown-item>
             </b-dropdown>
+            <div v-else />
+          </div>
+        </template>
+        <template #cell(status)="data">
+          <div class="text-center">
+            {{ $t(data.value) }}
           </div>
         </template>
         <template #cell()="data">
@@ -69,7 +72,11 @@
 </template>
 <script>
 import {
-  BButton, BCardText, BTable, BDropdown, BDropdownItem,
+  BButton,
+  BCardText,
+  BTable,
+  BDropdown,
+  BDropdownItem,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 
@@ -86,26 +93,30 @@ export default {
   },
   data() {
     return {
-      groupsTableInfo: [
-        { key: 'groups', label: 'Group' },
-        { key: 'description', label: 'Description' },
+      statusTableInfo: [
+        { key: 'status', label: 'Status' },
         { key: 'action', label: 'Action' },
       ],
-      groups: [
+      statuses: [
         {
           id: '001',
-          groups: 'Group Name 1',
-          description: '-',
+          status: 'Kept',
+          action: false,
         },
         {
           id: '002',
-          groups: 'Group Name 2',
-          description: '-',
+          status: 'Mailed',
+          action: false,
         },
         {
           id: '003',
-          groups: 'Group Name 3',
-          description: '-',
+          status: 'Disposed',
+          action: false,
+        },
+        {
+          id: '005',
+          status: 'New status',
+          action: true,
         },
       ],
     }
