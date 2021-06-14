@@ -70,7 +70,7 @@
         >
           <b-form-input
             id="accountNumber"
-            placeholder="Acount ID"
+            :placeholder="$t('Acount ID')"
             :disabled="true"
             :value="items.accountNumber"
             :state="validateAction ? validations.find(d => d.key === 'accountNumber').validate : null"

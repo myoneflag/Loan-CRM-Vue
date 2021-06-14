@@ -112,8 +112,8 @@ export default {
       debtInfo: {
         borrowingDate: '',
         repaymentMonth: 0,
-        chequesAmount: 0,
-        chequesState: '',
+        principle: 0,
+        promissoryNoteStatus: '',
         note: '',
       },
       loan: {

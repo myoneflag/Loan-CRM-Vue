@@ -18,19 +18,19 @@
           />
         </b-form-group>
         <b-form-group
-          :label="$t('Cheques Amount')"
-          label-for="chequesAmount"
+          :label="$t('Principle')"
+          label-for="principle"
         >
           <b-input-group
-            id="chequesAmount"
+            id="principle"
             prepend="$"
             append=".00"
             class="input-group-merge"
-            :state="validateAction ? validations.find(d => d.key === 'chequesAmount').validate : null"
+            :state="validateAction ? validations.find(d => d.key === 'principle').validate : null"
           >
             <b-form-input
-              v-model="items.chequesAmount"
-              @change="e => changeValue('chequesAmount', e)"
+              v-model="items.principle"
+              @change="e => changeValue('principle', e)"
               :disabled="editDisabled"
               placeholder="0"
             />
@@ -65,21 +65,21 @@
           </b-input-group>
         </b-form-group>
         <b-form-group
-          :label="$t('Cheques status')"
-          label-for="chequesState"
+          :label="$t('Promissory note')"
+          label-for="promissoryNoteStatus"
         >
           <b-dropdown
-            id="chequesState"
+            id="promissoryNoteStatus"
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
             :disabled="editDisabled"
             :text="statuses.find(d => d.key === status).name"
-            :variant="`outline-${validateAction ? validations.find(d => d.key === 'chequesState').validate ? 'success' : 'danger' : 'dark'}`"
+            :variant="`outline-${validateAction ? validations.find(d => d.key === 'promissoryNoteStatus').validate ? 'success' : 'danger' : 'dark'}`"
             class="w-100 mb-1 full-width-dropdown"
           >
             <b-dropdown-item
               v-for="item in statuses"
               :key="item.key"
-              @click="changeValue('chequesState', item.key)"
+              @click="changeValue('promissoryNoteStatus', item.key)"
             >
               {{ $t(item.name) }}
             </b-dropdown-item>
@@ -142,11 +142,19 @@ export default {
       statuses: [
         {
           key: 'keep',
-          name: 'keep',
+          name: 'Keep',
         },
         {
-          key: 'refund',
-          name: 'Refund',
+          key: 'kept',
+          name: 'Kept',
+        },
+        {
+          key: 'mailed',
+          name: 'Mailed',
+        },
+        {
+          key: 'disposed',
+          name: 'Disposed',
         },
       ],
       status: '',
@@ -154,17 +162,17 @@ export default {
   },
   watch: {
     status(newVal) {
-      this.$emit('change', 'chequesState', newVal)
+      this.$emit('change', 'promissoryNoteStatus', newVal)
     },
   },
   created() {
-    this.status = this.items.chequesState ? this.items.chequesState : this.statuses[0].key
+    this.status = this.items.promissoryNoteStatus ? this.items.promissoryNoteStatus : this.statuses[0].key
   },
   mounted() {
   },
   methods: {
     changeValue(key, value) {
-      if (key === 'chequesState') {
+      if (key === 'promissoryNoteStatus') {
         this.$set(this, 'status', value)
       } else {
         this.$emit('change', key, value)

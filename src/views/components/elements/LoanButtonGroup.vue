@@ -1,11 +1,12 @@
 <template>
-  <div class="d-inline">
+  <div>
     <b-button
       v-for="button in buttons"
       :key="button.key"
       v-ripple.400="'rgba(255, 255, 255, 0.15)'"
       :variant="active === button.key ? variant : 'outline-dark'"
       class="mr-1 mb-1"
+      :style="'width: ' + buttonWidth + ';'"
       @click="handleClick(button.key)"
     >
       {{ $t(button.name) }}
@@ -31,6 +32,10 @@ export default {
     variant: {
       type: String,
       default: 'primary',
+    },
+    buttonWidth: {
+      type: String,
+      default: 'auto',
     },
   },
   directives: {

@@ -55,6 +55,12 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
     font-size: 12px;
   }
 }
+.small-row-table {
+  td {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
 .step-label {
   .label-box {
     width: 30px;

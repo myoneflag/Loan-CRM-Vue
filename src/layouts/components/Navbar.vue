@@ -56,13 +56,13 @@
           />
         </template>
 
-        <b-dropdown-item link-class="d-flex align-items-center">
+        <b-dropdown-item link-class="d-flex align-items-center" to="settings">
           <feather-icon
             size="16"
             icon="SettingsIcon"
             class="mr-50"
           />
-          <span>Settings</span>
+          <span>{{ $t('Settings') }}</span>
         </b-dropdown-item>
 
         <b-dropdown-item
@@ -74,7 +74,7 @@
             icon="LogOutIcon"
             class="mr-50"
           />
-          <span>Logout</span>
+          <span>{{ $t('Logout') }}</span>
         </b-dropdown-item>
 
         <b-dropdown-divider />
