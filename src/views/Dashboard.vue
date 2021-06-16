@@ -12,7 +12,6 @@
         />
       </b-col>
     </b-row>
-    <!------------------------------ Filter Card End ------------------------------->
     <!------------------------------ Day Content Start ----------------------------->
     <div v-if="!isWeek">
       <!---------------------------- Summary View Card Start ----------------------->
@@ -30,8 +29,7 @@
           <ListCard :data="notesOutcomes" class="h-100" />
         </b-col>
       </b-row>
-      <!---------------------------- Summary View Card End ------------------------->
-      <!---------------------------- All paid View Card Start ---------------------->
+      <!---------------------------- Paid list Start ---------------------->
       <b-row>
         <b-col lg="12">
           <b-card no-body class="overflow-hidden mb-1">
@@ -126,7 +124,10 @@
           <!-- Paid modal in all table Start -->
           <b-modal
             id="modal-paid"
-            :title="$t('Edit')"
+            :title="$t(paidModalTitle)"
+            :header-close-content="null"
+            :no-close-on-backdrop="true"
+            :no-close-on-esc="true"
             footer-class="justify-content-end flex-row-reverse"
             :ok-title="$t('Save')"
             :cancel-title="$t('Cancel')"
@@ -134,32 +135,6 @@
             @ok="paidSubmit"
           >
             <b-form>
-              <b-row>
-                <b-col cols="6">
-                  <b-form-group
-                    :label="$t('Date')"
-                    label-for="paid-date"
-                  >
-                    <b-form-datepicker
-                      id="paid-date"
-                      v-model="paidInfo.date"
-                      :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit', }"
-                    />
-                  </b-form-group>
-                </b-col>
-                <b-col cols="6">
-                  <b-form-group
-                    :label="$t('Time')"
-                    label-for="paid-time"
-                  >
-                    <b-form-timepicker
-                      id="paid_time"
-                      v-model="paidInfo.time"
-                      locale='en'
-                    />
-                  </b-form-group>
-                </b-col>
-              </b-row>
               <b-row>
                 <b-col>
                   <b-form-group
@@ -238,8 +213,7 @@
           <!-- Note modal in all table End -->
         </b-col>
       </b-row>
-      <!---------------------------- All paid View Card End ------------------------>
-      <!---------------------------- penalty paid View Card Start ------------------>
+      <!---------------------------- penalty list Start ------------------>
       <b-row>
         <b-col>
           <b-card no-body class="mb-1">
@@ -312,8 +286,8 @@
                   <b-link
                     href="#"
                     class="link-text"
-                    v-b-modal.modal-paid
-                    @click="handlePaidModal(data.item)"
+                    v-b-modal.modal-penalty-paid
+                    @click="handlePenaltyPaidModal(data.item)"
                   >
                     {{ data.item.currency + data.value }}
                   </b-link>
@@ -343,11 +317,70 @@
               </template>
             </b-table>
           </b-card>
+          <!-- Paid modal in all table Start -->
+          <b-modal
+            id="modal-penalty-paid"
+            :title="$t('Edit')"
+            :header-close-content="null"
+            :no-close-on-backdrop="true"
+            :no-close-on-esc="true"
+            footer-class="justify-content-end flex-row-reverse"
+            :ok-title="$t('Save')"
+            :cancel-title="$t('Cancel')"
+            cancel-variant="outline-secondary"
+            @ok="paidSubmit"
+          >
+            <b-form>
+              <b-row>
+                <b-col cols="6">
+                  <b-form-group
+                    :label="$t('Date')"
+                    label-for="paid-date"
+                  >
+                    <b-form-datepicker
+                      id="paid-date"
+                      v-model="penaltyPaidInfo.date"
+                      :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit', }"
+                    />
+                  </b-form-group>
+                </b-col>
+                <b-col cols="6">
+                  <b-form-group
+                    :label="$t('Time')"
+                    label-for="paid-time"
+                  >
+                    <b-form-timepicker
+                      id="paid_time"
+                      v-model="penaltyPaidInfo.time"
+                      locale='en'
+                    />
+                  </b-form-group>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col>
+                  <b-form-group
+                    :label="$t('Amount')"
+                    label-for="paid-amount"
+                  >
+                    <b-input-group
+                      :prepend="penaltyPaidInfo.currency"
+                      append=".00"
+                    >
+                      <b-form-input
+                        id="paid-amount"
+                        v-model='penaltyPaidInfo.amount'
+                      />
+                    </b-input-group>
+                  </b-form-group>
+                </b-col>
+              </b-row>
+            </b-form>
+          </b-modal>
+          <!-- Paid modal in all table End -->
         </b-col>
       </b-row>
-      <!---------------------------- penalty paid View Card End -------------------->
     </div>
-    <!------------------------------ Day Content End ------------------------------->
     <div v-else>
       <b-row>
         <b-col cols="6">
@@ -580,7 +613,7 @@ export default {
             },
             loan: '400000',
             payable: '2450',
-            paid: '400',
+            paid: 0,
             allowance: '',
             penalty: '1950',
             note: {
@@ -827,6 +860,12 @@ export default {
         },
       ],
       paidInfo: {
+        date: '',
+        time: '',
+        amount: '',
+        currency: '$',
+      },
+      penaltyPaidInfo: {
         date: '',
         time: '',
         amount: '',
@@ -1115,6 +1154,13 @@ export default {
         currency: row.currency,
       })
     },
+    handlePenaltyPaidModal(row) {
+      this.$set(this, 'penaltyPaidInfo', {
+        ...this.penaltyPaidInfo,
+        amount: row.paid,
+        currency: row.currency,
+      })
+    },
     handleNoteModal(note) {
       this.$set(this, 'noteInfo', {
         ...note,
@@ -1125,6 +1171,15 @@ export default {
     },
     noteSubmit() {
       console.log('note')
+    },
+  },
+  computed: {
+    paidModalTitle() {
+      let status = 'Add'
+      if (this.paidInfo.amount !== 0) {
+        status = 'Edit'
+      }
+      return `${status} Amount`
     },
   },
 }
