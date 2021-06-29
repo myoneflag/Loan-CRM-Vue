@@ -25,6 +25,7 @@
           :validateAction="validateAction"
           :showAvatar="true"
           @change="changeValue"
+          @changeArray="changeArray"
         />
       </div>
       <b-card-footer class="d-flex justify-content-between border-0">
@@ -35,6 +36,7 @@
   </b-overlay>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import store from '@/store'
 import {
   BCard, BCardHeader, BCardFooter, BCardText, BButton, BOverlay,
@@ -99,16 +101,36 @@ export default {
       validateAction: false, // Variable to indicate if all the field controls in a current step would show/hide the validation property when 'Next' button will be clicked
       nextButtonText: 'Next', // Title of a next button in a current step
       saveSpinner: false, // Spinner hide/show while saving or edit
+      customerInfoNoRequiredFields: store.state.app.customerInfoNoRequiredFields,
     }
   },
   watch: {
     stepNumber(newValue, oldValue) { // When the step number is changed
       this.steps[newValue].active = true
       this.steps[oldValue].active = false
-      this.$set(this, 'validations', Object.keys(this.allStepsItmes[this.steps[newValue].id]).map(itemKey => ({
-        key: itemKey,
-        validate: this.allStepsItmes[this.steps[newValue].id][itemKey] !== '',
-      })))
+      let validations = []
+      const stepInfo = this.allStepsItmes[this.steps[newValue].id]
+      switch (Array.isArray(stepInfo)) {
+        case false:
+          Object.keys(stepInfo).forEach(itemKey => {
+            if (this.customerInfoNoRequiredFields[this.steps[newValue].id].indexOf(itemKey) === -1) {
+              validations.push({
+                key: itemKey,
+                validate: stepInfo[itemKey] !== '',
+              })
+            }
+          })
+          break
+        case true:
+          validations = stepInfo.map((item, index) => Object.keys(item).map(itemKey => ({
+            key: itemKey,
+            validate: stepInfo[index][itemKey] !== '',
+          })))
+          break
+        default:
+      }
+      this.$set(this, 'validations', validations)
+
       /** Set if the current step has 'Finish' or 'Next' status  */
       if (newValue === this.steps.length - 1) {
         this.$set(this, 'nextButtonText', 'Finish')
@@ -116,22 +138,60 @@ export default {
         this.$set(this, 'nextButtonText', 'Next')
       }
     },
+
+    customers(newVal) {
+      const customerInfo = { ...this.$store.state.app.blankCustomerInfo }
+      this.$set(this, 'allStepsItmes', {
+        ...customerInfo,
+        index: common.increaseIndex(newVal.map(d => d.index)),
+        basicInfo: {
+          ...customerInfo.basicInfo,
+          accountNumber: common.increaseIndex(newVal.map(d => d.index)).toString().padStart(6, '0'),
+        },
+      })
+    },
   },
   created() {
+    // console.log(this.$store.state.app.customers)
+    const customerInfo = { ...this.$store.state.app.blankCustomerInfo }
     /** Set State (allStepsItmes) from Store for the customerInfo  */
     this.$set(this, 'allStepsItmes', {
-      ...this.$store.state.app.blankCustomerInfo,
+      ...customerInfo,
+      index: common.increaseIndex(this.customers.map(d => d.index)),
       basicInfo: {
-        ...this.$store.state.app.blankCustomerInfo.basicInfo,
-        accountNumber: common.makeIdUpercase(12),
+        ...customerInfo.basicInfo,
+        accountNumber: common.increaseIndex(this.customers.map(d => d.index)).toString().padStart(6, '0'),
+        // accountNumber: common.makeIdUpercase(12),
       },
     })
 
     /** Set State (validations) from allStepsItmes for a validation of each field */
-    this.$set(this, 'validations', Object.keys(this.allStepsItmes[this.steps[this.stepNumber].id]).map(itemKey => ({
+    let validations = []
+    const stepInfo = this.allStepsItmes[this.steps[this.stepNumber].id]
+    switch (Array.isArray(stepInfo)) {
+      case false:
+        Object.keys(stepInfo).forEach(itemKey => {
+          if (this.customerInfoNoRequiredFields[this.steps[this.stepNumber].id].indexOf(itemKey) === -1) {
+            validations.push({
+              key: itemKey,
+              validate: stepInfo[itemKey] !== '',
+            })
+          }
+        })
+        break
+      case true:
+        validations = stepInfo.map((item, index) => Object.keys(item).map(itemKey => ({
+          key: itemKey,
+          validate: stepInfo[index][itemKey] !== '',
+        })))
+        break
+      default:
+    }
+    this.$set(this, 'validations', validations)
+    /* this.$set(this, 'validations', Object.keys(this.allStepsItmes[this.steps[this.stepNumber].id]).map(itemKey => ({
       key: itemKey,
       validate: this.allStepsItmes[this.steps[this.stepNumber].id][itemKey] !== '',
-    })))
+    }))) */
   },
   mounted() {
     /** Set to show in Store for a Back button  */
@@ -143,25 +203,99 @@ export default {
     next()
   },
   computed: {
+    ...mapGetters({
+      customers: 'app/getCustomers',
+    }),
     validate() { // Get a validation for all the fields of the current step
-      return !(this.validations.map(d => d.validate).indexOf(false) > -1)
+      const arr = []
+      this.validations.forEach(d => {
+        if (Array.isArray(d)) {
+          d.forEach(p => arr.push(p.validate))
+        } else {
+          arr.push(d.validate)
+        }
+      })
+      return !(arr.indexOf(false) > -1)
     },
   },
   methods: {
-    changeValue(key, value) {
-      const obj = { ...this.allStepsItmes[[this.steps[this.stepNumber].id]] }
-      _.set(obj, key, value)
-      this.$set(this, 'allStepsItmes', { // Update the state for any field changed in the current step
-        ...this.allStepsItmes,
-        [this.steps[this.stepNumber].id]: { ...obj },
-      })
-      if (value !== '') { // A validation of a field changed is true as that is Not empty
-        this.validations.find(d => d.key === key.split('.')[0]).validate = true
-      } else { // A validation of a field changed is false as that is empty
-        this.validations.find(d => d.key === key.split('.')[0]).validate = false
+    changeValue(key, value, row) {
+      let obj = null
+      const stepInfo = this.allStepsItmes[this.steps[this.stepNumber].id]
+      switch (Array.isArray(stepInfo)) {
+        case false:
+          obj = { ...stepInfo }
+          _.set(obj, key, value)
+          this.$set(this, 'allStepsItmes', {
+            // Update the state for any field changed in the current step
+            ...this.allStepsItmes,
+            [this.steps[this.stepNumber].id]: { ...obj },
+          })
+          if (this.validations.find(d => d.key === key.split('.')[0]) === undefined) break
+          if (value !== '') { // A validation of a field changed is true as that is Not empty
+            this.validations.find(d => d.key === key.split('.')[0]).validate = true
+          } else { // A validation of a field changed is false as that is empty
+            this.validations.find(d => d.key === key.split('.')[0]).validate = false
+          }
+          break
+        case true:
+          obj = [...stepInfo]
+          obj[row] = {
+            ...obj[row],
+            [key]: value,
+          }
+          this.$set(this, 'allStepsItmes', { // Update the state for any field changed in the current step
+            ...this.allStepsItmes,
+            [this.steps[this.stepNumber].id]: [...obj],
+          })
+          if (value !== '') { // A validation of a field changed is true as that is Not empty
+            this.validations[row].find(d => d.key === key.split('.')[0]).validate = true
+          } else { // A validation of a field changed is false as that is empty
+            this.validations[row].find(d => d.key === key.split('.')[0]).validate = false
+          }
+          break
+        default:
       }
-      // console.log(this.validations)
     },
+
+    /**
+     Change that array in the case stepInfo is array
+     * index: item's index
+     * action: add or remove
+     */
+    changeArray(index, action) {
+      switch (action) {
+        case 'add':
+          this.$set(this, 'allStepsItmes', {
+            ...this.allStepsItmes,
+            [this.steps[this.stepNumber].id]: [
+              ...this.allStepsItmes[this.steps[this.stepNumber].id],
+              this.$store.state.app.blankCustomerInfo[this.steps[this.stepNumber].id][0],
+            ],
+          })
+          this.$set(this, 'validations', [
+            ...this.validations,
+            Object.keys(this.$store.state.app.blankCustomerInfo[this.steps[this.stepNumber].id][0]).map(d => ({
+              key: d,
+              validate: false,
+            })),
+          ])
+          break
+        case 'remove':
+          this.allStepsItmes[this.steps[this.stepNumber].id].splice(index, 1)
+          this.validations.splice(index, 1)
+          this.$set(this, 'allStepsItmes', {
+            ...this.allStepsItmes,
+            [this.steps[this.stepNumber].id]: [
+              ...this.allStepsItmes[this.steps[this.stepNumber].id],
+            ],
+          })
+          this.$set(this, 'validations', [...this.validations])
+          break
+        default:
+      }
+    },
+
     nextStep() {
       if (this.stepNumber === this.steps.length - 1 && this.validate) { // Finish
         this.$set(this, 'saveSpinner', true)

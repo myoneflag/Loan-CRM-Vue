@@ -117,7 +117,7 @@
                     :variant="`light-${statusItems.find(d => d.key === data.value).color}`"
                     class="circle-rounded px-1 font-weight-normal mb-50"
                   >
-                    {{ statusItems.find(d => d.key === data.value).name }}
+                    {{ $t(statusItems.find(d => d.key === data.value).name) }}
                   </b-badge>
                 </template>
                 <!------------------- User column ------------------->

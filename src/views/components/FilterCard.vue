@@ -82,15 +82,26 @@
               <!-------------------------- Search box End ---------------------------->
               <!-------------------------- Add buttom Start -------------------------->
               <b-button
+                v-show="selectedRadioDayWeek === 'day'"
                 v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                 variant="primary"
                 class="btn-icon m-0 mb-1 ml-1"
-                v-b-modal.modal-add
+                v-b-modal.modal-add-day
                 @click="handleAdd"
               >
                 <feather-icon icon="PlusIcon" />
               </b-button>
               <!-------------------------- Add buttom End -------------------------->
+              <b-button
+                v-show="selectedRadioDayWeek === 'week'"
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                variant="primary"
+                class="btn-icon m-0 mb-1 ml-1"
+                v-b-modal.modal-add-week
+                @click="handleAdd"
+              >
+                <feather-icon icon="PlusIcon" />
+              </b-button>
             </div>
           </b-col>
         </b-row>
@@ -98,11 +109,15 @@
     </b-row>
     <!---------------------- Add modal Start ------------------------>
     <b-modal
-      id="modal-add"
+      id="modal-add-day"
       :title="$t('Add')"
-      footer-class="justify-content-end flex-row-reverse"
-      ok-title="Income"
+      :hide-header-close="true"
+      :no-close-on-backdrop="true"
+      :no-close-on-esc="true"
+      :ok-title="$t('Income')"
+      :cancel-title="$t('Cancel')"
       cancel-variant="outline-secondary"
+      footer-class="justify-content-end flex-row-reverse"
       @ok="addSubmit"
     >
       <b-form>
@@ -234,12 +249,43 @@
       </b-form>
     </b-modal>
     <!---------------------- Add modal End -------------------------->
+
+    <b-modal
+      id="modal-add-week"
+      :title="$t('Add Note')"
+      :hide-header-close="true"
+      :no-close-on-backdrop="true"
+      :no-close-on-esc="true"
+      footer-class="justify-content-end flex-row-reverse"
+      :ok-title="$t('Save')"
+      cancel-variant="outline-secondary"
+    >
+      <b-form-group
+        :label="$t('Date')"
+        label-for="note-date"
+      >
+        <loan-date-picker
+          id="note-date"
+          :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit', }"
+        />
+      </b-form-group>
+      <b-form-group
+        label="Note"
+        label-for="note-edit"
+      >
+        <b-form-textarea
+          id="note-edit"
+          rows="4"
+          placeholder="Content"
+        />
+      </b-form-group>
+    </b-modal>
   </b-card>
 </template>
 
 <script>
 import {
-  BCard, BRow, BCol, BButton, BDropdown, BDropdownItem, BFormInput, BFormGroup, BModal, BForm, BFormTimepicker, BInputGroup, BAvatar, BFormRadioGroup,
+  BCard, BRow, BCol, BButton, BDropdown, BDropdownItem, BFormInput, BFormGroup, BModal, BForm, BFormTimepicker, BInputGroup, BAvatar, BFormRadioGroup, BFormTextarea, VBModal,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import LoanDatePicker from '@/views/components/elements/LoanDatePicker.vue'
@@ -261,6 +307,7 @@ export default {
     BInputGroup,
     BAvatar,
     BFormRadioGroup,
+    BFormTextarea,
   },
   props: {
     statuses: Array,
@@ -269,6 +316,7 @@ export default {
     users: Array,
   },
   directives: {
+    'b-modal': VBModal,
     Ripple,
   },
   data() {

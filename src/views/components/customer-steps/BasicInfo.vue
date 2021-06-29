@@ -152,7 +152,6 @@
             :disabled="editDisabled"
             v-model="items.homePhoneNumber"
             @change="e => changeValue('homePhoneNumber', e)"
-            :state="validateAction ? validations.find(d => d.key === 'homePhoneNumber').validate : null"
           />
         </b-form-group>
       </b-col>
@@ -235,7 +234,6 @@
             :disabled="editDisabled"
             v-model="items.companyName"
             @change="e => changeValue('companyName', e)"
-            :state="validateAction ? validations.find(d => d.key === 'companyName').validate : null"
           />
         </b-form-group>
       </b-col>

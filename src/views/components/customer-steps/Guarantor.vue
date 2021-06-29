@@ -102,7 +102,6 @@
             rows="5"
             v-model="items.note"
             @change="e => changeValue('note', e)"
-            :state="validateAction ? validations.find(d => d.key === 'note').validate : null"
           />
         </b-form-group>
       </b-col>

@@ -83,18 +83,13 @@
           link-class="d-flex align-items-center"
         >
           <b-button
-            variant="primary"
+            v-for="store in stores"
+            :key="store.id"
+            :variant="store.themeColor"
             class="rounded-circle rounded-text-btn mr-50"
             @click="storeClick()"
           >
             E
-          </b-button>
-          <b-button
-            variant="warning"
-            class="rounded-circle rounded-text-btn"
-            @click="storeClick()"
-          >
-            N
           </b-button>
         </b-dropdown-item>
       </b-nav-item-dropdown>
@@ -103,6 +98,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
   BLink, BNavbarNav, BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar, BButton,
 } from 'bootstrap-vue'
@@ -126,10 +122,18 @@ export default {
       default: () => {},
     },
   },
+  data() {
+    return {
+      stores: [],
+    }
+  },
   computed: {
     backButtonInfo() {
       return this.$store.state.app.navBackInfo
     },
+    ...mapGetters({
+      getStores: 'app/getStores',
+    }),
   },
   methods: {
     logout() {
@@ -149,6 +153,11 @@ export default {
       this.$router.push({ name: this.backButtonInfo.backName })
     },
     storeClick() {
+    },
+  },
+  watch: {
+    getStores(stores) {
+      this.$set(this, 'stores', stores)
     },
   },
 }

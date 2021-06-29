@@ -125,7 +125,7 @@
           <b-modal
             id="modal-paid"
             :title="$t(paidModalTitle)"
-            :header-close-content="null"
+            :hide-header-close="true"
             :no-close-on-backdrop="true"
             :no-close-on-esc="true"
             footer-class="justify-content-end flex-row-reverse"
@@ -321,7 +321,7 @@
           <b-modal
             id="modal-penalty-paid"
             :title="$t('Edit')"
-            :header-close-content="null"
+            :hide-header-close="true"
             :no-close-on-backdrop="true"
             :no-close-on-esc="true"
             footer-class="justify-content-end flex-row-reverse"
@@ -381,6 +381,7 @@
         </b-col>
       </b-row>
     </div>
+    <!------------------------------ Week Content Start ----------------------------->
     <div v-else>
       <b-row>
         <b-col cols="6">

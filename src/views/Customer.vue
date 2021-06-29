@@ -13,6 +13,13 @@
         <b-col lg="8">
           <b-card no-body class="pt-2 px-2" style="min-height: 149px;">
             <b-row no-gutters>
+              <!--
+                Customer's profile
+                * Avatar
+                * Name
+                * Acount ID
+                * Status
+              -->
               <b-col md="5">
                 <b-media no-body class="mb-2">
                   <b-media-aside
@@ -52,6 +59,16 @@
                   </b-media-body>
                 </b-media>
               </b-col>
+
+              <!--
+                Customer's payment summary
+                * Total Received
+                * Total Penalty
+                * Total Notes
+                * Loan Amount
+                * Next Payment(15 days)
+                * Next Payment Amount
+              -->
               <b-col md="7">
                 <b-row>
                   <b-col cols="3" class="mb-2">
@@ -109,6 +126,10 @@
             </b-row>
           </b-card>
         </b-col>
+
+        <!--
+          Lending History
+        -->
         <b-col lg="4">
           <b-card style="height: 149px;">
             <b-card-text  class="font-weight-bolder mb-50">
@@ -142,9 +163,11 @@
                 Dropdown menu - Actions for a customer
                 * Edit // Edit a customer's note (Modal view)
                 * Delete // Delete a current customer from db (Modal confirm)
+                * Show only if active button is transaction
               -->
               <div
                 class="flex-grow-1 text-right"
+                v-show="activeInfoBtnGroup === 'transaction'"
               >
                 <b-dropdown
                   v-ripple.400="'rgba(255, 255, 255, 0.15)'"
@@ -164,9 +187,14 @@
                     />
                   </template>
                   <b-dropdown-item
-                    v-b-modal.customer-note-edit-modal
+                    v-b-modal.customer-add-loan-modal
                   >
-                    {{ $t('Edit') }}
+                    {{ $t('Add loan') }}
+                  </b-dropdown-item>
+                  <b-dropdown-item
+                    v-b-modal.customer-interest-rate-modal
+                  >
+                    {{ $t('Interest rate') }}
                   </b-dropdown-item>
                   <b-dropdown-item
                     v-b-modal.customer-delete-modal
@@ -194,6 +222,7 @@
               :validateAction="validateAction"
               :editDisabled="editDisabled"
               @change="changeValue"
+              @changeArray="changeArray"
             />
 
             <!--
@@ -225,33 +254,120 @@
         </b-col>
       </b-row>
 
-      <!--------------------- Customer note edit Modal --------------------->
+      <!--------------------- Customer add loan Modal --------------------->
       <b-modal
-        id="customer-note-edit-modal"
-        title="Edit"
-        ok-title="Save"
-        cancel-title="Cancel"
+        id="customer-add-loan-modal"
+        :title="$t('Add loan')"
+        :hide-header-close="true"
+        :no-close-on-backdrop="true"
+        :no-close-on-esc="true"
+        :ok-title="$t('Save')"
+        :cancel-title="$t('Cancel')"
         cancel-variant="outline-primary"
         footer-class="justify-content-end flex-row-reverse"
         centered
       >
+        <b-form-group
+          :label="$t('Loan Start Date')"
+          label-for="loan-start-date"
+        >
+          <b-form-datepicker
+            id="loan-start-date"
+            v-model="addLoan.startDate"
+            :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit', }"
+          />
+        </b-form-group>
+        <b-row>
+          <b-col sm="6">
+            <b-form-group
+              :label="$t('Loan Amount')"
+              label-for="loan-amount"
+            >
+              <b-form-input
+                id="loan-amount"
+                :placeholder="$t('Loan Amount')"
+                v-model="addLoan.amount"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col sm="6">
+            <b-form-group
+              :label="$t('Payment Duration')"
+              label-for="payment-duration"
+            >
+              <b-dropdown
+                id="payment-duration"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                :text="addLoan.durations.values.find(d => d === addLoan.duration).toString() + ' ' + $t(addLoan.durations.unit)"
+                variant="outline-primary"
+                class="w-100 mb-1 full-width-dropdown"
+              >
+                <b-dropdown-item
+                  v-for="duration in addLoan.durations.values"
+                  :key="duration"
+                  @click="addLoan.duration = duration"
+                >
+                  {{ duration.toString() + ' ' + $t(addLoan.durations.unit) }}
+                </b-dropdown-item>
+              </b-dropdown>
+            </b-form-group>
+          </b-col>
+        </b-row>
         <b-form-group
           label="Note"
           label-for="note-edit"
         >
           <b-form-textarea
             id="note-edit"
-            rows="6"
+            rows="4"
             placeholder="Content"
           />
+        </b-form-group>
+      </b-modal>
+
+      <!--------------------- Customer interest rate Modal --------------------->
+      <b-modal
+        id="customer-interest-rate-modal"
+        :title="$t('Interest rate')"
+        :hide-header-close="true"
+        :no-close-on-backdrop="true"
+        :no-close-on-esc="true"
+        :ok-title="$t('Save')"
+        :cancel-title="$t('Cancel')"
+        cancel-variant="outline-primary"
+        footer-class="justify-content-end flex-row-reverse"
+        centered
+      >
+        <b-form-group
+          :label="$t('Interest rate')"
+          label-for="interest-rate"
+        >
+          <b-dropdown
+            id="interest-rate"
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            :text="rates.find(d => d === rate).toString() + '%'"
+            variant="outline-primary"
+            class="w-100 full-width-dropdown"
+          >
+            <b-dropdown-item
+              v-for="item in rates"
+              :key="item"
+              @click="rate = item"
+            >
+              {{ item.toString() + '%' }}
+            </b-dropdown-item>
+          </b-dropdown>
         </b-form-group>
       </b-modal>
 
       <!--------------------- Customer delete Modal --------------------->
       <b-modal
         id="customer-delete-modal"
-        ok-title="Yes, delete it!"
-        cancel-title="cancel"
+        :hide-header-close="true"
+        :no-close-on-backdrop="true"
+        :no-close-on-esc="true"
+        :ok-title="$t('Yes, delete it!')"
+        :cancel-title="$t('Cancel')"
         footer-class="justify-content-center flex-row-reverse"
         body-class="text-center"
         cancel-variant="outline-danger"
@@ -280,9 +396,10 @@
 import store from '@/store'
 import { mapGetters } from 'vuex'
 import {
-  BCard, BRow, BCol, BMedia, BMediaAside, BMediaBody, BAvatar, BCardText, BDropdown, BDropdownItem, BButton, BOverlay, BModal, VBModal, BFormGroup, BFormTextarea,
+  BCard, BRow, BCol, BMedia, BMediaAside, BMediaBody, BAvatar, BCardText, BDropdown, BDropdownItem, BButton, BOverlay, BModal, VBModal, BFormGroup, BFormTextarea, BFormDatepicker, BFormInput,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import moment from 'moment'
 import HistoryList from './components/HistoryList.vue'
 import LoanButtonGroup from './components/elements/LoanButtonGroup.vue'
 import TransactionInfo from './components/TransactionInfo.vue'
@@ -311,6 +428,8 @@ export default {
     BModal,
     BFormGroup,
     BFormTextarea,
+    BFormInput,
+    BFormDatepicker,
 
     HistoryList,
     LoanButtonGroup,
@@ -480,6 +599,8 @@ export default {
       /** Array of all the VALIDATIONS for all the fields in a category in customer information */
       validations: [],
 
+      customerInfoNoRequiredFields: store.state.app.customerInfoNoRequiredFields,
+
       /** Key of a button activated(clicked) */
       activeInfoBtnGroup: 'transaction',
       actionSectionKey: '',
@@ -493,6 +614,26 @@ export default {
       imgFile: null, // Avatar image
 
       saveSpinner: false, // Ovrelay and Spinner durring access to db
+
+      /**
+       Add loan data
+       * Loan start date
+       * Loan amount
+       * Payment duration
+       * note
+      */
+      addLoan: {
+        startDate: moment().toDate(),
+        amount: 0,
+        duration: 15,
+        durations: {
+          values: [15, 30, 45],
+          unit: 'days',
+        },
+        note: '',
+      },
+      rates: [10, 15, 20, 25, 30, 35, 40],
+      rate: 15,
     }
   },
   watch: {
@@ -501,10 +642,32 @@ export default {
 
       /** Set State (validations) from customerInfo for a validation of each field */
       if (validationKeys.includes(this.activeInfoBtnGroup)) {
-        this.$set(this, 'validations', Object.keys(newVal[this.activeInfoBtnGroup]).map(itemKey => ({
+        let validations = []
+        const stepInfo = newVal[this.activeInfoBtnGroup]
+        switch (Array.isArray(stepInfo)) {
+          case false:
+            Object.keys(stepInfo).forEach(itemKey => {
+              if (this.customerInfoNoRequiredFields[this.activeInfoBtnGroup].indexOf(itemKey) === -1) {
+                validations.push({
+                  key: itemKey,
+                  validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '',
+                })
+              }
+            })
+            break
+          case true:
+            validations = stepInfo.map((item, index) => Object.keys(item).map(itemKey => ({
+              key: itemKey,
+              validate: stepInfo[index][itemKey] !== '',
+            })))
+            break
+          default:
+        }
+        this.$set(this, 'validations', validations)
+        /* this.$set(this, 'validations', Object.keys(newVal[this.activeInfoBtnGroup]).map(itemKey => ({
           key: itemKey,
-          validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '',
-        })))
+          validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '' && this.customerInfoNoRequiredFields[this.activeInfoBtnGroup].indexOf(itemKey) === -1,
+        }))) */
       }
 
       if (this.actionSectionKey !== '') {
@@ -515,10 +678,32 @@ export default {
 
     activeInfoBtnGroup(newValue) { // When each button is clicked
       if (validationKeys.includes(newValue)) {
-        this.$set(this, 'validations', Object.keys(this.customerInfo[newValue]).map(itemKey => ({
+        let validations = []
+        const stepInfo = this.customerInfo[newValue]
+        switch (Array.isArray(stepInfo)) {
+          case false:
+            Object.keys(stepInfo).forEach(itemKey => {
+              if (this.customerInfoNoRequiredFields[this.activeInfoBtnGroup].indexOf(itemKey) === -1) {
+                validations.push({
+                  key: itemKey,
+                  validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '',
+                })
+              }
+            })
+            break
+          case true:
+            validations = stepInfo.map((item, index) => Object.keys(item).map(itemKey => ({
+              key: itemKey,
+              validate: stepInfo[index][itemKey] !== '',
+            })))
+            break
+          default:
+        }
+        this.$set(this, 'validations', validations)
+        /* this.$set(this, 'validations', Object.keys(this.customerInfo[newValue]).map(itemKey => ({
           key: itemKey,
-          validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '',
-        })))
+          validate: this.customerInfo[this.activeInfoBtnGroup][itemKey] !== '' && this.customerInfoNoRequiredFields[this.activeInfoBtnGroup].indexOf(itemKey) === -1,
+        }))) */
       }
 
       /**
@@ -572,7 +757,15 @@ export default {
     }),
 
     validate() { // Get a validation for all the fields of the current category
-      return !(this.validations.map(d => d.validate).indexOf(false) > -1)
+      const arr = []
+      this.validations.forEach(d => {
+        if (Array.isArray(d)) {
+          d.forEach(p => arr.push(p.validate))
+        } else {
+          arr.push(d.validate)
+        }
+      })
+      return !(arr.indexOf(false) > -1)
     },
   },
   methods: {
@@ -603,18 +796,79 @@ export default {
       this.$set(this, 'activeInfoBtnGroup', key)
     },
 
-    changeValue(key, value) {
-      this.$set(this, 'customerInfo', { // Update the state for any field changed in the current category
-        ...this.customerInfo,
-        [this.activeInfoBtnGroup]: {
-          ...this.customerInfo[this.activeInfoBtnGroup],
-          [key]: value,
-        },
-      })
-      if (value !== '') { // A validation of a field changed is true as that is Not empty
-        this.validations.find(d => d.key === key).validate = true
-      } else { // A validation of a field changed is false as that is empty
-        this.validations.find(d => d.key === key).validate = false
+    changeValue(key, value, row) {
+      let obj = null
+      const stepInfo = this.customerInfo[this.activeInfoBtnGroup]
+      switch (Array.isArray(stepInfo)) {
+        case false:
+          this.$set(this, 'customerInfo', { // Update the state for any field changed in the current category
+            ...this.customerInfo,
+            [this.activeInfoBtnGroup]: {
+              ...this.customerInfo[this.activeInfoBtnGroup],
+              [key]: value,
+            },
+          })
+          if (value !== '') { // A validation of a field changed is true as that is Not empty
+            this.validations.find(d => d.key === key).validate = true
+          } else { // A validation of a field changed is false as that is empty
+            this.validations.find(d => d.key === key).validate = false
+          }
+          break
+        case true:
+          obj = [...stepInfo]
+          obj[row] = {
+            ...obj[row],
+            [key]: value,
+          }
+          this.$set(this, 'customerInfo', { // Update the state for any field changed in the current step
+            ...this.customerInfo,
+            [this.activeInfoBtnGroup]: [...obj],
+          })
+          if (value !== '') { // A validation of a field changed is true as that is Not empty
+            this.validations[row].find(d => d.key === key.split('.')[0]).validate = true
+          } else { // A validation of a field changed is false as that is empty
+            this.validations[row].find(d => d.key === key.split('.')[0]).validate = false
+          }
+          break
+        default:
+      }
+    },
+
+    /**
+     Change that array in the case stepInfo is array
+     * index: item's index
+     * action: add or remove
+     */
+    changeArray(index, action) {
+      switch (action) {
+        case 'add':
+          this.$set(this, 'customerInfo', {
+            ...this.customerInfo,
+            [this.activeInfoBtnGroup]: [
+              ...this.customerInfo[this.activeInfoBtnGroup],
+              this.$store.state.app.blankCustomerInfo[this.activeInfoBtnGroup][0],
+            ],
+          })
+          this.$set(this, 'validations', [
+            ...this.validations,
+            Object.keys(this.$store.state.app.blankCustomerInfo[this.activeInfoBtnGroup][0]).map(d => ({
+              key: d,
+              validate: false,
+            })),
+          ])
+          break
+        case 'remove':
+          this.customerInfo[this.activeInfoBtnGroup].splice(index, 1)
+          this.validations.splice(index, 1)
+          this.$set(this, 'customerInfo', {
+            ...this.customerInfo,
+            [this.activeInfoBtnGroup]: [
+              ...this.customerInfo[this.activeInfoBtnGroup],
+            ],
+          })
+          this.$set(this, 'validations', [...this.validations])
+          break
+        default:
       }
     },
 

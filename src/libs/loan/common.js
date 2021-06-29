@@ -17,3 +17,12 @@ export const makeIdUpercase = length => {
   }
   return result.join('')
 }
+
+export const increaseIndex = arr => {
+  let index = 0
+  if (arr.length > 0) {
+    const idx = arr.indexOf(Math.max(...arr))
+    index = arr[idx] + 1
+  }
+  return index
+}

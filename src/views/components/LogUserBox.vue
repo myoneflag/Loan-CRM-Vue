@@ -5,7 +5,10 @@
         {{ status.name }}
       </b-badge>
     </div>
-    <div class="d-flex align-items-center">
+    <div
+      class="d-flex align-items-center cursor-pointer user-card"
+      @click="clickCustomerBox"
+    >
       <div class="pr-50">
         <b-avatar
           :src="data.avatar"
@@ -13,11 +16,11 @@
       </div>
       <div>
         <small class="m-0">{{ data.category + " " + data.uid }}</small><br/>
-        <h6>{{ data.name }}</h6>
+        <h6 class="user-name">{{ data.name }}</h6>
       </div>
     </div>
     <div class="text-center">
-      <small class="m-0">{{ `${data.payInfo.type}: ${data.payInfo.currency}${data.payInfo.amount}` }}</small>
+      <small class="m-0">{{ `${data.payInfo.type.toUpperCase()}: ${data.payInfo.currency}${data.payInfo.amount}` }}</small>
     </div>
   </b-card>
 </template>
@@ -32,14 +35,27 @@ export default {
     BBadge,
     BAvatar,
   },
-  data() {
-    return {
-      status: this.statuses.find(d => d.key === this.data.status),
-    }
+  computed: {
+    status() {
+      return this.statuses.find(d => d.key === this.data.status)
+    },
   },
   props: {
     data: Object,
     statuses: Array,
   },
+  methods: {
+    clickCustomerBox() {
+      this.$emit('customerInfoModal', this.data, this.status)
+    },
+  },
 }
 </script>
+<style lang="scss" scoped>
+@import '@core/scss/base/colors.scss';
+.user-card:hover {
+  .user-name {
+    color: $primary;
+  }
+}
+</style>

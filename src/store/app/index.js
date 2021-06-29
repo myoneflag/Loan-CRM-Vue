@@ -64,6 +64,7 @@ export default {
     },
     blankCustomerInfo: {
       id: '',
+      index: 0,
       sid: '',
       status: '',
       photoURL: '',
@@ -91,13 +92,15 @@ export default {
         companyName: '',
         companyPhoneNumber: '',
       },
-      familyInfo: {
-        name: '',
-        phoneNumber: '',
-        address: '',
-        jobOccupation: '',
-        relationship: '',
-      },
+      familyInfo: [
+        {
+          name: '',
+          phoneNumber: '',
+          address: '',
+          jobOccupation: '',
+          relationship: '',
+        },
+      ],
       guarantorInfo: {
         name: '',
         phoneNumber: '',
@@ -110,10 +113,9 @@ export default {
         credit: '',
       },
       debtInfo: {
-        borrowingDate: '',
-        repaymentMonth: 0,
-        principle: 0,
         promissoryNoteStatus: '',
+        promissoryNotesAmount: 0,
+        interestRate: 0,
         note: '',
       },
       loan: {
@@ -131,6 +133,13 @@ export default {
         penaltyRecieved: 0,
         allowanceReceived: 0,
       },
+    },
+    customerInfoNoRequiredFields: {
+      basicInfo: ['homePhoneNumber', 'companyName'],
+      familyInfo: [],
+      guarantorInfo: ['note'],
+      creditInfo: ['credit'],
+      debtInfo: ['note'],
     },
     customerTransactions: [
       {
@@ -218,8 +227,8 @@ export default {
     getCustomersFromDb(context) {
       const { currentUser } = firebase.auth
       try {
-        return firebase.db.collection('customers').where('sid', '==', currentUser.uid).get()
-          .then(res => {
+        return firebase.db.collection('customers').where('sid', '==', currentUser.uid)
+          .onSnapshot(res => {
             if (res.docs.length > 0) {
               const rawCustomers = res.docs.map(item => ({ id: item.id, ...item.data() }))
               const mappedCustomers = rawCustomers.map(item => ({
@@ -243,8 +252,8 @@ export default {
      */
     getCustomerWithIdFromDb(context, cid) {
       try {
-        return db.getOneDoc({ collectionName: 'customers', id: cid })
-          .then(res => {
+        return firebase.db.collection('customers').doc(cid)
+          .onSnapshot(res => {
             if (res.exists) {
               const rawCustomer = res.data()
               const mappedCustomer = {
@@ -457,6 +466,14 @@ export default {
       } catch (error) {
         return { status: 'error', error }
       }
+    },
+
+    /**
+     * Update a Store(bussiness) into db
+     * Update stores(vuex)
+     */
+    updateStore(context) {
+      console.log(context)
     },
 
     /**

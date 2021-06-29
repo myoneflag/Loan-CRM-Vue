@@ -8,6 +8,7 @@
         v-ripple.400="'rgba(255, 255, 255, 0.15)'"
         variant="primary"
         class="btn-icon m-0"
+        v-b-modal.customer-group-modal
       >
         {{ $t('Add') }}
       </b-button>
@@ -65,11 +66,46 @@
         </template>
       </b-table>
     </div>
+    <b-modal
+      id="customer-group-modal"
+      :title="$t('Add group')"
+      :hide-header-close="true"
+      :no-close-on-backdrop="true"
+      :no-close-on-esc="true"
+      :ok-title="$t('Add')"
+      :cancel-title="$t('Cancel')"
+      :ok-disabled="group.group === ''"
+      cancel-variant="outline-primary"
+      footer-class="justify-content-end flex-row-reverse"
+      centered
+      @ok="groupHandle('add')"
+    >
+      <b-form-group
+        :label="$t('Group name')"
+        label-for="group-name"
+      >
+        <b-form-input
+          id="group-name"
+          :placeholder="$t('Group name')"
+          v-model="group.group"
+        />
+      </b-form-group>
+      <b-form-group
+        :label="$t('Description')"
+        label-for="group-description"
+      >
+        <b-form-textarea
+          id="group-description"
+          :placeholder="$t('Description')"
+          v-model="group.description"
+        />
+      </b-form-group>
+    </b-modal>
   </div>
 </template>
 <script>
 import {
-  BButton, BCardText, BTable, BDropdown, BDropdownItem,
+  BButton, BCardText, BTable, BDropdown, BDropdownItem, BModal, VBModal, BFormGroup, BFormInput, BFormTextarea,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 
@@ -80,39 +116,38 @@ export default {
     BTable,
     BDropdown,
     BDropdownItem,
+    BModal,
+    BFormGroup,
+    BFormInput,
+    BFormTextarea,
   },
   directives: {
+    'b-modal': VBModal,
     Ripple,
   },
   data() {
     return {
       groupsTableInfo: [
-        { key: 'groups', label: 'Group' },
+        { key: 'group', label: 'Group' },
         { key: 'description', label: 'Description' },
         { key: 'action', label: 'Action' },
       ],
       groups: [
-        {
-          id: '001',
-          groups: 'Group Name 1',
-          description: '-',
-        },
-        {
-          id: '002',
-          groups: 'Group Name 2',
-          description: '-',
-        },
-        {
-          id: '003',
-          groups: 'Group Name 3',
-          description: '-',
-        },
       ],
+      group: {
+        group: '',
+        description: '',
+      },
     }
   },
   methods: {
     userSelectHandle(uid) {
       console.log(uid)
+    },
+    groupHandle(handleKey) {
+      if (handleKey === 'add') {
+        console.log(handleKey)
+      }
     },
   },
 }

@@ -4,68 +4,9 @@
       {{ $t('Debt-related') }}
     </b-card-text>
     <b-row>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
-          :label="$t('Borrowing Date')"
-          label-for="borrowingDate"
-        >
-          <loan-date-picker
-            id="borrowingDate"
-            :value="items.borrowingDate"
-            :disabled="editDisabled"
-            @change="e => changeValue('borrowingDate', e)"
-            :state="validateAction ? validations.find(d => d.key === 'borrowingDate').validate : null"
-          />
-        </b-form-group>
-        <b-form-group
-          :label="$t('Principle')"
-          label-for="principle"
-        >
-          <b-input-group
-            id="principle"
-            prepend="$"
-            append=".00"
-            class="input-group-merge"
-            :state="validateAction ? validations.find(d => d.key === 'principle').validate : null"
-          >
-            <b-form-input
-              v-model="items.principle"
-              @change="e => changeValue('principle', e)"
-              :disabled="editDisabled"
-              placeholder="0"
-            />
-          </b-input-group>
-        </b-form-group>
-      </b-col>
-      <b-col cols="4">
-        <b-form-group
-          :label="$t('Repayment/Month')"
-          label-for="repaymentMonth"
-        >
-          <!-- <b-form-input
-            id="repaymentMonth"
-            placeholder="15天"
-            :disabled="editDisabled"
-            v-model="items.repaymentMonth"
-            @change="e => changeValue('repaymentMonth', e)"
-            :state="validateAction ? validations.find(d => d.key === 'repaymentMonth').validate : null"
-          /> -->
-          <b-input-group
-            id="repaymentMonth"
-            append="天"
-            class="input-group-merge"
-            :state="validateAction ? validations.find(d => d.key === 'repaymentMonth').validate : null"
-          >
-            <b-form-input
-              :disabled="editDisabled"
-              v-model="items.repaymentMonth"
-              @change="e => changeValue('repaymentMonth', e)"
-              placeholder="0"
-            />
-          </b-input-group>
-        </b-form-group>
-        <b-form-group
-          :label="$t('Promissory note')"
+          :label="$t('Promissory Note Status')"
           label-for="promissoryNoteStatus"
         >
           <b-dropdown
@@ -86,23 +27,61 @@
           </b-dropdown>
         </b-form-group>
       </b-col>
-      <b-col cols="4">
+      <b-col sm="4">
         <b-form-group
-          :label="$t('Note')"
-          label-for="debtNote"
+          :label="$t('Promissory Note Amount')"
+          label-for="promissoryNotesAmount"
         >
-          <b-form-textarea
-            id="debtNote"
-            :placeholder="$t('Note')"
-            :disabled="editDisabled"
-            rows="4"
-            v-model="items.note"
-            @change="e => changeValue('note', e)"
-            :state="validateAction ? validations.find(d => d.key === 'note').validate : null"
-          />
+          <b-input-group
+            id="promissoryNotesAmount"
+            prepend="$"
+            append=".00"
+            class="input-group-merge"
+            :state="validateAction ? validations.find(d => d.key === 'promissoryNotesAmount').validate : null"
+          >
+            <b-form-input
+              v-model="items.promissoryNotesAmount"
+              @change="e => changeValue('promissoryNotesAmount', e)"
+              :disabled="editDisabled"
+              placeholder="0"
+            />
+          </b-input-group>
+        </b-form-group>
+      </b-col>
+      <b-col sm="4">
+        <b-form-group
+          :label="$t('Interest rate')"
+          label-for="interestRate"
+        >
+          <b-input-group
+            id="interestRate"
+            append="%"
+            class="input-group-merge"
+            :state="validateAction ? validations.find(d => d.key === 'interestRate').validate : null"
+          >
+            <b-form-input
+              v-model="items.interestRate"
+              @change="e => changeValue('interestRate', e)"
+              :disabled="editDisabled"
+              placeholder="0"
+            />
+          </b-input-group>
         </b-form-group>
       </b-col>
     </b-row>
+    <b-form-group
+      :label="$t('Note')"
+      label-for="debtNote"
+    >
+      <b-form-textarea
+        id="debtNote"
+        :placeholder="$t('Note')"
+        :disabled="editDisabled"
+        rows="4"
+        v-model="items.note"
+        @change="e => changeValue('note', e)"
+      />
+    </b-form-group>
   </div>
 </template>
 <script>
@@ -110,7 +89,6 @@ import {
   BCardText, BRow, BCol, BFormGroup, BFormTextarea, BFormInput, BInputGroup, BDropdown, BDropdownItem,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
-import LoanDatePicker from '@/views/components/elements/LoanDatePicker.vue'
 
 export default {
   components: {
@@ -123,7 +101,6 @@ export default {
     BFormTextarea,
     BDropdown,
     BDropdownItem,
-    LoanDatePicker,
   },
   directives: {
     Ripple,

@@ -16,7 +16,6 @@
             rows="10"
             v-model="items.credit"
             @change="e => changeValue('credit', e)"
-            :state="validateAction ? validations.find(d => d.key === 'credit').validate : null"
           />
         </b-form-group>
       </b-col>
