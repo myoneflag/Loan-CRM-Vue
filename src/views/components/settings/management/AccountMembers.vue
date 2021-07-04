@@ -152,7 +152,7 @@ export default {
     return {
       membersTableInfo: [
         { key: 'name', label: 'Name' },
-        { key: 'email', label: 'E-Mail' },
+        { key: 'email', label: 'Email' },
         { key: 'role', label: 'Role' },
         { key: 'certification', label: 'Certification' },
         { key: 'action', label: 'Action' },

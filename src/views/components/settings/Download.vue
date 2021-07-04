@@ -9,7 +9,7 @@
         icon="DownloadIcon"
         class="mr-50"
       />
-      <span class="align-middle">{{ $t('Download data') }}</span>
+      <span class="align-middle">{{ $t('Download Data') }}</span>
     </b-button>
   </b-card>
 </template>

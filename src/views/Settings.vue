@@ -10,6 +10,7 @@
         :activeKey="activeInfoBtnGroup"
         variant='primary'
         buttonWidth='100%'
+        textAlign='text-left'
         @activeKey="setActiveInfoBtnGroup"
       />
     </b-col>
@@ -54,26 +55,31 @@ export default {
         {
           key: 'general',
           name: 'General',
+          icon: 'AlertCircleIcon',
           component: General,
         },
         {
           key: 'password',
           name: 'Password',
+          icon: 'LockIcon',
           component: Password,
         },
         {
           key: 'management',
           name: 'Management',
+          icon: 'UserCheckIcon',
           component: Management,
         },
         {
           key: 'system',
           name: 'System',
+          icon: 'CommandIcon',
           component: System,
         },
         {
           key: 'download',
-          name: 'Download data',
+          name: 'Download Data',
+          icon: 'DownloadIcon',
           component: Download,
         },
       ],

@@ -239,7 +239,7 @@
                 class="mr-2"
                 @click="editActionClick"
               >
-                {{ !editDisabled ? 'Save' : 'Edit' }}
+                {{ !editDisabled ? $t('Save') : $t('Edit') }}
               </b-button>
               <b-button
                 v-ripple.400="'rgba(255, 255, 255, 0.15)'"

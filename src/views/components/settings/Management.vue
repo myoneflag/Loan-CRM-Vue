@@ -53,7 +53,7 @@ export default {
         },
         {
           key: 'memberLogs',
-          name: 'Member logs',
+          name: 'Member Logs',
           component: MemberLogs,
         },
       ],

@@ -4,11 +4,11 @@
       no-body
       class="px-2 pt-2"
     >
-      <b-row>
+      <b-row no-gutters>
         <!--
           Daterange-picker
         -->
-        <b-col sm="4" class="mb-2">
+        <b-col sm="4" class="mb-2 pr-1">
           <b-form-datepicker
           />
         </b-col>
@@ -16,7 +16,7 @@
         <!--
           Dropdown of feature
         -->
-        <b-col sm="2" class="mb-2">
+        <b-col sm="2" class="mb-2 pr-1">
           <b-dropdown
             v-ripple.400="'rgba(113, 102, 240, 0.15)'"
             variant="outline-secondary"
@@ -41,14 +41,13 @@
             <b-form-input
               id="search_input"
               :placeholder="$t('Search') + '...'"
-              style="min-width: 233px;"
             />
           </div>
 
           <!--
             Button to add a transaction
           -->
-          <div class="mb-2 pl-2 d-flex flex-row justify-content-center" >
+          <div class="mb-2 pl-1 d-flex flex-row justify-content-center" >
             <b-button
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
               variant="outline-secondary"
@@ -66,7 +65,7 @@
               v-ripple.400="'rgba(255, 255, 255, 0.15)'"
               variant="primary"
               class="btn-icon"
-              v-b-modal.add-outcome-modal
+              v-b-modal.add-Expenses-modal
             >
               <feather-icon icon="PlusIcon" />
             </b-button>
@@ -133,7 +132,7 @@
           <b-col sm="6">
             <money-view
               :value="59000"
-              title="Outcome"
+              title="Expenses"
               variant="danger"
               icon="DollarSignIcon"
             />
@@ -208,11 +207,11 @@
     </b-card>
 
     <!--
-      Modal to add outcome
+      Modal to add Expenses
     -->
     <b-modal
-      id="add-outcome-modal"
-      title="Outcome"
+      id="add-Expenses-modal"
+      title="Expenses"
       ok-title="Add"
       cancel-title="Cancel"
       cancel-variant="outline-primary"
@@ -221,27 +220,27 @@
     >
       <b-form-group
         :label="$t('Title')"
-        label-for="outcome-title"
+        label-for="Expenses-title"
       >
         <b-form-input
-          id="outcome-title"
+          id="Expenses-title"
           :placeholder="$t('Title')"
         />
       </b-form-group>
       <b-form-group
         :label="$t('Date')"
-        label-for="outcome-date"
+        label-for="Expenses-date"
       >
         <b-form-datepicker
-          id="outcome-date"
+          id="Expenses-date"
         />
       </b-form-group>
       <b-form-group
         :label="$t('Amount')"
-        label-for="outcome-amount"
+        label-for="Expenses-amount"
       >
         <b-input-group
-          id="outcome-amount"
+          id="Expenses-amount"
           prepend="$"
           append=".00"
           class="input-group-merge"

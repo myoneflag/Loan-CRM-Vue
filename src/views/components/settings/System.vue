@@ -42,7 +42,7 @@ export default {
         },
         {
           key: 'promissoryNotesStatus',
-          name: 'Promissory Notes Status',
+          name: 'Promissory Note Status',
           component: PromissoryNotesStatus,
         },
         {

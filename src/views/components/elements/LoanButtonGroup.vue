@@ -5,11 +5,16 @@
       :key="button.key"
       v-ripple.400="'rgba(255, 255, 255, 0.15)'"
       :variant="active === button.key ? variant : 'outline-dark'"
-      class="mr-1 mb-1"
+      :class="'mr-50 mb-1 ' + textAlign"
       :style="'width: ' + buttonWidth + ';'"
       @click="handleClick(button.key)"
     >
-      {{ $t(button.name) }}
+      <feather-icon
+        v-if="button.icon"
+        :icon="button.icon"
+        class="mr-50"
+      />
+      <span class="align-middle">{{ $t(button.name) }}</span>
     </b-button>
   </div>
 </template>
@@ -36,6 +41,10 @@ export default {
     buttonWidth: {
       type: String,
       default: 'auto',
+    },
+    textAlign: {
+      type: String,
+      default: 'text-center',
     },
   },
   directives: {
